@@ -19,50 +19,50 @@
     <button onclick="startTracking()">Start Sending Location</button>
 
     <div id="status"></div>
+<script>
+    let tracking = false;
 
-    <script>
-        let tracking = false;
+    function startTracking() {
+        tracking = true;
+        document.getElementById('status').innerText = 'Tracking started...';
 
-        function startTracking() {
-            tracking = true;
-            document.getElementById('status').innerText = 'Tracking started...';
+        setInterval(() => {
+            if (!tracking) return;
 
-            setInterval(() => {
-                if (!tracking) return;
+            navigator.geolocation.getCurrentPosition(function(position) {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                const id = document.getElementById('ambulance_id').value;
 
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    const latitude = position.coords.latitude;
-                    const longitude = position.coords.longitude;
-                    const id = document.getElementById('ambulance_id').value;
-
-fetch("{{ route('update.location', [], true) }}", {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        },
-                        body: JSON.stringify({
-                            id: id,
-                            latitude: latitude,
-                            longitude: longitude
-                        })
+                fetch("{{ route('update.location', [], true) }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        latitude: latitude,
+                        longitude: longitude
                     })
-                    .then(res => res.json())
-                    .then(data => {
-                        console.log("✅ GPS sent:", data);
-                        document.getElementById('status').innerText =
-                            `Last sent: ${new Date().toLocaleTimeString()}`;
-                    })
-                    .catch(err => {
-                        console.error("❌ Failed to send location:", err);
-                        document.getElementById('status').innerText = '❌ Failed to send location';
-                    });
-                }, function(error) {
-                    console.error("Geolocation error:", error.message);
-                    document.getElementById('status').innerText = '❌ GPS not allowed or not available';
+                })
+                .then(res => res.json())
+                .then(data => {
+                    console.log("✅ GPS sent:", data);
+                    document.getElementById('status').innerText =
+                        `Last sent: ${new Date().toLocaleTimeString()}`;
+                })
+                .catch(err => {
+                    console.error("❌ Failed to send location:", err);
+                    document.getElementById('status').innerText = '❌ Failed to send location';
                 });
-            }, 5000);
-        }
-    </script>
+
+            }, function(error) {
+                console.error("Geolocation error:", error.message);
+                document.getElementById('status').innerText = '❌ GPS not allowed or not available';
+            });
+        }, 5000);
+    }
+</script>
 </body>
 </html>
