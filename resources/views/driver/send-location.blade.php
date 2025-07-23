@@ -35,18 +35,15 @@
                     const longitude = position.coords.longitude;
                     const id = document.getElementById('ambulance_id').value;
 
-                    fetch("{{ route('update.location') }}", {
-                        method: 'POST',
+                        fetch("https://mdrrmoweb-hgeiw.sevalla.app/update-location", {
+                        method: "POST",
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            'Accept': 'application/json',
                         },
-                        body: JSON.stringify({
-                            id: id,
-                            latitude: latitude,
-                            longitude: longitude
+                        body: JSON.stringify(data),
                         })
-                    })
+
                     .then(res => res.json())
                     .then(data => {
                         console.log("✅ GPS sent:", data);

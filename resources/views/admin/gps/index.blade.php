@@ -60,15 +60,15 @@
 
 {{-- LIVE GPS SCRIPT --}}
 <script>
-    const map = L.map('map').setView([14.5995, 120.9842], 12);
+    var map = L.map('map').setView([14.5995, 120.9842], 12);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    let markers = {};
-    let trails = {};
-    let positions = {};
+    let markers = {};     // { ambulance_id: marker }
+    let trails = {};      // { ambulance_id: polyline }
+    let positions = {};   // { ambulance_id: [ [lat, lng], [lat, lng], ... ] }
 
     const ambulanceIcon = L.icon({
         iconUrl: 'https://cdn-icons-png.flaticon.com/512/843/843313.png',
@@ -78,51 +78,53 @@
     });
 
     function fetchAmbulanceData() {
-        fetch("{{ route('admin.gps.data') }}", {
-            headers: {
-                'Accept': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(amb => {
-                if (amb.latitude && amb.longitude) {
-                    let latLng = [amb.latitude, amb.longitude];
+        fetch("{{ route('admin.gps.data') }}")
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(amb => {
+                    if (amb.latitude && amb.longitude) {
+                        let latLng = [amb.latitude, amb.longitude];
 
-                    if (!positions[amb.id]) positions[amb.id] = [];
-                    positions[amb.id].push(latLng);
-                    if (positions[amb.id].length > 30) positions[amb.id].shift();
+                        // Store path history
+                        if (!positions[amb.id]) {
+                            positions[amb.id] = [];
+                        }
+                        positions[amb.id].push(latLng);
 
-                    // Marker
-                    if (markers[amb.id]) {
-                        markers[amb.id].setLatLng(latLng);
-                        markers[amb.id].setPopupContent(`<strong>${amb.name}</strong><br>Status: ${amb.status}`);
-                    } else {
-                        markers[amb.id] = L.marker(latLng, { icon: ambulanceIcon })
-                            .addTo(map)
-                            .bindPopup(`<strong>${amb.name}</strong><br>Status: ${amb.status}`);
+                        // Limit trail length
+                        if (positions[amb.id].length > 30) {
+                            positions[amb.id].shift(); // remove oldest
+                        }
+
+                        // Update or create marker
+                        if (markers[amb.id]) {
+                            markers[amb.id].setLatLng(latLng);
+                            markers[amb.id].setPopupContent(`<strong>${amb.name}</strong><br>Status: ${amb.status}`);
+                        } else {
+                            let marker = L.marker(latLng, { icon: ambulanceIcon })
+                                .addTo(map)
+                                .bindPopup(`<strong>${amb.name}</strong><br>Status: ${amb.status}`);
+                            markers[amb.id] = marker;
+                        }
+
+                        // Draw or update trail (polyline)
+                        if (trails[amb.id]) {
+                            trails[amb.id].setLatLngs(positions[amb.id]);
+                        } else {
+                            trails[amb.id] = L.polyline(positions[amb.id], {
+                                color: 'blue',
+                                weight: 3,
+                                opacity: 0.7
+                            }).addTo(map);
+                        }
                     }
-
-                    // Trail
-                    if (trails[amb.id]) {
-                        trails[amb.id].setLatLngs(positions[amb.id]);
-                    } else {
-                        trails[amb.id] = L.polyline(positions[amb.id], {
-                            color: 'blue',
-                            weight: 3,
-                            opacity: 0.7
-                        }).addTo(map);
-                    }
-                }
+                });
             });
-        })
-        .catch(error => {
-            console.error("❌ Failed to fetch ambulance data:", error);
-        });
     }
 
     fetchAmbulanceData();
     setInterval(fetchAmbulanceData, 5000);
 </script>
+
 
 @endsection
