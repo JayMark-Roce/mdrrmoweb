@@ -34,7 +34,7 @@
                 const longitude = position.coords.longitude;
                 const id = document.getElementById('ambulance_id').value;
 
-                fetch("https://mdrrmoweb-hgeiw.sevalla.app/update-location", {
+                fetch("{{ url('/update-location') }}", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
