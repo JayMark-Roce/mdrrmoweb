@@ -627,7 +627,7 @@ body {
         <div class="login-left">
             <div class="login-form-wrapper">
                 <div class="login-header">
-                    <h2>Login sana gumana gfgfgf</h2>
+                    <h2>Login sana gumana gfgfgf jnjdnfjdfnj</h2>
                 </div>
 
                 <!-- Session Status -->
