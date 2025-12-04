@@ -6861,7 +6861,7 @@ document.getElementById('case-creation-form')?.addEventListener('submit', async 
         age: document.getElementById('case-age').value || null,
         date_of_birth: document.getElementById('case-date-of-birth').value || null,
         address: document.getElementById('case-address').value,
-        destination: destinationText || null,
+        destination: destinationText || '', // Backend requires destination to be a string, not null
         type: document.getElementById('case-type').value,
         ambulance_ids: selectedAmbulances,
         latitude: window.clickedLatitude,
@@ -6880,10 +6880,28 @@ document.getElementById('case-creation-form')?.addEventListener('submit', async 
         return;
     }
     
+    // Validate destination (required by backend)
+    if (!formData.destination || formData.destination.trim() === '') {
+        showInlineNotice('Please enter a destination address.', {
+            title: 'Destination Required',
+            type: 'warning'
+        });
+        return;
+    }
+    
     // Validate coordinates
     if (!formData.latitude || !formData.longitude) {
         showInlineNotice('Please set a pickup location by clicking on the map.', {
             title: 'Pickup Needed',
+            type: 'warning'
+        });
+        return;
+    }
+    
+    // Validate destination coordinates (required by backend)
+    if (!formData.destination_latitude || !formData.destination_longitude) {
+        showInlineNotice('Please set a destination location by holding Ctrl (or Cmd on Mac) and clicking on the map where the destination should be.', {
+            title: 'Destination Location Needed',
             type: 'warning'
         });
         return;
@@ -6988,8 +7006,40 @@ document.getElementById('case-creation-form')?.addEventListener('submit', async 
             document.getElementById('move-pin-btn').textContent = 'Move Pin';
             document.getElementById('move-pin-btn').style.background = '#f59e0b';
         } else {
-            const error = await response.json();
-            showInlineNotice('Error creating case: ' + (error.message || 'Unknown error'), {
+            // Try to parse error response
+            let errorMessage = 'Unknown error';
+            let errorDetails = '';
+            
+            try {
+                const error = await response.json();
+                errorMessage = error.message || error.error || 'Unknown error';
+                
+                // If validation errors, show detailed messages
+                if (error.errors) {
+                    const validationErrors = Object.entries(error.errors)
+                        .map(([field, messages]) => `${field}: ${Array.isArray(messages) ? messages.join(', ') : messages}`)
+                        .join('\n');
+                    errorDetails = validationErrors;
+                    errorMessage = 'Validation failed:\n' + validationErrors;
+                }
+            } catch (e) {
+                // If response is not JSON, try to get text
+                try {
+                    const text = await response.text();
+                    errorMessage = text || `HTTP ${response.status}: ${response.statusText}`;
+                } catch (e2) {
+                    errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+                }
+            }
+            
+            console.error('Case creation failed:', {
+                status: response.status,
+                statusText: response.statusText,
+                message: errorMessage,
+                details: errorDetails
+            });
+            
+            showInlineNotice(errorMessage, {
                 title: 'Creation Failed',
                 type: 'danger'
             });
