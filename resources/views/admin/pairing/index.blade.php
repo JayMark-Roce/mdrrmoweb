@@ -28,6 +28,9 @@
     --shadow-lg: 0 30px 60px rgba(15, 23, 42, 0.12);
     --rounded-xl: 28px;
     --glass: rgba(255, 255, 255, 0.65);
+    --modal-radius: 20px;
+    --modal-shadow: 0 25px 60px rgba(15, 23, 42, 0.22);
+    --overlay-bg: rgba(9, 12, 27, 0.52);
 }
 
 html, body {
@@ -92,9 +95,9 @@ html, body {
     box-shadow: var(--shadow-lg);
     border: 1px solid rgba(99, 102, 241, 0.12);
     display: grid;
-    grid-template-columns: 1.4fr 1fr;
-    gap: clamp(1.25rem, 3vw, 2.5rem);
-    align-items: center;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: clamp(1.5rem, 3vw, 3rem);
+    align-items: flex-start;
     position: relative;
     overflow: hidden;
     isolation: isolate;
@@ -169,68 +172,39 @@ html, body {
     transform: translateY(-2px);
 }
 
-.hero-kpis {
+.hero-insights {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1rem;
 }
 
-.hero-kpi-card {
-    background: rgba(99, 102, 241, 0.08);
+.hero-insight-card {
+    background: rgba(255, 255, 255, 0.85);
     border-radius: 18px;
-    padding: 1rem 1.1rem;
-    border: 1px solid rgba(99, 102, 241, 0.2);
+    padding: 1.25rem 1.35rem;
+    border: 1px solid rgba(99, 102, 241, 0.16);
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1);
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
 }
 
-.hero-kpi-card span {
+.hero-insight-card small {
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    font-weight: 700;
-    color: #4338ca;
-}
-
-.hero-kpi-card strong {
-    font-size: 1.65rem;
-    font-weight: 900;
-    color: #1e1b4b;
-}
-
-.insight-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.25rem;
-}
-
-.insight-card {
-    background: var(--card-bg);
-    border-radius: 22px;
-    padding: 1.35rem;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    box-shadow: 0 25px 50px rgba(15, 23, 42, 0.08);
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-}
-
-.insight-card small {
     font-weight: 800;
-    text-transform: uppercase;
     color: var(--muted);
-    letter-spacing: 0.1em;
 }
 
-.insight-card h4 {
+.hero-insight-card h4 {
     margin: 0;
     font-size: 2rem;
     font-weight: 900;
     color: var(--heading);
 }
 
-.insight-trend {
+.hero-insight-card .insight-trend {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
@@ -238,71 +212,78 @@ html, body {
     font-size: 0.9rem;
 }
 
-.filters-card {
+.table-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.table-filter-card {
     background: var(--card-bg);
-    border-radius: 24px;
-    padding: 1.5rem;
-    box-shadow: 0 20px 55px rgba(15, 23, 42, 0.08);
+    border-radius: 22px;
+    padding: 1.35rem;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
     border: 1px solid rgba(15, 23, 42, 0.08);
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-.filters-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-}
-
-.filters-header h5 {
+.table-filter-title {
     margin: 0;
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-weight: 800;
     color: var(--heading);
 }
 
-.filters-grid {
+.table-filter-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1rem;
 }
 
-.pairing-field {
+.table-filter-field {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: 0.35rem;
     position: relative;
 }
 
-.pairing-field span {
-    font-size: 0.78rem;
+.table-filter-field span {
+    font-size: 0.75rem;
     text-transform: uppercase;
-    font-weight: 800;
     letter-spacing: 0.06em;
+    font-weight: 800;
     color: var(--muted);
 }
 
-.pairing-input,
-.pairing-select {
+.table-filter-input,
+.table-filter-select {
     border-radius: 14px;
     border: 1.5px solid rgba(148, 163, 184, 0.5);
-    padding: 0.7rem 0.85rem;
-    font-size: 0.95rem;
+    padding: 0.65rem 0.85rem;
+    font-size: 0.92rem;
     font-weight: 600;
     color: var(--heading);
     background: #f8fafc;
     transition: border 0.2s ease, box-shadow 0.2s ease;
 }
 
-.pairing-input:focus,
-.pairing-select:focus {
+.table-filter-input:focus,
+.table-filter-select:focus {
     outline: none;
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
     background: #ffffff;
+}
+
+.filter-indicator {
+    position: absolute;
+    right: 0.85rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--accent);
+    display: none;
 }
 
 .table-card {
@@ -311,6 +292,8 @@ html, body {
     border: 1px solid rgba(15, 23, 42, 0.08);
     box-shadow: 0 25px 60px rgba(15, 23, 42, 0.12);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .table-card-header {
@@ -425,69 +408,38 @@ html, body {
 
 .action-buttons {
     display: flex;
-    gap: 0.4rem;
+    gap: 0.6rem;
+    flex-wrap: wrap;
 }
 
 .action-btn {
     border: none;
-    border-radius: 8px;
-    padding: 0.4rem 0.7rem;
-    font-size: 0.8rem;
+    border-radius: 10px;
+    padding: 0.5rem 1.1rem;
+    font-size: 0.82rem;
     cursor: pointer;
-    transition: transform 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     display: inline-flex;
     align-items: center;
-    gap: 0.3rem;
+    gap: 0.35rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
 }
 
 .action-btn.complete {
-    background: rgba(16, 185, 129, 0.1);
-    color: #059669;
+    background: rgba(16, 185, 129, 0.12);
+    color: #047857;
+    box-shadow: 0 8px 18px rgba(16, 185, 129, 0.2);
 }
 
 .action-btn.cancel {
-    background: rgba(239, 68, 68, 0.1);
-    color: #dc2626;
+    background: rgba(239, 68, 68, 0.12);
+    color: #b91c1c;
+    box-shadow: 0 8px 18px rgba(239, 68, 68, 0.2);
 }
 
 .action-btn:hover {
     transform: translateY(-1px);
-}
-
-.pagination-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.25rem 1.75rem;
-    border-top: 1px solid rgba(226, 232, 240, 0.8);
-    background: #f8fafc;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.table-pager {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.pager-btn {
-    border: none;
-    background: #ffffff;
-    border-radius: 10px;
-    padding: 0.5rem 0.95rem;
-    font-weight: 700;
-    cursor: pointer;
-    border: 1px solid rgba(148, 163, 184, 0.5);
-    transition: background 0.2s ease;
-}
-
-.pager-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.pager-btn:not(:disabled):hover {
-    background: rgba(37, 99, 235, 0.08);
 }
 
 .empty-state {
@@ -529,13 +481,310 @@ body .nav-links a.active {
     font-weight: 800;
 }
 
-/* Panel Styles */
-.modal-overlay {
-    animation: fadeIn 0.2s ease;
+/* Layout helpers */
+@media (max-width: 768px) {
+    .table-filter-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
-.modal-content {
-    animation: slideUp 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+/* Panel & Modal Styles */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    padding: clamp(1.25rem, 4vw, 2.75rem);
+    background: rgba(4, 7, 29, 0.65);
+    backdrop-filter: blur(18px) saturate(160%);
+    z-index: 3000;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.25s ease;
+}
+
+.modal-shell {
+    width: min(720px, 94vw);
+    background: rgba(255, 255, 255, 0.97);
+    border-radius: var(--modal-radius);
+    border: 1px solid rgba(99, 102, 241, 0.18);
+    box-shadow: 0 50px 120px rgba(15, 23, 42, 0.45);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: modalPop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-shell.compact {
+    width: min(520px, 94vw);
+}
+
+.modal-shell.wide {
+    width: min(820px, 94vw);
+}
+
+.modal-header {
+    padding: 2rem clamp(1.5rem, 4vw, 2.5rem);
+    color: #ffffff;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-header::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.25), transparent 60%);
+    opacity: 0.6;
+}
+
+.modal-header > * {
+    position: relative;
+    z-index: 1;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: clamp(1.3rem, 2.4vw, 1.65rem);
+    font-weight: 900;
+    letter-spacing: 0.01em;
+}
+
+.modal-header p {
+    margin: 0.65rem auto 0;
+    max-width: 420px;
+    font-size: 0.98rem;
+    opacity: 0.92;
+    line-height: 1.5;
+}
+
+.modal-header .modal-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    margin: 0 auto 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+}
+
+.modal-header.green {
+    background: linear-gradient(135deg, #0ea96f, #0f766e);
+}
+
+.modal-header.blue {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+}
+
+.modal-header.purple {
+    background: linear-gradient(135deg, #7c3aed, #4c1d95);
+}
+
+.modal-header.neutral {
+    background: linear-gradient(135deg, #0f172a, #1f2937);
+}
+
+.modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    border: none;
+    background: rgba(255, 255, 255, 0.92);
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    cursor: pointer;
+    color: #0f172a;
+    font-size: 1rem;
+    box-shadow: 0 15px 30px rgba(15, 23, 42, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    z-index: 2;
+}
+
+.modal-close:hover {
+    transform: translateY(-1px) scale(1.02);
+    box-shadow: 0 18px 36px rgba(15, 23, 42, 0.28);
+}
+
+.modal-body {
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background: var(--card-bg);
+}
+
+.modal-body.compact {
+    padding: clamp(1.5rem, 4vw, 2.25rem);
+}
+
+.modal-grid {
+    display: grid;
+    gap: 1.25rem;
+}
+
+.modal-grid.two-col {
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+
+.modal-grid.three-col {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.modal-field label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #1f2937;
+    margin-bottom: 0.45rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.modal-field input,
+.modal-field select,
+.modal-field textarea {
+    width: 100%;
+    padding: 0.9rem;
+    border-radius: 14px;
+    border: 1.5px solid rgba(15, 23, 42, 0.08);
+    font-size: 0.95rem;
+    font-weight: 600;
+    background: #f8fafc;
+    transition: all 0.2s;
+}
+
+.modal-field textarea {
+    resize: vertical;
+    min-height: 110px;
+}
+
+.modal-helper {
+    font-size: 0.78rem;
+    color: #6b7280;
+    margin-top: 0.35rem;
+}
+
+.modal-field input:focus,
+.modal-field select:focus,
+.modal-field textarea:focus {
+    outline: none;
+    border-color: var(--accent) !important;
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.15) !important;
+    background: #ffffff !important;
+}
+
+.modal-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.85rem;
+}
+
+.modal-actions button {
+    border-radius: 14px;
+    padding: 0.9rem 1.9rem;
+    font-weight: 800;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modal-actions .secondary {
+    background: #f8fafc;
+    color: #0f172a;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.modal-actions .primary {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #ffffff;
+    box-shadow: 0 20px 40px rgba(37, 99, 235, 0.35);
+}
+
+.modal-actions button:hover {
+    transform: translateY(-1px);
+}
+
+.modal-choice-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.choice-card {
+    border: none;
+    width: 100%;
+    border-radius: 18px;
+    padding: 1.25rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    color: #ffffff;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.25);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.choice-card .choice-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.22);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.choice-card.green {
+    background: linear-gradient(135deg, #0ea5e9, #10b981);
+}
+
+.choice-card.blue {
+    background: linear-gradient(135deg, #6366f1, #2563eb);
+}
+
+.choice-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 25px 50px rgba(15, 23, 42, 0.35);
+}
+
+.choice-card span {
+    display: block;
+}
+
+.confirm-modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+.confirm-modal-actions button {
+    flex: 1;
+}
+
+.modal-confirm-message {
+    text-align: center;
+    font-size: 1rem;
+    color: var(--heading);
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+@keyframes modalPop {
+    from {
+        opacity: 0;
+        transform: translateY(25px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 @keyframes fadeIn {
@@ -670,110 +919,78 @@ body .nav-links a.active {
                     Efficiently pair drivers with medics and ambulances. Manage schedules, track assignments, and ensure optimal resource allocation for emergency response.
                 </p>
                 <div class="hero-actions">
-                    <button type="button" class="primary" onclick="openPairingTypeModal()"><i class="fas fa-plus"></i> Create Pairing</button>
                     <button type="button" class="secondary" onclick="window.location.href='{{ route('admin.pairing.log') }}'"><i class="fas fa-clock"></i> View Log</button>
                 </div>
             </div>
-            <div class="hero-kpis">
-                <div class="hero-kpi-card">
-                    <span>Active Pairings</span>
-                    <strong id="metricActivePairings">{{ $groupedDriverMedicPairings->count() + $groupedDriverAmbulancePairings->count() }}</strong>
-                </div>
-                <div class="hero-kpi-card">
-                    <span>Drivers</span>
-                    <strong>{{ $drivers->count() }}</strong>
-                </div>
-                <div class="hero-kpi-card">
-                    <span>Medics</span>
-                    <strong>{{ $medics->count() }}</strong>
-                </div>
-                <div class="hero-kpi-card">
-                    <span>Ambulances</span>
-                    <strong>{{ $ambulances->count() }}</strong>
-                </div>
+            @php
+                $activeDriverMedic = 0;
+                foreach($groupedDriverMedicPairings as $pairings) {
+                    if($pairings->pluck('status')->contains('active')) {
+                        $activeDriverMedic++;
+                    }
+                }
+                $activeDriverAmbulance = 0;
+                foreach($groupedDriverAmbulancePairings as $pairings) {
+                    if($pairings->pluck('status')->contains('active')) {
+                        $activeDriverAmbulance++;
+                    }
+                }
+            @endphp
+            <div class="hero-insights">
+                <article class="hero-insight-card">
+                    <small>Driver-Medic Teams</small>
+                    <h4>{{ $groupedDriverMedicPairings->count() }}</h4>
+                    <div class="insight-trend"><i class="fas fa-user-md" style="color: var(--success);"></i><span>{{ $activeDriverMedic }} active</span></div>
+                </article>
+                <article class="hero-insight-card">
+                    <small>Driver-Ambulance</small>
+                    <h4>{{ $groupedDriverAmbulancePairings->count() }}</h4>
+                    <div class="insight-trend"><i class="fas fa-ambulance" style="color: var(--accent);"></i><span>{{ $activeDriverAmbulance }} active</span></div>
+                </article>
             </div>
         </section>
 
-        <section class="insight-grid">
-            <article class="insight-card">
-                <small>Driver-Medic Teams</small>
-                <h4>{{ $groupedDriverMedicPairings->count() }}</h4>
-                @php
-                    $activeDriverMedic = 0;
-                    foreach($groupedDriverMedicPairings as $pairings) {
-                        if($pairings->pluck('status')->contains('active')) {
-                            $activeDriverMedic++;
-                        }
-                    }
-                @endphp
-                <div class="insight-trend"><i class="fas fa-user-md" style="color: var(--success);"></i><span>{{ $activeDriverMedic }} active</span></div>
-            </article>
-            <article class="insight-card">
-                <small>Driver-Ambulance</small>
-                <h4>{{ $groupedDriverAmbulancePairings->count() }}</h4>
-                @php
-                    $activeDriverAmbulance = 0;
-                    foreach($groupedDriverAmbulancePairings as $pairings) {
-                        if($pairings->pluck('status')->contains('active')) {
-                            $activeDriverAmbulance++;
-                        }
-                    }
-                @endphp
-                <div class="insight-trend"><i class="fas fa-ambulance" style="color: var(--accent);"></i><span>{{ $activeDriverAmbulance }} active</span></div>
-            </article>
-            <article class="insight-card">
-                <small>Available Drivers</small>
-                <h4>{{ $drivers->where('status', 'active')->count() }}</h4>
-                <div class="insight-trend"><i class="fas fa-users" style="color: var(--warning);"></i><span>Ready for assignment</span></div>
-            </article>
-            <article class="insight-card">
-                <small>Available Medics</small>
-                <h4>{{ $medics->where('status', 'active')->count() }}</h4>
-                <div class="insight-trend"><i class="fas fa-stethoscope" style="color: var(--danger);"></i><span>Medical personnel</span></div>
-            </article>
-        </section>
-
-        <section class="filters-card">
-            <div class="filters-header">
-                <h5>Search & Filter</h5>
-            </div>
-            <form method="GET" action="{{ route('admin.pairing.index') }}" class="filters-grid" id="searchForm" onsubmit="event.preventDefault(); return false;">
-                <label class="pairing-field">
-                    <span>Search</span>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search pairings..." class="pairing-input" id="liveSearchInput">
-                    <div id="searchIndicator" style="display: none; position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); color: var(--accent);">
-                        <i class="fas fa-spinner fa-spin"></i>
+        <!-- Driver-Medic Filters + Table -->
+        <section class="table-section" id="driverMedicSectionWrapper">
+            <div class="table-filter-card">
+                <h5 class="table-filter-title">Driver-Medic Filters</h5>
+                <form id="driverMedicFilters" onsubmit="event.preventDefault(); return false;">
+                    <div class="table-filter-grid">
+                        <label class="table-filter-field">
+                            <span>Search</span>
+                            <input type="text" class="table-filter-input" id="dmSearchInput" placeholder="Search driver, medic or notes...">
+                            <div class="filter-indicator" id="dmSearchIndicator">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                        </label>
+                        <label class="table-filter-field">
+                            <span>Driver</span>
+                            <select class="table-filter-select" id="dmDriverFilter">
+                                <option value="">All Drivers</option>
+                                @foreach($drivers as $driver)
+                                    <option value="{{ $driver->id }}">{{ $driver->name }}</option>
+                                @endforeach
+                            </select>
+                        </label>
+                        <label class="table-filter-field">
+                            <span>Medic</span>
+                            <select class="table-filter-select" id="dmMedicFilter">
+                                <option value="">All Medics</option>
+                                @foreach($medics as $medic)
+                                    <option value="{{ $medic->id }}">{{ $medic->name }}</option>
+                                @endforeach
+                            </select>
+                        </label>
                     </div>
-                </label>
-                <label class="pairing-field">
-                    <span>Driver</span>
-                    <select name="driver_id" class="pairing-select" id="driverSelect">
-                        <option value="">All Drivers</option>
-                        @foreach($drivers as $driver)
-                            <option value="{{ $driver->id }}" {{ request('driver_id') == $driver->id ? 'selected' : '' }}>
-                                {{ $driver->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </label>
-                <label class="pairing-field">
-                    <span>View Type</span>
-                    <select name="view_type" class="pairing-select" id="viewTypeSelect">
-                        <option value="driver_medic" {{ request('view_type') != 'driver_ambulance' ? 'selected' : '' }}>Driver-Medic</option>
-                        <option value="driver_ambulance" {{ request('view_type') == 'driver_ambulance' ? 'selected' : '' }}>Driver-Ambulance</option>
-                    </select>
-                </label>
-            </form>
-        </section>
-
-        <!-- Driver-Medic Pairings Table -->
-        <section class="table-card" id="driverMedicSection" style="display: {{ request('view_type') != 'driver_ambulance' ? 'block' : 'none' }};">
+                </form>
+            </div>
+            <section class="table-card" id="driverMedicSection">
             <div class="table-card-header">
                 <div>
                     <h4>Driver-Medic Pairings</h4>
                 </div>
                 <div class="table-actions">
-                    <button type="button" class="primary" onclick="openPairingTypeModal()"><i class="fas fa-plus"></i> Create Pairing</button>
+                    <button type="button" class="primary" onclick="openDriverMedicModal()"><i class="fas fa-plus"></i> Create Pairing</button>
                 </div>
             </div>
 
@@ -846,11 +1063,11 @@ body .nav-links a.active {
                                 <td>
                                     @if($isActive)
                                         <div class="action-buttons">
-                                            <button onclick="bulkActionGroup('driver_medic', '{{ $groupKey }}', 'complete')" class="action-btn complete" title="Complete">
-                                                <i class="fas fa-check"></i>
+                                            <button onclick="openActionModal('driver_medic', '{{ $groupKey }}', 'complete')" class="action-btn complete">
+                                                Mark Complete
                                             </button>
-                                            <button onclick="bulkActionGroup('driver_medic', '{{ $groupKey }}', 'cancel')" class="action-btn cancel" title="Cancel">
-                                                <i class="fas fa-times"></i>
+                                            <button onclick="openActionModal('driver_medic', '{{ $groupKey }}', 'cancel')" class="action-btn cancel">
+                                                Cancel Pairing
                                             </button>
                                         </div>
                                     @else
@@ -866,159 +1083,173 @@ body .nav-links a.active {
                     </tbody>
                 </table>
             </div>
-
-            <div class="pagination-bar">
-                <div>
-                    <strong>Tip:</strong> Use filters to find specific pairings.
-                </div>
-                <div class="table-pager">
-                    <button class="pager-btn" data-prev>Prev</button>
-                    <button class="pager-btn" data-next>Next</button>
-                </div>
-            </div>
+            </section>
         </section>
 
-        <!-- Driver-Ambulance Pairings Table -->
-        <section class="table-card" id="driverAmbulanceSection" style="display: {{ request('view_type') == 'driver_ambulance' ? 'block' : 'none' }};">
-            <div class="table-card-header">
-                <div>
-                    <h4>Driver-Ambulance Pairings</h4>
-                </div>
-                <div class="table-actions">
-                    <button type="button" class="primary" onclick="window.location.href='{{ route('admin.pairing.driver-ambulance.create') }}'"><i class="fas fa-plus"></i> Create Pairing</button>
-                </div>
+        <!-- Driver-Ambulance Filters + Table -->
+        <section class="table-section" id="driverAmbulanceSectionWrapper">
+            <div class="table-filter-card">
+                <h5 class="table-filter-title">Driver-Ambulance Filters</h5>
+                <form id="driverAmbulanceFilters" onsubmit="event.preventDefault(); return false;">
+                    <div class="table-filter-grid">
+                        <label class="table-filter-field">
+                            <span>Search</span>
+                            <input type="text" class="table-filter-input" id="daSearchInput" placeholder="Search driver, ambulance or notes...">
+                            <div class="filter-indicator" id="daSearchIndicator">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                        </label>
+                        <label class="table-filter-field">
+                            <span>Driver</span>
+                            <select class="table-filter-select" id="daDriverFilter">
+                                <option value="">All Drivers</option>
+                                @foreach($drivers as $driver)
+                                    <option value="{{ $driver->id }}">{{ $driver->name }}</option>
+                                @endforeach
+                            </select>
+                        </label>
+                        <label class="table-filter-field">
+                            <span>Ambulance</span>
+                            <select class="table-filter-select" id="daAmbulanceFilter">
+                                <option value="">All Ambulances</option>
+                                @foreach($ambulances as $ambulance)
+                                    <option value="{{ $ambulance->id }}">{{ $ambulance->name }}</option>
+                                @endforeach
+                            </select>
+                        </label>
+                    </div>
+                </form>
             </div>
+            <section class="table-card" id="driverAmbulanceSection">
+                <div class="table-card-header">
+                    <div>
+                        <h4>Driver-Ambulance Pairings</h4>
+                    </div>
+                    <div class="table-actions">
+                        <button type="button" class="primary" onclick="openDriverAmbulanceModal()"><i class="fas fa-plus"></i> Create Pairing</button>
+                    </div>
+                </div>
 
-            <div class="pairing-table-wrapper">
-                <table class="pairing-table" data-paginate="true" data-page-size="10">
-                    <thead>
-                        <tr>
-                            <th>Drivers</th>
-                            <th>Ambulance</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($groupedDriverAmbulancePairings as $groupKey => $pairings)
-                            @php
-                                $firstPairing = $pairings->first();
-                                $groupDrivers = isset($groupOperators[$groupKey]) ? $groupOperators[$groupKey] : $pairings->pluck('driver');
-                                $ambulance = $firstPairing->ambulance;
-                                $allStatuses = $pairings->pluck('status')->unique();
-                                $isActive = $allStatuses->contains('active');
-                            @endphp
+                <div class="pairing-table-wrapper">
+                    <table class="pairing-table" data-paginate="true" data-page-size="10">
+                        <thead>
                             <tr>
-                                <td>
-                                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                                        @foreach($groupDrivers as $op)
-                                            <div style="font-weight: 700; color: #0f172a;">{{ $op ? $op->name : 'Deleted Driver' }}</div>
-                                        @endforeach
-                                    </div>
-                                </td>
-                                <td>
-                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                        <i class="fas fa-ambulance" style="color: var(--accent);"></i>
-                                        <div>
-                                            <div style="font-weight: 700; color: #0f172a;">{{ $ambulance ? $ambulance->name : 'Deleted Ambulance' }}</div>
-                                            @if($ambulance && $ambulance->plate_number)
-                                                <div style="font-size: 0.85rem; color: var(--muted);">Plate: {{ $ambulance->plate_number }}</div>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div style="font-weight: 700;">{{ $firstPairing->pairing_date->format('M d, Y') }}</div>
-                                    <div style="font-size: 0.85rem; color: var(--muted);">{{ $firstPairing->pairing_date->format('l') }}</div>
-                                </td>
-                                <td>
-                                    @if($allStatuses->count() == 1)
-                                        <span class="status-badge {{ $allStatuses->first() }}">
-                                            {{ ucfirst($allStatuses->first()) }}
-                                        </span>
-                                    @else
-                                        <div style="display: flex; flex-wrap: wrap; gap: 0.3rem;">
-                                            @foreach($allStatuses as $status)
-                                                <span class="status-badge {{ $status }}">
-                                                    {{ ucfirst($status) }}
-                                                </span>
+                                <th>Drivers</th>
+                                <th>Ambulance</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($groupedDriverAmbulancePairings as $groupKey => $pairings)
+                                @php
+                                    $firstPairing = $pairings->first();
+                                    $groupDrivers = isset($groupOperators[$groupKey]) ? $groupOperators[$groupKey] : $pairings->pluck('driver');
+                                    $ambulance = $firstPairing->ambulance;
+                                    $allStatuses = $pairings->pluck('status')->unique();
+                                    $isActive = $allStatuses->contains('active');
+                                @endphp
+                                <tr>
+                                    <td>
+                                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                            @foreach($groupDrivers as $op)
+                                                <div style="font-weight: 700; color: #0f172a;">{{ $op ? $op->name : 'Deleted Driver' }}</div>
                                             @endforeach
                                         </div>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($isActive)
-                                        <div class="action-buttons">
-                                            <button onclick="bulkActionGroup('driver_ambulance', '{{ $groupKey }}', 'complete')" class="action-btn complete" title="Complete">
-                                                <i class="fas fa-check"></i>
-                                            </button>
-                                            <button onclick="bulkActionGroup('driver_ambulance', '{{ $groupKey }}', 'cancel')" class="action-btn cancel" title="Cancel">
-                                                <i class="fas fa-times"></i>
-                                            </button>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <i class="fas fa-ambulance" style="color: var(--accent);"></i>
+                                            <div>
+                                                <div style="font-weight: 700; color: #0f172a;">{{ $ambulance ? $ambulance->name : 'Deleted Ambulance' }}</div>
+                                                @if($ambulance && $ambulance->plate_number)
+                                                    <div style="font-size: 0.85rem; color: var(--muted);">Plate: {{ $ambulance->plate_number }}</div>
+                                                @endif
+                                            </div>
                                         </div>
-                                    @else
-                                        <span style="color: var(--muted); font-size: 0.85rem;">No actions</span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="empty-state">No driver-ambulance pairings found.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="pagination-bar">
-                <div>
-                    <strong>Tip:</strong> Use filters to find specific pairings.
+                                    </td>
+                                    <td>
+                                        <div style="font-weight: 700;">{{ $firstPairing->pairing_date->format('M d, Y') }}</div>
+                                        <div style="font-size: 0.85rem; color: var(--muted);">{{ $firstPairing->pairing_date->format('l') }}</div>
+                                    </td>
+                                    <td>
+                                        @if($allStatuses->count() == 1)
+                                            <span class="status-badge {{ $allStatuses->first() }}">
+                                                {{ ucfirst($allStatuses->first()) }}
+                                            </span>
+                                        @else
+                                            <div style="display: flex; flex-wrap: wrap; gap: 0.3rem;">
+                                                @foreach($allStatuses as $status)
+                                                    <span class="status-badge {{ $status }}">
+                                                        {{ ucfirst($status) }}
+                                                    </span>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($isActive)
+                                            <div class="action-buttons">
+                                                <button onclick="openActionModal('driver_ambulance', '{{ $groupKey }}', 'complete')" class="action-btn complete">
+                                                    Mark Complete
+                                                </button>
+                                                <button onclick="openActionModal('driver_ambulance', '{{ $groupKey }}', 'cancel')" class="action-btn cancel">
+                                                    Cancel Pairing
+                                                </button>
+                                            </div>
+                                        @else
+                                            <span style="color: var(--muted); font-size: 0.85rem;">No actions</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="empty-state">No driver-ambulance pairings found.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
-                <div class="table-pager">
-                    <button class="pager-btn" data-prev>Prev</button>
-                    <button class="pager-btn" data-next>Next</button>
-                </div>
-            </div>
+            </section>
         </section>
-
     </div>
 </main>
 
 <!-- Pairing Type Selection Modal -->
-<div id="pairingTypeModal" class="modal-overlay" style="display:none; position:fixed; inset:0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index:3000; align-items:center; justify-content:center;">
-    <div class="modal-content" style="background: #ffffff; width: 90%; max-width: 500px; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); position: relative; overflow: hidden;">
-        <button type="button" onclick="closePairingTypeModal()" style="position: absolute; top: 16px; right: 16px; background: #f3f4f6; color: #6b7280; border: none; width: 36px; height: 36px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: all 0.2s;">
+<div id="pairingTypeModal" class="modal-overlay" style="display:none;">
+    <div class="modal-shell compact">
+        <button type="button" class="modal-close" onclick="closePairingTypeModal()">
             <i class="fas fa-times"></i>
         </button>
-        <div style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; padding: 2rem; text-align: center;">
-            <div style="width: 64px; height: 64px; background: rgba(255,255,255,0.2); border-radius: 16px; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+        <div class="modal-header blue">
+            <div class="modal-icon">
                 <i class="fas fa-link"></i>
             </div>
-            <h3 style="margin: 0; font-size: 1.5rem; font-weight: 800;">Create New Pairing</h3>
-            <p style="margin: 0.75rem 0 0; font-size: 1rem; opacity: 0.9;">Choose the type of pairing you want to create</p>
+            <h3>Create New Pairing</h3>
+            <p>Choose the type of pairing you want to create</p>
         </div>
-        <div style="padding: 2rem;">
-            <div style="display: flex; flex-direction: column; gap: 1rem;">
-                <button onclick="openDriverMedicModal()" class="pairing-type-btn" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; border: none; padding: 1.5rem; border-radius: 16px; cursor: pointer; display: flex; align-items: center; gap: 1.25rem; transition: all 0.2s; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
-                    <div style="width: 56px; height: 56px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+        <div class="modal-body compact">
+            <div class="modal-choice-grid">
+                <button type="button" onclick="openDriverMedicModal()" class="choice-card green pairing-type-btn">
+                    <div class="choice-icon">
                         <i class="fas fa-user-md"></i>
                     </div>
-                    <div style="flex: 1; text-align: left;">
-                        <div style="font-weight: 800; font-size: 1.2rem; margin-bottom: 0.25rem;">Driver-Medic Pairing</div>
-                        <div style="font-size: 0.9rem; opacity: 0.9;">Pair a driver with medical personnel</div>
+                    <div style="flex:1; text-align:left;">
+                        <span style="font-weight:800; font-size:1.15rem; margin-bottom:0.1rem;">Driver-Medic Pairing</span>
+                        <span style="font-size:0.95rem; opacity:0.9;">Pair a driver with medical personnel</span>
                     </div>
-                    <i class="fas fa-chevron-right" style="font-size: 1.1rem; opacity: 0.8;"></i>
+                    <i class="fas fa-chevron-right" style="font-size:1.1rem;"></i>
                 </button>
-                <button onclick="openDriverAmbulanceModal()" class="pairing-type-btn" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: #ffffff; border: none; padding: 1.5rem; border-radius: 16px; cursor: pointer; display: flex; align-items: center; gap: 1.25rem; transition: all 0.2s; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);">
-                    <div style="width: 56px; height: 56px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                <button type="button" onclick="openDriverAmbulanceModal()" class="choice-card blue pairing-type-btn">
+                    <div class="choice-icon">
                         <i class="fas fa-ambulance"></i>
                     </div>
-                    <div style="flex: 1; text-align: left;">
-                        <div style="font-weight: 800; font-size: 1.2rem; margin-bottom: 0.25rem;">Driver-Ambulance Pairing</div>
-                        <div style="font-size: 0.9rem; opacity: 0.9;">Assign a driver to an ambulance vehicle</div>
+                    <div style="flex:1; text-align:left;">
+                        <span style="font-weight:800; font-size:1.15rem; margin-bottom:0.1rem;">Driver-Ambulance Pairing</span>
+                        <span style="font-size:0.95rem; opacity:0.9;">Assign a driver to an ambulance vehicle</span>
                     </div>
-                    <i class="fas fa-chevron-right" style="font-size: 1.1rem; opacity: 0.8;"></i>
+                    <i class="fas fa-chevron-right" style="font-size:1.1rem;"></i>
                 </button>
             </div>
         </div>
@@ -1026,26 +1257,26 @@ body .nav-links a.active {
 </div>
 
 <!-- Driver-Medic Pairing Modal -->
-<div id="driverMedicModal" class="modal-overlay" style="display:none; position:fixed; inset:0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index:3001; align-items:center; justify-content:center; overflow-y: auto; padding: 2rem;">
-    <div class="modal-content" style="background: #ffffff; width: 90%; max-width: 700px; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); position: relative; overflow: hidden; margin: auto;">
-        <button type="button" onclick="closeDriverMedicModal()" style="position: absolute; top: 16px; right: 16px; background: #f3f4f6; color: #6b7280; border: none; width: 36px; height: 36px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: all 0.2s; z-index: 10;">
+<div id="driverMedicModal" class="modal-overlay" style="display:none;">
+    <div class="modal-shell wide">
+        <button type="button" class="modal-close" onclick="closeDriverMedicModal()">
             <i class="fas fa-times"></i>
         </button>
-        <div style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; padding: 2rem; text-align: center;">
-            <div style="width: 64px; height: 64px; background: rgba(255,255,255,0.2); border-radius: 16px; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+        <div class="modal-header green">
+            <div class="modal-icon">
                 <i class="fas fa-user-md"></i>
             </div>
-            <h3 style="margin: 0; font-size: 1.5rem; font-weight: 800;">Driver-Medic Pairing</h3>
-            <p style="margin: 0.75rem 0 0; font-size: 1rem; opacity: 0.9;">Pair a driver with medical personnel</p>
+            <h3>Driver-Medic Pairing</h3>
+            <p>Pair a driver with medical personnel</p>
         </div>
-        <div style="padding: 2rem;">
+        <div class="modal-body">
             <form id="driverMedicForm" onsubmit="submitDriverMedicForm(event)">
                 @csrf
-                <div style="display: grid; gap: 1.5rem;">
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                <div class="modal-grid">
+                    <div class="modal-grid two-col">
                         <div class="modal-field">
-                            <label style="display: block; font-size: 0.85rem; font-weight: 800; color: #1f2937; margin-bottom: 0.5rem;">Driver *</label>
-                            <select name="driver_id" id="dmDriverSelect" required style="width: 100%; padding: 0.85rem; border-radius: 12px; border: 1.5px solid #e5e7eb; font-size: 0.95rem; font-weight: 600; background: #f8fafc; transition: all 0.2s;">
+                            <label>Driver *</label>
+                            <select name="driver_id" id="dmDriverSelect" required>
                                 <option value="">Select Driver</option>
                                 @foreach($drivers as $driver)
                                     <option value="{{ $driver->id }}">{{ $driver->name }}</option>
@@ -1054,43 +1285,41 @@ body .nav-links a.active {
                             <div id="dmDriverIdError" style="color: #ef4444; font-size: 0.8rem; margin-top: 0.25rem; display: none;"></div>
                         </div>
                         <div class="modal-field">
-                            <label style="display: block; font-size: 0.85rem; font-weight: 800; color: #1f2937; margin-bottom: 0.5rem;">Medic *</label>
-                            <select name="medic_id" id="dmMedicSelect" required style="width: 100%; padding: 0.85rem; border-radius: 12px; border: 1.5px solid #e5e7eb; font-size: 0.95rem; font-weight: 600; background: #f8fafc; transition: all 0.2s;">
+                            <label>Medic *</label>
+                            <select name="medic_id" id="dmMedicSelect" required>
                                 <option value="">Select Medic</option>
                                 @foreach($medics as $medic)
                                     <option value="{{ $medic->id }}" data-specialization="{{ $medic->specialization ?? '' }}">{{ $medic->name }}@if($medic->specialization) ({{ $medic->specialization }})@endif</option>
                                 @endforeach
                             </select>
                             <div id="dmMedicIdError" style="color: #ef4444; font-size: 0.8rem; margin-top: 0.25rem; display: none;"></div>
-                            <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Each medic can only be paired with one driver per date</p>
+                            <p class="modal-helper">Each medic can only be paired with one driver per date</p>
                         </div>
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                    <div class="modal-grid three-col">
                         <div class="modal-field">
-                            <label style="display: block; font-size: 0.85rem; font-weight: 800; color: #1f2937; margin-bottom: 0.5rem;">Pairing Date *</label>
-                            <input type="date" name="pairing_date" id="dmPairingDate" value="{{ $selectedDate }}" required style="width: 100%; padding: 0.85rem; border-radius: 12px; border: 1.5px solid #e5e7eb; font-size: 0.95rem; font-weight: 600; background: #f8fafc; transition: all 0.2s;" onchange="updateDriverMedicOptions()">
+                            <label>Pairing Date *</label>
+                            <input type="date" name="pairing_date" id="dmPairingDate" value="{{ $selectedDate }}" required onchange="updateDriverMedicOptions()">
                             <div id="dmPairingDateError" style="color: #ef4444; font-size: 0.8rem; margin-top: 0.25rem; display: none;"></div>
                         </div>
                         <div class="modal-field">
-                            <label style="display: block; font-size: 0.85rem; font-weight: 800; color: #1f2937; margin-bottom: 0.5rem;">Start Time *</label>
-                            <input type="time" name="start_time" id="dmStartTime" required style="width: 100%; padding: 0.85rem; border-radius: 12px; border: 1.5px solid #e5e7eb; font-size: 0.95rem; font-weight: 600; background: #f8fafc; transition: all 0.2s;">
+                            <label>Start Time *</label>
+                            <input type="time" name="start_time" id="dmStartTime" required>
                             <div id="dmStartTimeError" style="color: #ef4444; font-size: 0.8rem; margin-top: 0.25rem; display: none;"></div>
                         </div>
                         <div class="modal-field">
-                            <label style="display: block; font-size: 0.85rem; font-weight: 800; color: #1f2937; margin-bottom: 0.5rem;">End Time *</label>
-                            <input type="time" name="end_time" id="dmEndTime" required style="width: 100%; padding: 0.85rem; border-radius: 12px; border: 1.5px solid #e5e7eb; font-size: 0.95rem; font-weight: 600; background: #f8fafc; transition: all 0.2s;">
+                            <label>End Time *</label>
+                            <input type="time" name="end_time" id="dmEndTime" required>
                             <div id="dmEndTimeError" style="color: #ef4444; font-size: 0.8rem; margin-top: 0.25rem; display: none;"></div>
                         </div>
                     </div>
                     <div class="modal-field">
-                        <label style="display: block; font-size: 0.85rem; font-weight: 800; color: #1f2937; margin-bottom: 0.5rem;">Notes</label>
-                        <textarea name="notes" id="dmNotes" rows="3" placeholder="Any additional notes about this pairing..." style="width: 100%; padding: 0.85rem; border-radius: 12px; border: 1.5px solid #e5e7eb; font-size: 0.95rem; font-weight: 600; background: #f8fafc; transition: all 0.2s; resize: vertical;"></textarea>
+                        <label>Notes</label>
+                        <textarea name="notes" id="dmNotes" rows="3" placeholder="Any additional notes about this pairing..."></textarea>
                     </div>
-                    <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem;">
-                        <button type="button" onclick="closeDriverMedicModal()" style="padding: 0.85rem 1.75rem; border-radius: 12px; border: 1px solid #e5e7eb; background: #f1f5f9; color: #0f172a; font-weight: 700; cursor: pointer; transition: all 0.2s;">
-                            Cancel
-                        </button>
-                        <button type="submit" id="dmSubmitBtn" style="padding: 0.85rem 1.75rem; border-radius: 12px; border: none; background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
+                    <div class="modal-actions">
+                        <button type="button" class="secondary" onclick="closeDriverMedicModal()">Cancel</button>
+                        <button type="submit" class="primary" id="dmSubmitBtn">
                             <i class="fas fa-check"></i> Create Pairing
                         </button>
                     </div>
@@ -1101,60 +1330,58 @@ body .nav-links a.active {
 </div>
 
 <!-- Driver-Ambulance Pairing Modal -->
-<div id="driverAmbulanceModal" class="modal-overlay" style="display:none; position:fixed; inset:0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index:3001; align-items:center; justify-content:center; overflow-y: auto; padding: 2rem;">
-    <div class="modal-content" style="background: #ffffff; width: 90%; max-width: 700px; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); position: relative; overflow: hidden; margin: auto;">
-        <button type="button" onclick="closeDriverAmbulanceModal()" style="position: absolute; top: 16px; right: 16px; background: #f3f4f6; color: #6b7280; border: none; width: 36px; height: 36px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: all 0.2s; z-index: 10;">
+<div id="driverAmbulanceModal" class="modal-overlay" style="display:none;">
+    <div class="modal-shell wide">
+        <button type="button" class="modal-close" onclick="closeDriverAmbulanceModal()">
             <i class="fas fa-times"></i>
         </button>
-        <div style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: #ffffff; padding: 2rem; text-align: center;">
-            <div style="width: 64px; height: 64px; background: rgba(255,255,255,0.2); border-radius: 16px; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+        <div class="modal-header blue">
+            <div class="modal-icon">
                 <i class="fas fa-ambulance"></i>
             </div>
-            <h3 style="margin: 0; font-size: 1.5rem; font-weight: 800;">Driver-Ambulance Pairing</h3>
-            <p style="margin: 0.75rem 0 0; font-size: 1rem; opacity: 0.9;">Assign a driver to an ambulance vehicle</p>
+            <h3>Driver-Ambulance Pairing</h3>
+            <p>Assign a driver to an ambulance vehicle</p>
         </div>
-        <div style="padding: 2rem;">
+        <div class="modal-body">
             <form id="driverAmbulanceForm" onsubmit="submitDriverAmbulanceForm(event)">
                 @csrf
-                <div style="display: grid; gap: 1.5rem;">
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                <div class="modal-grid">
+                    <div class="modal-grid two-col">
                         <div class="modal-field">
-                            <label style="display: block; font-size: 0.85rem; font-weight: 800; color: #1f2937; margin-bottom: 0.5rem;">Driver *</label>
-                            <select name="driver_id" id="daDriverSelect" required style="width: 100%; padding: 0.85rem; border-radius: 12px; border: 1.5px solid #e5e7eb; font-size: 0.95rem; font-weight: 600; background: #f8fafc; transition: all 0.2s;">
+                            <label>Driver *</label>
+                            <select name="driver_id" id="daDriverSelect" required>
                                 <option value="">Select Driver</option>
                                 @foreach($drivers as $driver)
                                     <option value="{{ $driver->id }}">{{ $driver->name }}</option>
                                 @endforeach
                             </select>
                             <div id="daDriverIdError" style="color: #ef4444; font-size: 0.8rem; margin-top: 0.25rem; display: none;"></div>
-                            <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Drivers paired with medics can still be paired with ambulances</p>
+                            <p class="modal-helper">Drivers paired with medics can still be paired with ambulances</p>
                         </div>
                         <div class="modal-field">
-                            <label style="display: block; font-size: 0.85rem; font-weight: 800; color: #1f2937; margin-bottom: 0.5rem;">Ambulance *</label>
-                            <select name="ambulance_id" id="daAmbulanceSelect" required style="width: 100%; padding: 0.85rem; border-radius: 12px; border: 1.5px solid #e5e7eb; font-size: 0.95rem; font-weight: 600; background: #f8fafc; transition: all 0.2s;">
+                            <label>Ambulance *</label>
+                            <select name="ambulance_id" id="daAmbulanceSelect" required>
                                 <option value="">Select Ambulance</option>
                                 @foreach($ambulances as $ambulance)
                                     <option value="{{ $ambulance->id }}">{{ $ambulance->name }}@if($ambulance->plate_number) ({{ $ambulance->plate_number }})@endif</option>
                                 @endforeach
                             </select>
                             <div id="daAmbulanceIdError" style="color: #ef4444; font-size: 0.8rem; margin-top: 0.25rem; display: none;"></div>
-                            <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Maximum 2 drivers per ambulance</p>
+                            <p class="modal-helper">Maximum 2 drivers per ambulance</p>
                         </div>
                     </div>
                     <div class="modal-field">
-                        <label style="display: block; font-size: 0.85rem; font-weight: 800; color: #1f2937; margin-bottom: 0.5rem;">Pairing Date *</label>
-                        <input type="date" name="pairing_date" id="daPairingDate" value="{{ $selectedDate }}" required style="width: 100%; padding: 0.85rem; border-radius: 12px; border: 1.5px solid #e5e7eb; font-size: 0.95rem; font-weight: 600; background: #f8fafc; transition: all 0.2s;" onchange="updateDriverAmbulanceOptions()">
+                        <label>Pairing Date *</label>
+                        <input type="date" name="pairing_date" id="daPairingDate" value="{{ $selectedDate }}" required onchange="updateDriverAmbulanceOptions()">
                         <div id="daPairingDateError" style="color: #ef4444; font-size: 0.8rem; margin-top: 0.25rem; display: none;"></div>
                     </div>
                     <div class="modal-field">
-                        <label style="display: block; font-size: 0.85rem; font-weight: 800; color: #1f2937; margin-bottom: 0.5rem;">Notes</label>
-                        <textarea name="notes" id="daNotes" rows="3" placeholder="Any additional notes about this pairing..." style="width: 100%; padding: 0.85rem; border-radius: 12px; border: 1.5px solid #e5e7eb; font-size: 0.95rem; font-weight: 600; background: #f8fafc; transition: all 0.2s; resize: vertical;"></textarea>
+                        <label>Notes</label>
+                        <textarea name="notes" id="daNotes" rows="3" placeholder="Any additional notes about this pairing..."></textarea>
                     </div>
-                    <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem;">
-                        <button type="button" onclick="closeDriverAmbulanceModal()" style="padding: 0.85rem 1.75rem; border-radius: 12px; border: 1px solid #e5e7eb; background: #f1f5f9; color: #0f172a; font-weight: 700; cursor: pointer; transition: all 0.2s;">
-                            Cancel
-                        </button>
-                        <button type="submit" id="daSubmitBtn" style="padding: 0.85rem 1.75rem; border-radius: 12px; border: none; background: linear-gradient(135deg, #3b82f6, #2563eb); color: #ffffff; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);">
+                    <div class="modal-actions">
+                        <button type="button" class="secondary" onclick="closeDriverAmbulanceModal()">Cancel</button>
+                        <button type="submit" class="primary" id="daSubmitBtn">
                             <i class="fas fa-check"></i> Create Pairing
                         </button>
                     </div>
