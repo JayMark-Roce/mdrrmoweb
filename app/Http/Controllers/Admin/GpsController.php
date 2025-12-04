@@ -21,20 +21,23 @@ class GpsController extends Controller
             ->whereNull('archived_at')
             ->get();
         
-        // Step 2: Get today's date for pairing lookup
-        $today = date('Y-m-d');
-        
-        // Step 3: Get all active pairings for today
-        $pairings = DriverAmbulancePairing::where('pairing_date', $today)
-            ->where('status', 'active')
+        // Step 2: Get all active pairings (regardless of date - get most recent active pairing per driver)
+        // This ensures we find pairings even if they're for past or future dates
+        $allPairings = DriverAmbulancePairing::where('status', 'active')
             ->with('ambulance')
-            ->get()
-            ->keyBy('driver_id'); // Key by driver_id for easy lookup
+            ->orderBy('pairing_date', 'desc') // Most recent date first
+            ->orderBy('id', 'desc') // Most recent ID first (in case same date)
+            ->get();
         
-        // Step 4: Build array with drivers and their paired ambulances
+        // Group by driver_id and take the first (most recent) pairing for each driver
+        $pairingsByDriver = $allPairings->groupBy('driver_id')->map(function ($driverPairings) {
+            return $driverPairings->first(); // Get most recent pairing for this driver
+        });
+        
+        // Step 3: Build array with drivers and their paired ambulances
         $driversWithAmbulances = [];
         foreach ($activeDrivers as $driver) {
-            $pairing = $pairings->get($driver->id);
+            $pairing = $pairingsByDriver->get($driver->id);
             
             $driverInfo = [
                 'driver_id' => $driver->id,
