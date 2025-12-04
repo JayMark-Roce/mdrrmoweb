@@ -3551,10 +3551,11 @@ body.fullscreen-mode::before {
                                     <div id="driver-checkboxes" style="max-height: 220px; overflow-y: auto; border: 1px solid #d1d5db; border-radius: 12px; padding: 0.75rem; background: #f9fafb;">
                                         @forelse($driversWithAmbulances as $driverInfo)
                                             @php
-                                                // Disable if driver is offline (but still show them)
-                                                $isDisabled = !$driverInfo['is_online'];
-                                                $disabledReason = $isDisabled ? 'Driver is Offline' : '';
-                                                $hasAmbulance = !empty($driverInfo['ambulance_name']);
+                                                $hasAmbulance = !empty($driverInfo['ambulance_id']) && !empty($driverInfo['ambulance_name']);
+                                                $isOffline = !$driverInfo['is_online'];
+                                                // Disable if driver is offline OR doesn't have an ambulance assigned
+                                                $isDisabled = $isOffline || !$hasAmbulance;
+                                                $disabledReason = $isOffline ? 'Driver is Offline' : ($hasAmbulance ? '' : 'No Ambulance Assigned');
                                             @endphp
                                             <label style="display: flex; align-items: center; padding: 0.5rem; margin-bottom: 0.5rem; background: {{ $isDisabled ? '#fef2f2' : 'white' }}; border-radius: 8px; cursor: {{ $isDisabled ? 'not-allowed' : 'pointer' }}; border: 1px solid {{ $isDisabled ? '#fecaca' : '#e5e7eb' }}; transition: all 0.2s ease; opacity: {{ $isDisabled ? '0.7' : '1' }};" 
                                                    onmouseover="this.style.background='{{ $isDisabled ? '#fef2f2' : '#f3f4f6' }}'" 
@@ -3568,12 +3569,17 @@ body.fullscreen-mode::before {
                                                 <div style="flex: 1;">
                                                     <div style="font-weight: 600; color: {{ $isDisabled ? '#991b1b' : '#1f2937' }};">
                                                         {{ $driverInfo['driver_name'] }}@if($hasAmbulance) - {{ $driverInfo['ambulance_name'] }}@endif
-                                                        @if($isDisabled)
+                                                        @if($isDisabled && $disabledReason)
                                                             <span style="font-size: 0.75rem; color: #dc2626; font-weight: 700; margin-left: 0.5rem;">
                                                                 <i class="fas fa-exclamation-triangle"></i> {{ $disabledReason }}
                                                             </span>
                                                         @endif
                                                     </div>
+                                                    @if(!$hasAmbulance && !$isOffline)
+                                                        <div style="font-size: 0.75rem; color: #f59e0b; margin-top: 0.25rem;">
+                                                            <i class="fas fa-info-circle"></i> Pair this driver with an ambulance in <a href="{{ route('admin.pairing.index') }}" target="_blank" style="color: #2563eb; text-decoration: underline;">Pairing Management</a>
+                                                        </div>
+                                                    @endif
                                                     @if($hasAmbulance)
                                                         <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 0.2rem;">
                                                             <div id="case-count-{{ $driverInfo['ambulance_id'] }}" style="font-size: 0.75rem; color: #6b7280; background: #f3f4f6; padding: 0.2rem 0.4rem; border-radius: 4px;">
