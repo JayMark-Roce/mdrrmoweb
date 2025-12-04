@@ -492,7 +492,7 @@
         <div style="margin-top:8px; width:100%; text-align:center; font-weight:800; color:#fff; letter-spacing:0.5px;">SILANG MDRRMO</div>
     </div>
     <nav class="nav-links">
-        <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}"><i class="fas fa-chart-pie"></i> Dashboard</a>
+        <a href="{{ route('dashboard') }}" class="{{ request()->is('dashboard') ? 'active' : '' }}"><i class="fas fa-chart-pie"></i> Dashboard</a>
         @if(auth()->check())
             <span class="nav-link-locked" style="display:block; text-decoration:none; color:#9ca3af; font-weight:600; padding:0.75rem 1rem; border-radius:8px; cursor:not-allowed; opacity:0.6;">
                 <i class="fas fa-pen"></i> Posting <i class="fas fa-lock" style="font-size:10px; margin-left:6px;"></i>

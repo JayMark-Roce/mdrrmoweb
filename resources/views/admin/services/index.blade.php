@@ -19,7 +19,7 @@
         <img src="{{ asset('image/mdrrmologo.jpg') }}" alt="Logo" class="logo-img">
     </div>
     <nav class="nav-links">
-        <a href="{{ url('/') }}"><i class="fas fa-chart-pie"></i> Dashboard</a>
+        <a href="{{ route('dashboard') }}"><i class="fas fa-chart-pie"></i> Dashboard</a>
         <span class="nav-link-locked" style="display: block; padding: 12px 16px; color: #9ca3af; cursor: not-allowed; opacity: 0.6; position: relative;"><i class="fas fa-pen"></i> Posting <i class="fas fa-lock" style="font-size: 10px; margin-left: 8px; opacity: 0.7;"></i></span>
         <a href="{{ url('/admin/services') }}"><i class="fas fa-concierge-bell"></i> Services</a>
         <a href="{{ url('/admin/contacts') }}"><i class="fas fa-address-book"></i> Contacts</a>

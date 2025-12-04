@@ -7,7 +7,7 @@
 
         {{-- Navigation Links --}}
         <ul class="flex flex-wrap gap-x-4 gap-y-2 text-sm font-medium mt-2 sm:mt-0">
-            <li><a href="{{ url('/') }}" class="hover:underline">Dashboard</a></li>
+            <li><a href="{{ route('dashboard') }}" class="hover:underline">Dashboard</a></li>
             <li><a href="{{ url('/admin/posting') }}" class="hover:underline">Posting</a></li>
             <li><a href="{{ url('/admin/services') }}" class="hover:underline">Create Service</a></li>
             <li><a href="{{ url('/admin/services/reviews') }}" class="hover:underline">Reviews</a></li>

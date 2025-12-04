@@ -99,7 +99,7 @@
         <div style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 800; color: #ffffff; letter-spacing: .5px;">SILANG MDRRMO</div>
     </div>
     <nav class="nav-links">
-        <a href="{{ url('/') }}" class="active"><i class="fas fa-chart-pie"></i> Dashboard</a>
+        <a href="{{ route('dashboard') }}" class="active"><i class="fas fa-chart-pie"></i> Dashboard</a>
         <a href="{{ route('login') }}"><i class="fas fa-sign-in-alt"></i> Login</a>
     </nav>
 </aside>
