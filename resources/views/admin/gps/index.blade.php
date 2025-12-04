@@ -6840,29 +6840,76 @@ function showNotification(message, type = 'info') {
 document.getElementById('case-creation-form')?.addEventListener('submit', async function(event) {
     event.preventDefault();
     
+    // Check if form elements exist first
+    const callerNameEl = document.getElementById('caller-name');
+    const callerContactEl = document.getElementById('caller-contact');
+    const addressEl = document.getElementById('case-address');
+    
+    if (!callerNameEl || !callerContactEl || !addressEl) {
+        console.error('Form elements not found:', {
+            callerNameEl: !!callerNameEl,
+            callerContactEl: !!callerContactEl,
+            addressEl: !!addressEl
+        });
+        showInlineNotice('Form elements not found. Please refresh the page and try again.', {
+            title: 'Form Error',
+            type: 'danger'
+        });
+        return;
+    }
+    
     // Get selected drivers and map them to their ambulance IDs
     const selectedDrivers = Array.from(document.querySelectorAll('input[name="drivers[]"]:checked'));
+    
+    // Debug: Log all driver checkboxes (checked and unchecked)
+    const allDriverCheckboxes = Array.from(document.querySelectorAll('input[name="drivers[]"]'));
+    console.log('All driver checkboxes:', allDriverCheckboxes.map(cb => ({
+        checked: cb.checked,
+        ambulanceId: cb.getAttribute('data-ambulance-id'),
+        driverId: cb.getAttribute('data-driver-id'),
+        disabled: cb.disabled
+    })));
+    
     const selectedAmbulances = selectedDrivers.map(checkbox => {
         const ambulanceId = checkbox.getAttribute('data-ambulance-id');
+        const driverId = checkbox.getAttribute('data-driver-id');
+        console.log('Selected driver checkbox:', { 
+            checked: checkbox.checked, 
+            ambulanceId: ambulanceId, 
+            driverId: driverId,
+            value: checkbox.value 
+        });
         return ambulanceId && ambulanceId !== '' ? ambulanceId : null;
     }).filter(id => id !== null && id !== '');
     
-    const callerName = document.getElementById('caller-name').value.trim();
-    const callerContact = document.getElementById('caller-contact').value.trim();
-    const patientName = document.getElementById('case-name').value.trim();
-    const patientContact = document.getElementById('case-contact').value.trim();
-    const destinationText = document.getElementById('case-destination').value.trim();
+    const callerName = callerNameEl.value?.trim() || '';
+    const callerContact = callerContactEl.value?.trim() || '';
+    const patientName = document.getElementById('case-name')?.value?.trim() || '';
+    const patientContact = document.getElementById('case-contact')?.value?.trim() || '';
+    const destinationText = document.getElementById('case-destination')?.value?.trim() || '';
+    const address = addressEl.value?.trim() || '';
+
+    // Debug: Log field values to help diagnose issues
+    console.log('Form validation check:', {
+        callerName: callerName,
+        callerContact: callerContact,
+        address: address,
+        selectedDriversCount: selectedDrivers.length,
+        selectedAmbulancesCount: selectedAmbulances.length,
+        selectedAmbulances: selectedAmbulances,
+        allCheckboxesCount: allDriverCheckboxes.length
+    });
 
     const formData = {
         caller_name: callerName,
         caller_contact: callerContact,
         name: patientName || null,
         contact: patientContact || null,
-        age: document.getElementById('case-age').value || null,
-        date_of_birth: document.getElementById('case-date-of-birth').value || null,
-        address: document.getElementById('case-address').value,
+        age: document.getElementById('case-age')?.value || null,
+        date_of_birth: document.getElementById('case-date-of-birth')?.value || null,
+        address: address,
         destination: destinationText || '', // Backend requires destination to be a string, not null
-        type: document.getElementById('case-type').value,
+        type: document.getElementById('case-type')?.value || '',
         ambulance_ids: selectedAmbulances,
         latitude: window.clickedLatitude,
         longitude: window.clickedLongitude,
@@ -6871,9 +6918,39 @@ document.getElementById('case-creation-form')?.addEventListener('submit', async 
         timestamp: new Date().toISOString()
     };
     
-    // Validate required fields
-    if (!formData.caller_name || !formData.caller_contact || !formData.address || selectedAmbulances.length === 0) {
-        showInlineNotice('Please complete caller name, caller contact, pickup address, and select at least one driver.', {
+    // Validate required fields with specific error messages
+    const missingFields = [];
+    if (!formData.caller_name) {
+        missingFields.push('Caller Name');
+    }
+    if (!formData.caller_contact) {
+        missingFields.push('Caller Contact');
+    }
+    if (!formData.address) {
+        missingFields.push('Pickup Address');
+    }
+    
+    // Check driver selection - provide specific message if drivers are selected but have no ambulance IDs
+    if (selectedDrivers.length === 0) {
+        missingFields.push('At least one driver');
+    } else if (selectedAmbulances.length === 0) {
+        // Drivers are selected but none have valid ambulance IDs
+        console.error('Selected drivers have no ambulance IDs:', selectedDrivers.map(cb => ({
+            driverId: cb.getAttribute('data-driver-id'),
+            ambulanceId: cb.getAttribute('data-ambulance-id'),
+            value: cb.value
+        })));
+        showInlineNotice('The selected driver(s) are not assigned to an ambulance. Please select a driver with an assigned ambulance.', {
+            title: 'Invalid Driver Selection',
+            type: 'warning'
+        });
+        return;
+    }
+    
+    if (missingFields.length > 0) {
+        const errorMessage = 'Please complete the following required fields: ' + missingFields.join(', ');
+        console.error('Validation failed - missing fields:', missingFields);
+        showInlineNotice(errorMessage, {
             title: 'Form Incomplete',
             type: 'warning'
         });
