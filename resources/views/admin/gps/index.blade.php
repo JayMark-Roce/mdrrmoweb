@@ -4699,6 +4699,27 @@ document.getElementById('close-active-modal')?.addEventListener('click', functio
     closeModal('active-modal');
 });
 
+(function(){
+    let activeModalAutoOpened = false;
+    const shouldOpenActiveModal = () => {
+        const params = new URLSearchParams(window.location.search);
+        const viewParam = (params.get('view') || params.get('focus') || '').toLowerCase();
+        const hash = (window.location.hash || '').replace('#','').toLowerCase();
+        return viewParam === 'active' || viewParam === 'active-cases' || hash === 'active' || hash === 'active-cases';
+    };
+    const openActiveModalFromIntent = () => {
+        if (!shouldOpenActiveModal()) return;
+        if (activeModalAutoOpened && document.getElementById('active-modal')?.style.display === 'flex') return;
+        activeModalAutoOpened = true;
+        setTimeout(() => {
+            openModal('active-modal');
+            loadActiveCases();
+        }, 350);
+    };
+    document.addEventListener('DOMContentLoaded', openActiveModalFromIntent);
+    window.addEventListener('hashchange', openActiveModalFromIntent);
+})();
+
 document.getElementById('close-geocode-modal')?.addEventListener('click', function(event) {
     event.preventDefault();
     event.stopPropagation();

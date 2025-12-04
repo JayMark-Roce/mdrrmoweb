@@ -9,19 +9,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         :root {
-            --bg-gradient: radial-gradient(circle at top, #fdf2ff 0%, #eef2ff 45%, #f5f7fb 100%);
-            --panel: #ffffff;
-            --glass: rgba(255, 255, 255, 0.7);
-            --border: rgba(148, 163, 184, 0.3);
+            --bg-gradient: radial-gradient(circle at top, #eff6ff 0%, #eef2ff 45%, #f5f7fb 100%);
+            --card: #ffffff;
+            --border: rgba(148, 163, 184, 0.25);
             --heading: #0f172a;
             --muted: #6b7280;
             --accent: #2563eb;
-            --accent-alt: #7c3aed;
-            --success: #16a34a;
+            --accent-alt: #6366f1;
+            --success: #10b981;
             --warning: #f97316;
             --danger: #ef4444;
-            --shadow: 0 25px 60px rgba(15, 23, 42, 0.12);
-            --header-height: 70px;
+            --shadow-lg: 0 30px 60px rgba(15, 23, 42, 0.12);
+            --header-height: 72px;
+            --nav-width: 260px;
         }
 
         * {
@@ -36,57 +36,70 @@
             color: var(--heading);
         }
 
-        .dashboard-shell {
-            margin-left: 260px;
-            padding: 2.5rem clamp(1rem, 3vw, 3rem);
+        .mdrrmo-header {
+            background: #f7f7f7;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            border: none;
+            min-height: var(--header-height);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .dashboard-main {
+            margin-left: var(--nav-width);
+            padding: 2.75rem clamp(1.25rem, 3vw, 3rem);
+            padding-top: calc(var(--header-height) + 2.5rem);
         }
 
         @media (max-width: 992px) {
-            .dashboard-shell {
+            .dashboard-main {
                 margin-left: 0;
-                padding-top: calc(var(--header-height) + 2rem);
+                padding: calc(var(--header-height) + 1.5rem) 1.25rem 2rem;
             }
         }
 
-        .dashboard-container {
+        .dashboard-page-container {
             max-width: 1500px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            gap: 1.75rem;
+            gap: 1.65rem;
         }
 
-        .hero-panel {
-            background: var(--panel);
-            border-radius: 28px;
-            border: 1px solid rgba(99, 102, 241, 0.12);
-            box-shadow: var(--shadow);
+        .hero-card {
+            background: var(--card);
+            border-radius: 30px;
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            box-shadow: var(--shadow-lg);
             padding: clamp(1.75rem, 4vw, 3rem);
             display: grid;
-            gap: 2rem;
-            grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.9fr);
+            gap: 2.5rem;
+            grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.8fr);
             position: relative;
             overflow: hidden;
+            isolation: isolate;
         }
 
-        .hero-panel::after {
+        .hero-card::after {
             content: "";
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at top right, rgba(124,58,237,0.18), transparent 65%);
-            z-index: 0;
-        }
-
-        .hero-panel > * {
-            position: relative;
-            z-index: 1;
+            background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.15), transparent 55%);
+            z-index: -1;
         }
 
         .hero-badge {
             display: inline-flex;
             align-items: center;
-            gap: 0.4rem;
-            padding: 0.35rem 0.9rem;
+            gap: 0.45rem;
+            padding: 0.4rem 0.95rem;
             border-radius: 999px;
             background: rgba(37, 99, 235, 0.12);
             color: #1d4ed8;
@@ -96,110 +109,57 @@
             letter-spacing: 0.08em;
         }
 
-        .hero-panel h1 {
-            margin: 0.75rem 0 0;
+        .hero-card h1 {
+            margin: 0.85rem 0 0.35rem;
             font-size: clamp(2rem, 4vw, 3rem);
             font-weight: 900;
         }
 
-        .hero-panel p {
-            margin: 0.75rem 0 1.25rem;
+        .hero-card p {
+            margin: 0.65rem 0 1.25rem;
             color: var(--muted);
             font-size: 1rem;
             max-width: 520px;
         }
 
-        .hero-metrics {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 0.85rem;
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
         }
 
-        .hero-metric {
-            background: rgba(37, 99, 235, 0.08);
-            border: 1px solid rgba(37, 99, 235, 0.15);
-            border-radius: 18px;
-            padding: 0.9rem 1rem;
-        }
-
-        .hero-metric span {
-            display: block;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: #4338ca;
-            font-weight: 700;
-        }
-
-        .hero-metric strong {
-            display: block;
-            margin-top: 0.35rem;
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: #1e1b4b;
-        }
-
-        .control-panel {
-            background: linear-gradient(145deg, rgba(37,99,235,0.08), rgba(124,58,237,0.08)), var(--panel);
-            border: 1px solid rgba(99, 102, 241, 0.18);
+        .hero-card__panel {
+            background: rgba(99, 102, 241, 0.08);
             border-radius: 24px;
-            padding: 1.75rem;
-            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+            padding: 1.5rem;
+            border: 1px solid rgba(99, 102, 241, 0.2);
             display: flex;
             flex-direction: column;
-            gap: 1.25rem;
-        }
-
-        .control-panel__header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             gap: 1rem;
         }
 
-        .control-panel__eyebrow {
-            margin: 0;
+        .panel-heading {
+            font-size: 0.78rem;
             text-transform: uppercase;
-            font-size: 0.72rem;
             letter-spacing: 0.25em;
             color: var(--muted);
             font-weight: 800;
+            margin: 0;
         }
 
-        .control-panel__header h4 {
-            margin: 0.2rem 0 0;
-            font-size: 1.35rem;
-            font-weight: 900;
-            color: var(--heading);
-        }
-
-        .control-panel__status {
+        .live-pill {
             display: inline-flex;
             align-items: center;
             gap: 0.45rem;
-            padding: 0.5rem 0.9rem;
+            font-weight: 700;
+            background: #fff;
             border-radius: 999px;
-            background: rgba(15, 23, 42, 0.06);
+            padding: 0.45rem 0.85rem;
             border: 1px solid rgba(15, 23, 42, 0.08);
             font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--heading);
         }
 
-        .control-panel__grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            align-items: end;
-        }
-
-        .control-field {
-            display: flex;
-            flex-direction: column;
-            gap: 0.45rem;
-        }
-
-        .control-field span {
+        .hero-card__panel label {
             font-size: 0.78rem;
             text-transform: uppercase;
             letter-spacing: 0.12em;
@@ -207,35 +167,30 @@
             font-weight: 800;
         }
 
-        .control-panel input[type="date"] {
-            border-radius: 16px;
+        .hero-card__panel input[type="date"] {
+            width: 100%;
+            border-radius: 18px;
             border: 1.6px solid rgba(148, 163, 184, 0.6);
-            padding: 0.9rem 1rem;
+            padding: 0.95rem 1rem;
             font-weight: 700;
             color: var(--heading);
             background: #ffffff;
             box-shadow: inset 0 1px 2px rgba(15,23,42,0.05);
         }
 
-        .control-panel__buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-        }
-
-        .control-panel__note {
+        .hero-note {
             font-size: 0.85rem;
             color: var(--muted);
             font-weight: 600;
             display: flex;
-            align-items: center;
-            gap: 0.4rem;
+            gap: 0.5rem;
+            align-items: flex-start;
         }
 
         .btn {
             border: none;
             border-radius: 14px;
-            padding: 0.85rem 1.25rem;
+            padding: 0.85rem 1.35rem;
             font-weight: 800;
             letter-spacing: 0.02em;
             cursor: pointer;
@@ -256,60 +211,121 @@
             box-shadow: 0 18px 35px rgba(37, 99, 235, 0.35);
         }
 
-        .btn-secondary {
+        .btn-tonal {
             background: rgba(15, 23, 42, 0.05);
             color: var(--heading);
             border: 1px solid rgba(15, 23, 42, 0.08);
+            text-decoration: none;
         }
 
-        .sync-meta {
-            font-size: 0.9rem;
-            color: var(--muted);
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .stat-grid {
+        .kpi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 1rem;
         }
 
-        .stat-card {
-            background: var(--panel);
+        .kpi-card {
+            background: var(--card);
             border-radius: 22px;
-            border: 1px solid rgba(15, 23, 42, 0.08);
-            padding: 1.25rem;
-            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+            padding: 1.2rem 1.4rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 18px 35px rgba(15, 23, 42, 0.08);
+            text-decoration: none;
+            color: inherit;
             display: flex;
             flex-direction: column;
             gap: 0.35rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .stat-card__label {
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 25px 55px rgba(37, 99, 235, 0.15);
+        }
+
+        .kpi-card__eyebrow {
+            font-size: 0.72rem;
+            letter-spacing: 0.2em;
             text-transform: uppercase;
-            font-size: 0.74rem;
-            letter-spacing: 0.1em;
             color: var(--muted);
             font-weight: 800;
         }
 
-        .stat-card__value {
-            font-size: 2rem;
+        .kpi-card__value {
+            font-size: 2.4rem;
             font-weight: 900;
         }
 
-        .stat-card__sub {
+        .kpi-card__hint {
+            font-size: 0.85rem;
             color: var(--muted);
             font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
         }
 
-        .readiness-card {
-            background: var(--panel);
-            border-radius: 28px;
-            border: 1px solid rgba(15, 23, 42, 0.08);
-            box-shadow: var(--shadow);
+        .insight-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+        }
+
+        .insight-card {
+            background: var(--card);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            padding: 1.4rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .insight-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 30px 60px rgba(37, 99, 235, 0.15);
+        }
+
+        .insight-card small {
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--muted);
+            letter-spacing: 0.12em;
+        }
+
+        .insight-card h3 {
+            margin: 0;
+            font-size: 2.2rem;
+            font-weight: 900;
+        }
+
+        .readiness-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 1100px) {
+            .hero-card {
+                grid-template-columns: 1fr;
+            }
+            .readiness-layout {
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            }
+        }
+
+        .readiness-card,
+        .queue-card,
+        .quick-card,
+        .notes-card {
+            background: var(--card);
+            border-radius: 26px;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 55px rgba(15, 23, 42, 0.08);
             padding: 1.75rem;
             display: flex;
             flex-direction: column;
@@ -319,17 +335,17 @@
         .progress-row {
             display: flex;
             flex-direction: column;
-            gap: 0.4rem;
+            gap: 0.45rem;
         }
 
         .progress-row span {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 700;
             color: var(--heading);
         }
 
         .progress-bar {
-            height: 10px;
+            height: 12px;
             border-radius: 999px;
             background: #e2e8f0;
             position: relative;
@@ -343,49 +359,33 @@
             background: linear-gradient(135deg, var(--accent), var(--accent-alt));
         }
 
-        .mini-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1rem;
-        }
-
-        .mini-panel {
-            background: var(--panel);
-            border-radius: 24px;
-            border: 1px solid rgba(15, 23, 42, 0.08);
-            padding: 1.5rem;
-            box-shadow: 0 15px 30px rgba(15, 23, 42, 0.08);
+        .queue-list,
+        .notes-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
         }
 
-        .list {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 0.6rem;
-        }
-
-        .list li {
+        .queue-list li {
             display: flex;
             justify-content: space-between;
             font-weight: 700;
             color: var(--heading);
         }
 
-        .list li span {
-            font-size: 0.85rem;
+        .queue-list span {
+            font-size: 0.9rem;
             color: var(--muted);
             font-weight: 600;
         }
 
         .quick-link {
             border: 1px solid rgba(148, 163, 184, 0.4);
-            border-radius: 14px;
-            padding: 0.8rem 1rem;
+            border-radius: 16px;
+            padding: 0.95rem 1rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -397,7 +397,14 @@
 
         .quick-link:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 25px rgba(37, 99, 235, 0.15);
+            box-shadow: 0 18px 35px rgba(37, 99, 235, 0.18);
+        }
+
+        .notes-card p {
+            margin: 0;
+            color: var(--muted);
+            font-weight: 600;
+            line-height: 1.6;
         }
 
         .toggle-btn {
@@ -419,10 +426,6 @@
             .toggle-btn {
                 display: inline-flex;
             }
-            .dashboard-shell {
-                padding: 1.5rem;
-                padding-top: calc(var(--header-height) + 1.5rem);
-            }
             .sidenav {
                 transform: translateX(-100%);
             }
@@ -435,7 +438,7 @@
             position: fixed;
             left: 0;
             top: 0;
-            width: 260px;
+            width: var(--nav-width);
             height: 100vh;
             background: linear-gradient(180deg, #031273 0%, #1e3a8a 100%);
             z-index: 900;
@@ -447,7 +450,7 @@
         .nav-links {
             display: flex;
             flex-direction: column;
-            gap: 0.35rem;
+            gap: 0.4rem;
             padding: 1.25rem 1rem 2rem;
         }
 
@@ -466,7 +469,7 @@
         }
 
         .nav-links a:hover {
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.15);
             color: #ffffff;
         }
 
@@ -477,9 +480,12 @@
         }
     </style>
 </head>
-<body>
+<body class="dashboard-page">
 @php
     $firstName = auth()->check() ? explode(' ', auth()->user()->name ?? 'Admin')[0] : 'Guest';
+    $driverPercent = $staffMetrics['drivers']['total'] ? round(($staffMetrics['drivers']['online'] / max(1, $staffMetrics['drivers']['total'])) * 100) : 0;
+    $medicPercent = $staffMetrics['medics']['total'] ? round(($staffMetrics['medics']['active'] / max(1, $staffMetrics['medics']['total'])) * 100) : 0;
+    $ambulanceText = number_format($systemMetrics['ambulances']['available']).' ready / '.number_format($systemMetrics['ambulances']['total']).' fleet';
 @endphp
 
 <button class="toggle-btn" onclick="toggleSidebar()">
@@ -508,7 +514,7 @@
     </nav>
 </aside>
 
-<div class="mdrrmo-header" style="background:#F7F7F7; box-shadow:0 2px 8px rgba(0,0,0,0.12); border:none; min-height:var(--header-height); padding:1rem 2rem; display:flex; align-items:center; justify-content:center; position:fixed; top:0; left:0; right:0; z-index:1000;">
+<div class="mdrrmo-header">
     <h2 class="header-title" style="display:none;"></h2>
     <div id="userMenu" style="position:fixed; right:16px; top:16px; display:inline-flex; align-items:center; gap:10px; cursor:pointer; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); padding:6px 10px; border-radius:999px; box-shadow:0 6px 18px rgba(0,0,0,0.18); backdrop-filter:saturate(140%);">
         <div style="width:28px; height:28px; border-radius:999px; background:linear-gradient(135deg,#4CC9F0,#031273); display:inline-flex; align-items:center; justify-content:center; position:relative;">
@@ -537,89 +543,93 @@
     </div>
 </div>
 
-<main class="dashboard-shell">
-    <div class="dashboard-container">
-        <section class="hero-panel">
+<main class="dashboard-main">
+    <div class="dashboard-page-container">
+        <section class="hero-card">
             <div>
                 <span class="hero-badge"><i class="fas fa-bolt"></i> Operations pulse</span>
                 <h1>Emergency Command Dashboard</h1>
                 <p id="selected-date-label">Tracking deployments for {{ $selectedDateHuman }}</p>
-                <div class="hero-metrics">
-                    <div class="hero-metric">
-                        <span>Pending cases</span>
-                        <strong id="metricPending">{{ number_format($caseMetrics['pending']) }}</strong>
-                    </div>
-                    <div class="hero-metric">
-                        <span>Active cases</span>
-                        <strong id="metricActive">{{ number_format($caseMetrics['active']) }}</strong>
-                    </div>
-                    <div class="hero-metric">
-                        <span>Completed today</span>
-                        <strong id="metricCompletedToday">{{ number_format($caseMetrics['completed']) }}</strong>
-                    </div>
+                <div class="hero-actions">
+                    <button id="refresh-metrics" class="btn btn-primary">
+                        <i class="fas fa-rotate"></i> Refresh data
+                    </button>
+                    <a href="{{ route('dashboard.view') }}" class="btn btn-tonal">
+                        <i class="fas fa-display"></i> Dashboard view
+                    </a>
+                </div>
+                <div class="hero-note">
+                    <i class="fas fa-lightbulb" style="color:var(--accent);"></i>
+                    <span>Need printable snapshots? Go to Reports for polished exports and PDF-ready tables.</span>
                 </div>
             </div>
-            <div class="control-panel">
-                <div class="control-panel__header">
-                    <div>
-                        <p class="control-panel__eyebrow">Live controls</p>
-                        <h4>Focus timeline</h4>
-                    </div>
-                    <span class="control-panel__status">
-                        <i class="fas fa-circle" style="color:#22c55e;"></i>
-                        <span id="metrics-status">Updated {{ $lastUpdated }}</span>
-                    </span>
-                </div>
-                <div class="control-panel__grid">
-                    <label class="control-field">
-                        <span>Focus date</span>
-                        <input type="date" id="metrics-date" value="{{ $selectedDate }}">
-                    </label>
-                    <div class="control-panel__buttons">
-                        <button id="refresh-metrics" class="btn btn-primary">
-                            <i class="fas fa-rotate"></i> Refresh data
-                        </button>
-                        <a href="{{ route('dashboard.view') }}" class="btn btn-secondary" style="text-decoration:none;">
-                            <i class="fas fa-display"></i> Dashboard view
-                        </a>
-                    </div>
-                </div>
-                <div class="control-panel__note">
-                    <i class="fas fa-lightbulb"></i>
-                    <span>Need printable snapshots? Visit Reports for polished exports.</span>
+            <div class="hero-card__panel">
+                <p class="panel-heading">Focus timeline</p>
+                <span class="live-pill">
+                    <i class="fas fa-circle" style="color:#22c55e;"></i>
+                    <span id="metrics-status">Updated {{ $lastUpdated }}</span>
+                </span>
+                <div>
+                    <label for="metrics-date">Focus date</label>
+                    <input type="date" id="metrics-date" value="{{ $selectedDate }}">
                 </div>
             </div>
         </section>
 
-        @php
-            $driverPercent = $staffMetrics['drivers']['total'] ? round(($staffMetrics['drivers']['online'] / max(1, $staffMetrics['drivers']['total'])) * 100) : 0;
-            $medicPercent = $staffMetrics['medics']['total'] ? round(($staffMetrics['medics']['active'] / max(1, $staffMetrics['medics']['total'])) * 100) : 0;
-            $ambulanceText = number_format($systemMetrics['ambulances']['available']).' ready / '.number_format($systemMetrics['ambulances']['total']).' fleet';
-        @endphp
-
-        <section class="stat-grid">
-            <article class="stat-card">
-                <div class="stat-card__label">Online drivers</div>
-                <div class="stat-card__value" id="metricDriversOnline">{{ number_format($staffMetrics['drivers']['online']) }}</div>
-                <div class="stat-card__sub">of <span id="metricDriversTotal">{{ number_format($staffMetrics['drivers']['total']) }}</span> registered</div>
-            </article>
-            <article class="stat-card">
-                <div class="stat-card__label">Active medics</div>
-                <div class="stat-card__value" id="metricMedicsOnline">{{ number_format($staffMetrics['medics']['active']) }}</div>
-                <div class="stat-card__sub">of <span id="metricMedicsTotal">{{ number_format($staffMetrics['medics']['total']) }}</span> roster</div>
-            </article>
-            <article class="stat-card">
-                <div class="stat-card__label">Ambulances</div>
-                <div class="stat-card__value" id="metricAmbulancesAvailable">{{ number_format($systemMetrics['ambulances']['available']) }}</div>
-                <div class="stat-card__sub" id="metricAmbulancesSummary">{{ $ambulanceText }}</div>
-            </article>
-            <article class="stat-card">
-                <div class="stat-card__label">Total cases since launch</div>
-                <div class="stat-card__value" id="metricTotalCases">{{ number_format($caseMetrics['total']) }}</div>
-                <div class="stat-card__sub">Cumulative deployments</div>
-            </article>
+        <section class="kpi-grid">
+            <a href="{{ url('/admin/gps') }}" class="kpi-card">
+                <span class="kpi-card__eyebrow">Dispatch</span>
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <h3 style="margin:0;">Pending cases</h3>
+                    <i class="fas fa-arrow-up-right-from-square" style="font-size:0.95rem; color:var(--muted);"></i>
+                </div>
+                <div class="kpi-card__value" id="metricPending">{{ number_format($caseMetrics['pending']) }}</div>
+                <span class="kpi-card__hint">Opens GPS tracker</span>
+            </a>
+            <a href="{{ url('/admin/gps') }}?view=active" class="kpi-card">
+                <span class="kpi-card__eyebrow">Live runs</span>
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <h3 style="margin:0;">Active cases</h3>
+                    <i class="fas fa-arrow-up-right-from-square" style="font-size:0.95rem; color:var(--muted);"></i>
+                </div>
+                <div class="kpi-card__value" id="metricActive">{{ number_format($caseMetrics['active']) }}</div>
+                <span class="kpi-card__hint">Opens active table in GPS</span>
+            </a>
+            <a href="{{ route('admin.reports') }}#completed-today" class="kpi-card">
+                <span class="kpi-card__eyebrow">Wrap-ups</span>
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <h3 style="margin:0;">Completed today</h3>
+                    <i class="fas fa-arrow-up-right-from-square" style="font-size:0.95rem; color:var(--muted);"></i>
+                </div>
+                <div class="kpi-card__value" id="metricCompletedToday">{{ number_format($caseMetrics['completed']) }}</div>
+                <span class="kpi-card__hint">Jump to reports</span>
+            </a>
         </section>
-        <section class="mini-grid">
+
+        <section class="insight-grid">
+            <a href="{{ url('/admin/drivers') }}" class="insight-card">
+                <small>Online drivers</small>
+                <h3 id="metricDriversOnline">{{ number_format($staffMetrics['drivers']['online']) }}</h3>
+                <p style="margin:0; color:var(--muted);">of <span id="metricDriversTotal">{{ number_format($staffMetrics['drivers']['total']) }}</span> registered</p>
+            </a>
+            <a href="{{ url('/admin/drivers') }}" class="insight-card">
+                <small>Active medics</small>
+                <h3 id="metricMedicsOnline">{{ number_format($staffMetrics['medics']['active']) }}</h3>
+                <p style="margin:0; color:var(--muted);">of <span id="metricMedicsTotal">{{ number_format($staffMetrics['medics']['total']) }}</span> roster</p>
+            </a>
+            <a href="{{ url('/admin/drivers') }}" class="insight-card">
+                <small>Ambulances ready</small>
+                <h3 id="metricAmbulancesAvailable">{{ number_format($systemMetrics['ambulances']['available']) }}</h3>
+                <p id="metricAmbulancesSummary" style="margin:0; color:var(--muted);">{{ $ambulanceText }}</p>
+            </a>
+            <a href="{{ route('admin.reports') }}" class="insight-card">
+                <small>Total cases</small>
+                <h3 id="metricTotalCases">{{ number_format($caseMetrics['total']) }}</h3>
+                <p style="margin:0; color:var(--muted);">View mission history</p>
+            </a>
+        </section>
+
+        <section class="readiness-layout">
             <article class="readiness-card">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <h3 style="margin:0; font-size:1rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted);">Resource readiness</h3>
@@ -639,52 +649,53 @@
                 </div>
                 <div class="progress-row">
                     <span>Response queue health</span>
-                    <ul class="list">
-                        <li>Pending <span id="queuePendingLabel">{{ number_format($caseMetrics['pending']) }}</span></li>
-                        <li>Active <span id="queueActiveLabel">{{ number_format($caseMetrics['active']) }}</span></li>
-                        <li>Completed today <span id="queueCompletedLabel">{{ number_format($caseMetrics['completed']) }}</span></li>
+                    <ul class="queue-list">
+                        <li><span>Pending</span><strong id="queuePendingLabel">{{ number_format($caseMetrics['pending']) }}</strong></li>
+                        <li><span>Active</span><strong id="queueActiveLabel">{{ number_format($caseMetrics['active']) }}</strong></li>
+                        <li><span>Completed today</span><strong id="queueCompletedLabel">{{ number_format($caseMetrics['completed']) }}</strong></li>
                     </ul>
                 </div>
             </article>
-            <article class="mini-panel">
+            <article class="queue-card">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <h4 style="margin:0;">Queue snapshot</h4>
-                    <span style="font-size:0.8rem; text-transform:uppercase; color:var(--muted);">Live</span>
+                    <span style="font-size:0.82rem; text-transform:uppercase; color:var(--muted); letter-spacing:0.12em;">Live feed</span>
                 </div>
-                <ul class="list">
-                    <li>Dispatch ready <span id="queue-pending">{{ number_format($caseMetrics['pending']) }}</span></li>
-                    <li>On route <span id="queue-active">{{ number_format($caseMetrics['active']) }}</span></li>
+                <ul class="queue-list">
+                    <li><span>Dispatch ready</span><strong id="queue-pending">{{ number_format($caseMetrics['pending']) }}</strong></li>
+                    <li><span>On route</span><strong id="queue-active">{{ number_format($caseMetrics['active']) }}</strong></li>
+                    <li><span>Completed today</span><strong id="queue-completed">{{ number_format($caseMetrics['completed']) }}</strong></li>
                 </ul>
             </article>
-            <article class="mini-panel">
+            <article class="quick-card">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <h4 style="margin:0;">Quick actions</h4>
                     <i class="fas fa-arrow-trend-up" style="color:var(--accent);"></i>
                 </div>
-                <a class="quick-link" href="{{ route('dashboard.view') }}">
-                    Dashboard display
-                    <i class="fas fa-chevron-right"></i>
+                <a class="quick-link" href="{{ url('/admin/pairing') }}">
+                    Pair crews fast
+                    <i class="fas fa-link"></i>
+                </a>
+                <a class="quick-link" href="{{ url('/admin/gps') }}">
+                    GPS tracker
+                    <i class="fas fa-location-dot"></i>
                 </a>
                 <a class="quick-link" href="{{ route('admin.reports') }}">
                     Completed missions
                     <i class="fas fa-file-lines"></i>
                 </a>
-                <a class="quick-link" href="{{ url('/admin/pairing') }}">
-                    Pair crews fast
-                    <i class="fas fa-link"></i>
-                </a>
             </article>
-            <article class="mini-panel">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <h4 style="margin:0;">Ops notes</h4>
-                    <i class="fas fa-info-circle" style="color:var(--warning);"></i>
-                </div>
-                <p style="margin:0; color:var(--muted); font-weight:600; line-height:1.5;">
-                    • Keep at least 3 ambulances on standby during peak hours.<br>
-                    • Encourage medics to update statuses via the mobile app.<br>
-                    • Export detailed logs from the Reports page for end-of-day summaries.
-                </p>
-            </article>
+        </section>
+
+        <section class="notes-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h4 style="margin:0;">Ops notes</h4>
+                <i class="fas fa-info-circle" style="color:var(--warning);"></i>
+            </div>
+            <p>
+                • Keep at least 3 ambulances on standby during peak hours.<br>
+                • Export detailed logs from the Reports page for end-of-day summaries.
+            </p>
         </section>
     </div>
 </main>

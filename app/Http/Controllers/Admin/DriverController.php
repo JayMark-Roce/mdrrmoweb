@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Driver;
 use App\Models\Ambulance;
+use App\Models\Medic;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
@@ -16,10 +17,12 @@ class DriverController extends Controller
     public function index()
     {
         $drivers = Driver::active()->with('ambulance', 'archiver')->orderBy('created_at', 'desc')->get();
-        $ambulances = Ambulance::where('status', 'active')->get();
+        $medics = Medic::active()->orderBy('name')->get();
+        $ambulances = Ambulance::orderBy('name')->get();
 
         return view('admin.drivers.index', [
             'drivers' => $drivers,
+            'medics' => $medics,
             'ambulances' => $ambulances,
             'viewMode' => 'active',
         ]);
@@ -28,7 +31,8 @@ class DriverController extends Controller
     public function archived()
     {
         $drivers = Driver::archived()->with('ambulance', 'archiver')->orderBy('archived_at', 'desc')->get();
-        $ambulances = Ambulance::where('status', 'active')->get();
+        $medics = Medic::active()->orderBy('name')->get();
+        $ambulances = Ambulance::orderBy('name')->get();
 
         // Calculate archive statistics
         $archivedThisMonth = $drivers->filter(function($driver) {
@@ -46,6 +50,7 @@ class DriverController extends Controller
 
         return view('admin.drivers.index', [
             'drivers' => $drivers,
+            'medics' => $medics,
             'ambulances' => $ambulances,
             'viewMode' => 'archived',
             'archivedThisMonth' => $archivedThisMonth,

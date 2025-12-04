@@ -910,67 +910,8 @@ body .nav-links a.active {
                     </form>
                 </div>
 
-                <div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-                        <h5 style="margin: 0; font-size: 1.1rem; font-weight: 800; color: var(--heading);">
-                            <i class="fas fa-list"></i> Existing Medics
-                        </h5>
-                        <div class="search-container" style="margin: 0; flex: 1; max-width: 400px;">
-                            <input type="text" id="medicSearchInput" class="search-input" placeholder="Search by name, phone, or specialization...">
-                            <button type="button" id="clearMedicSearch" class="btn btn-secondary" style="display: none;">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="table-wrapper">
-                    <table class="data-table" data-paginate="true" data-page-size="10">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Phone</th>
-                                <th>Specialization</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($medics as $medic)
-                                <tr>
-                                    <td style="font-weight: 700;">{{ $medic->name }}</td>
-                                    <td>{{ $medic->phone ?? 'N/A' }}</td>
-                                    <td>{{ $medic->specialization ?? 'N/A' }}</td>
-                                    <td>
-                                        <span class="status-badge {{ $medic->status === 'active' ? 'active' : 'inactive' }}">
-                                            {{ ucfirst($medic->status) }}
-                                        </span>
-                                    </td>
-                                    <td class="action-buttons">
-                                        <button onclick="openEditModal({{ $medic->id }}, '{{ $medic->name }}', '{{ $medic->phone }}', '{{ $medic->specialization }}', '{{ $medic->status }}')" class="action-btn edit">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button onclick="openArchiveMedicModal({{ $medic->id }}, '{{ $medic->name }}')" class="action-btn" style="background: rgba(245, 158, 11, 0.15); color: #d97706;">
-                                            <i class="fas fa-box-archive"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5">
-                                        <div class="empty-state">
-                                            <i class="fas fa-user-md"></i>
-                                            <p>No medics found.</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                    </div>
-                    <div style="display: flex; justify-content: flex-end; gap: 0.5rem; padding: 1rem;">
-                        <button class="btn btn-secondary" data-prev>Prev</button>
-                        <button class="btn btn-secondary" data-next>Next</button>
-                    </div>
+                <div style="padding: 1.25rem; border: 1px dashed rgba(148,163,184,0.5); border-radius: 16px; background: rgba(248,250,252,0.7); color: var(--muted); font-weight: 600;">
+                    Full medic directory now lives inside the Drivers command dashboard for a single-pane experience.
                 </div>
             </div>
         </div>
@@ -1010,38 +951,8 @@ body .nav-links a.active {
                     </form>
                 </div>
 
-                <div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                        <h5 style="margin: 0; font-size: 1.1rem; font-weight: 800; color: var(--heading);">
-                            <i class="fas fa-list"></i> Existing Ambulances
-                        </h5>
-                        <div class="search-container" style="margin: 0; flex: 1; max-width: 400px;">
-                            <input type="text" id="ambulanceSearchInput" class="search-input" placeholder="Search ambulances...">
-                            <button type="button" id="clearAmbulanceSearch" class="btn btn-secondary" style="display: none;">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="grid-view">
-                        @forelse ($ambulances as $amb)
-                            <div class="grid-item">
-                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
-                                    <h5 style="margin: 0; flex: 1;">{{ $amb->name }}</h5>
-                                    <button onclick="openEditAmbulanceModal({{ $amb->id }}, '{{ $amb->name }}', '{{ $amb->status }}')" class="action-btn edit" style="padding: 0.4rem 0.6rem; font-size: 0.8rem;">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                </div>
-                                <span class="status-badge {{ strtolower($amb->status) }}">
-                                    {{ $amb->status }}
-                                </span>
-                            </div>
-                        @empty
-                            <div class="empty-state" style="grid-column: 1 / -1;">
-                                <i class="fas fa-ambulance"></i>
-                                <p>No ambulances yet.</p>
-                            </div>
-                        @endforelse
-                    </div>
+                <div style="padding: 1.25rem; border: 1px dashed rgba(148,163,184,0.5); border-radius: 16px; background: rgba(248,250,252,0.7); color: var(--muted); font-weight: 600;">
+                    Ambulance status monitoring also moved to the Drivers dashboard to stay alongside dispatch decisions.
                 </div>
             </div>
         </div>
@@ -1502,76 +1413,6 @@ window.onclick = function(event) {
     if (event.target === errorModal) closeErrorModal();
 }
 
-function filterMedicTable() {
-    const searchInput = document.getElementById('medicSearchInput');
-    const clearBtn = document.getElementById('clearMedicSearch');
-    const table = document.querySelector('.data-table tbody');
-    
-    if (!searchInput || !table) return;
-    
-    const searchTerm = searchInput.value.toLowerCase().trim();
-    const rows = table.querySelectorAll('tr');
-    
-    let visibleCount = 0;
-    
-    rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        const matches = text.includes(searchTerm);
-        
-        if (matches || searchTerm === '') {
-            row.style.display = '';
-            visibleCount++;
-        } else {
-            row.style.display = 'none';
-        }
-    });
-    
-    clearBtn.style.display = searchTerm !== '' ? 'block' : 'none';
-}
-
-function filterAmbulanceTable() {
-    const searchInput = document.getElementById('ambulanceSearchInput');
-    const clearBtn = document.getElementById('clearAmbulanceSearch');
-    const grid = document.querySelector('.grid-view');
-    
-    if (!searchInput || !grid) return;
-    
-    const searchTerm = searchInput.value.toLowerCase().trim();
-    const items = grid.querySelectorAll('.grid-item');
-    
-    let visibleCount = 0;
-    
-    items.forEach(item => {
-        const text = item.textContent.toLowerCase();
-        const matches = text.includes(searchTerm);
-        
-        if (matches || searchTerm === '') {
-            item.style.display = '';
-            visibleCount++;
-        } else {
-            item.style.display = 'none';
-        }
-    });
-    
-    clearBtn.style.display = searchTerm !== '' ? 'block' : 'none';
-}
-
-function clearMedicSearch() {
-    const searchInput = document.getElementById('medicSearchInput');
-    if (searchInput) {
-        searchInput.value = '';
-        filterMedicTable();
-    }
-}
-
-function clearAmbulanceSearch() {
-    const searchInput = document.getElementById('ambulanceSearchInput');
-    if (searchInput) {
-        searchInput.value = '';
-        filterAmbulanceTable();
-    }
-}
-
 let currentDriverSection = 1;
 
 function showDriverSection(index) {
@@ -1663,53 +1504,6 @@ document.addEventListener('DOMContentLoaded', function(){
     @if(session('success'))
         showSuccessModal('{{ session('success') }}');
     @endif
-
-    const medicSearchInput = document.getElementById('medicSearchInput');
-    const ambulanceSearchInput = document.getElementById('ambulanceSearchInput');
-    const clearMedicBtn = document.getElementById('clearMedicSearch');
-    const clearAmbulanceBtn = document.getElementById('clearAmbulanceSearch');
-
-    if (medicSearchInput) {
-        medicSearchInput.addEventListener('input', filterMedicTable);
-    }
-
-    if (ambulanceSearchInput) {
-        ambulanceSearchInput.addEventListener('input', filterAmbulanceTable);
-    }
-
-    if (clearMedicBtn) {
-        clearMedicBtn.addEventListener('click', clearMedicSearch);
-    }
-
-    if (clearAmbulanceBtn) {
-        clearAmbulanceBtn.addEventListener('click', clearAmbulanceSearch);
-    }
-
-    // Simple pagination
-    document.querySelectorAll('table.data-table[data-paginate="true"]').forEach(function(tbl){
-        const pageSize = parseInt(tbl.getAttribute('data-page-size') || '10', 10);
-        const tbody = tbl.querySelector('tbody');
-        if (!tbody) return;
-        const rows = Array.from(tbody.children);
-        if (rows.length <= pageSize) return;
-
-        let page = 0;
-        const container = tbl.closest('.content-card');
-        const prevBtn = container.querySelector('[data-prev]');
-        const nextBtn = container.querySelector('[data-next]');
-
-        function render(){
-            rows.forEach((tr, i)=>{
-                const inPage = i >= page*pageSize && i < (page+1)*pageSize;
-                tr.style.display = inPage ? '' : 'none';
-            });
-            if (prevBtn) prevBtn.disabled = page === 0;
-            if (nextBtn) nextBtn.disabled = (page+1)*pageSize >= rows.length;
-        }
-        if (prevBtn) prevBtn.addEventListener('click', function(){ if (page>0){ page--; render(); } });
-        if (nextBtn) nextBtn.addEventListener('click', function(){ if ((page+1)*pageSize < rows.length){ page++; render(); } });
-        render();
-    });
 });
 </script>
 </body>

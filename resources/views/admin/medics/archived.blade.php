@@ -571,8 +571,8 @@ body .nav-links a.active {
                     <h3><i class="fas fa-box-archive"></i> Archived Medics</h3>
                     <p>View and manage archived medics. You can restore them back to active status if needed.</p>
                 </div>
-                <a href="{{ route('admin.medics.index') }}" class="btn btn-primary">
-                    <i class="fas fa-arrow-left"></i> Back to Medics
+                <a href="{{ route('admin.drivers.index') }}" class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i> Back to dashboard
                 </a>
             </div>
         </section>

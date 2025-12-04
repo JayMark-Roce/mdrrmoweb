@@ -903,6 +903,201 @@ html, body {
     color: #6b7280;
     font-size: 0.75rem;
 }
+.operations-grid {
+    background: transparent;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 1.5rem;
+}
+.directory-panel {
+    background: var(--drivers-card);
+    border-radius: 26px;
+    border: 1px solid rgba(226,232,240,0.8);
+    box-shadow: 0 25px 60px rgba(15,23,42,0.08);
+    display: flex;
+    flex-direction: column;
+    min-height: 420px;
+    position: relative;
+    overflow: hidden;
+}
+.directory-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, rgba(37,99,235,0.12), transparent 50%);
+    pointer-events: none;
+}
+.directory-panel__header {
+    padding: 1.5rem 1.75rem 1rem;
+    position: relative;
+    z-index: 1;
+}
+.directory-panel__title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.directory-panel__title h4 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 900;
+}
+.directory-panel__meta {
+    margin-top: 0.4rem;
+    color: var(--drivers-muted);
+    font-size: 0.9rem;
+}
+.directory-panel__actions {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+.directory-panel__actions a {
+    border-radius: 999px;
+    background: rgba(15,23,42,0.06);
+    padding: 0.45rem 0.95rem;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-decoration: none;
+    color: #0f172a;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: background 0.2s ease;
+}
+.directory-panel__actions a:hover {
+    background: rgba(37,99,235,0.12);
+    color: var(--drivers-primary);
+}
+.directory-panel__stats {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    gap: 0.5rem;
+}
+.mini-stat {
+    background: rgba(15,23,42,0.04);
+    border: 1px solid rgba(148,163,184,0.25);
+    border-radius: 16px;
+    padding: 0.65rem 0.75rem;
+}
+.mini-stat span {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--drivers-muted);
+    margin-bottom: 0.25rem;
+}
+.mini-stat strong {
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: #0f172a;
+}
+.directory-panel__search {
+    padding: 0 1.75rem 1rem;
+    position: relative;
+    z-index: 1;
+}
+.directory-panel__search input {
+    width: 100%;
+    border-radius: 16px;
+    border: 1.5px solid rgba(148,163,184,0.5);
+    padding: 0.7rem 1rem;
+    font-weight: 600;
+    background: #f8fafc;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+.directory-panel__search input:focus {
+    outline: none;
+    border-color: var(--drivers-primary);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+    background: #fff;
+}
+.directory-panel__body {
+    padding: 0 1.75rem 1.75rem;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.directory-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding-right: 0.3rem;
+}
+.directory-item {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: 18px;
+    border: 1px solid rgba(226,232,240,0.9);
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 12px 22px rgba(15,23,42,0.05);
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.directory-item:hover {
+    transform: translateY(-2px);
+    border-color: rgba(99,102,241,0.35);
+}
+.directory-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--drivers-primary), var(--drivers-accent));
+    color: #fff;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+}
+.directory-body {
+    flex: 1;
+}
+.directory-title {
+    font-weight: 800;
+    font-size: 0.95rem;
+}
+.directory-meta {
+    font-size: 0.8rem;
+    color: var(--drivers-muted);
+    margin-top: 0.1rem;
+}
+.directory-status,
+.badge-pill {
+    border-radius: 999px;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+.badge-pill.med-active { background: #ecfdf5; color: #047857; }
+.badge-pill.med-inactive { background: #fef2f2; color: #b91c1c; }
+.badge-pill.amb-available { background: rgba(16,185,129,0.16); color: #047857; }
+.badge-pill.amb-out { background: rgba(245,158,11,0.2); color: #92400e; }
+.badge-pill.amb-unavailable { background: rgba(148,163,184,0.24); color: #475569; }
+.directory-empty {
+    margin-top: 1rem;
+    padding: 1.25rem;
+    border: 1px dashed rgba(148,163,184,0.5);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--drivers-muted);
+    text-align: center;
+    font-weight: 600;
+}
 @media (max-width: 1100px) {
     .hero-card { grid-template-columns: 1fr; }
 }
@@ -972,8 +1167,8 @@ html, body {
 @php
     $totalDrivers = $drivers->count();
     $onlineDrivers = $drivers->where('availability_status', 'online')->count();
-    $expiringDrivers = $drivers->filter(fn($driver) => $driver->isLicenseExpiringSoon())->count();
-    $expiredDrivers = $drivers->filter(fn($driver) => $driver->isLicenseExpired())->count();
+    $totalMedics = isset($medics) ? $medics->count() : 0;
+    $totalAmbulances = isset($ambulances) ? $ambulances->count() : 0;
 @endphp
 
 <main class="maincontentt pt-24">
@@ -998,13 +1193,10 @@ html, body {
                     @if($isArchivedView)
                         Browse preserved driver records, revisit driver details, and keep institutional memory within reach.
                     @else
-                        Monitor availability, track expiring licenses, and keep your driver roster in top shape from a single dashboard.
+                        Monitor drivers, medics, and ambulance units from a single command surface.
                     @endif
                 </p>
                 <div class="hero-actions">
-                    @if(!$isArchivedView)
-                        <a href="{{ route('admin.drivers.create') }}" class="primary"><i class="fas fa-user-plus"></i> Add driver</a>
-                    @endif
                     <button type="button" class="ghost" id="refreshDriversBtn"><i class="fas fa-sync"></i> Refresh data</button>
                     @if($isArchivedView)
                         <button type="button" class="ghost" onclick="window.location.href='{{ route('admin.drivers.index') }}'"><i class="fas fa-arrow-left"></i> Back to active</button>
@@ -1014,11 +1206,11 @@ html, body {
                 </div>
             </div>
             <div class="hero-metrics">
-                <div class="hero-metric-card">
-                    <span>{{ $isArchivedView ? 'Total archived' : 'Total drivers' }}</span>
-                    <strong>{{ $totalDrivers }}</strong>
-                </div>
                 @if($isArchivedView)
+                    <div class="hero-metric-card">
+                        <span>Total archived drivers</span>
+                        <strong>{{ $totalDrivers }}</strong>
+                    </div>
                     <div class="hero-metric-card">
                         <span>Archived this month</span>
                         <strong>{{ $archivedThisMonth ?? 0 }}</strong>
@@ -1033,16 +1225,20 @@ html, body {
                     </div>
                 @else
                     <div class="hero-metric-card">
-                        <span>Online now</span>
+                        <span>Drivers</span>
+                        <strong>{{ $totalDrivers }}</strong>
+                    </div>
+                    <div class="hero-metric-card">
+                        <span>Drivers online</span>
                         <strong>{{ $onlineDrivers }}</strong>
                     </div>
                     <div class="hero-metric-card">
-                        <span>License expiring</span>
-                        <strong>{{ $expiringDrivers }}</strong>
+                        <span>Medics</span>
+                        <strong>{{ $totalMedics }}</strong>
                     </div>
                     <div class="hero-metric-card">
-                        <span>License expired</span>
-                        <strong>{{ $expiredDrivers }}</strong>
+                        <span>Ambulances</span>
+                        <strong>{{ $totalAmbulances }}</strong>
                     </div>
                 @endif
             </div>
@@ -1051,16 +1247,16 @@ html, body {
         <section class="filters-card">
             <div class="filters-header">
                 <div>
-                    <h5 style="margin:0; font-size:1.1rem; font-weight:900;">Smart filters</h5>
-                    <p style="margin:0; color:var(--drivers-muted); font-size:0.9rem;">Find drivers instantly by keyword, availability or status.</p>
+                    <h5 style="margin:0; font-size:1.1rem; font-weight:900;">Search &amp; Filter</h5>
+                    <p style="margin:0; color:var(--drivers-muted); font-size:0.9rem;">Live search drivers by name, contact, ID, availability or status.</p>
                 </div>
                 <span class="filters-chip" id="filtersStatus">No filters applied</span>
             </div>
             <form id="driversFiltersForm">
                 <div class="filters-grid">
                     <label class="filter-field">
-                        <span>Search</span>
-                        <input type="text" name="q" id="driverSearchInput" value="{{ request('q') }}" class="filter-input" placeholder="Search name, email or ID">
+                        <span>Search &amp; Filter</span>
+                        <input type="text" name="q" id="driverSearchInput" value="{{ request('q') }}" class="filter-input" placeholder="Type to search across this list...">
                     </label>
                     <label class="filter-field">
                         <span>Availability</span>
@@ -1092,15 +1288,7 @@ html, body {
                     <div class="table-meta" style="color:var(--drivers-muted); font-size:0.9rem;">{{ $isArchivedView ? 'Preserved driver records from the archive.' : 'Live roster synced every few seconds.' }}</div>
                 </div>
                 <div class="table-actions">
-                    @if(!$isArchivedView)
-                        <a href="{{ route('admin.drivers.create') }}" class="primary"><i class="fas fa-user-plus"></i> Add driver</a>
-                    @endif
                     <button type="button" id="exportDriversBtn"><i class="fas fa-file-export"></i> Export CSV</button>
-                    @if($isArchivedView)
-                        <button type="button" onclick="window.location.href='{{ route('admin.drivers.index') }}'"><i class="fas fa-arrow-left"></i> Back to active</button>
-                    @else
-                        <button type="button" onclick="window.location.href='{{ route('admin.drivers.archived') }}'"><i class="fas fa-box-archive"></i> View archives</button>
-                    @endif
                 </div>
             </div>
 
@@ -1212,12 +1400,7 @@ html, body {
                                     <div style="display:flex; flex-direction:column; gap:0.75rem; align-items:center;">
                                         <i class="fas {{ $isArchivedView ? 'fa-box-archive' : 'fa-users' }}" style="font-size: 2.5rem;"></i>
                                         <strong style="font-size: 1.1rem;">{{ $isArchivedView ? 'No archived drivers found' : 'No drivers found' }}</strong>
-                                        <p style="margin:0;">{{ $isArchivedView ? 'No drivers have been archived yet.' : 'Get started by adding your first driver.' }}</p>
-                                        @if(!$isArchivedView)
-                                            <a href="{{ route('admin.drivers.create') }}" class="hero-actions primary" style="text-decoration:none; padding:0.6rem 1.2rem; font-size:0.9rem;">
-                                                <i class="fas fa-plus"></i> Add driver
-                                            </a>
-                                        @endif
+                                        <p style="margin:0;">{{ $isArchivedView ? 'No drivers have been archived yet.' : 'No driver records match the current filters.' }}</p>
                                     </div>
                                 </td>
                             </tr>
@@ -1226,6 +1409,163 @@ html, body {
                 </table>
             </div>
         </section>
+
+        @if(isset($medics) || isset($ambulances))
+        <section class="operations-grid">
+            @isset($medics)
+                @php
+                    $medicTotal = $medics->count();
+                    $medicActive = $medics->where('status', 'active')->count();
+                    $medicInactive = $medics->where('status', 'inactive')->count();
+                @endphp
+                <div class="directory-panel">
+                    <div class="directory-panel__header">
+                        <div class="directory-panel__title">
+                            <span class="badge-pill med-active" style="margin:0;">Medics</span>
+                            <h4><i class="fas fa-user-md"></i> Care team directory</h4>
+                        </div>
+                        <div class="directory-panel__meta">
+                            Keep an eye on every medic’s availability and specialization without leaving dispatch.
+                        </div>
+                        <div class="directory-panel__actions">
+                            <a href="{{ route('admin.medics.index') }}"><i class="fas fa-user-plus"></i> Manage medics</a>
+                            <a href="{{ route('admin.medics.archived') }}"><i class="fas fa-box-archive"></i> View archived</a>
+                        </div>
+                        <div class="directory-panel__stats">
+                            <div class="mini-stat">
+                                <span>Total</span>
+                                <strong>{{ $medicTotal }}</strong>
+                            </div>
+                            <div class="mini-stat">
+                                <span>Active</span>
+                                <strong>{{ $medicActive }}</strong>
+                            </div>
+                            <div class="mini-stat">
+                                <span>Inactive</span>
+                                <strong>{{ $medicInactive }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="directory-panel__search">
+                        <input type="text" id="medicsSearchInput" placeholder="Search medics by name, phone or specialization...">
+                    </div>
+                    <div class="directory-panel__body">
+                        <div class="directory-list" id="medicsDirectoryList">
+                            @foreach($medics as $medic)
+                                @php $mStatus = strtolower($medic->status); @endphp
+                                <div class="directory-item" data-search="{{ strtolower($medic->name . ' ' . ($medic->phone ?? '') . ' ' . ($medic->specialization ?? '') . ' ' . $medic->status) }}">
+                                    <div class="directory-avatar">{{ strtoupper(substr($medic->name, 0, 1)) }}</div>
+                                    <div class="directory-body">
+                                        <div class="directory-title">{{ $medic->name }}</div>
+                                        <div class="directory-meta">
+                                            {{ $medic->phone ?? 'No phone' }} &middot; {{ $medic->specialization ?? 'No specialization' }}
+                                        </div>
+                                    </div>
+                                    <div class="directory-status badge-pill {{ $mStatus === 'active' ? 'med-active' : 'med-inactive' }}">
+                                        {{ ucfirst($medic->status) }}
+                                    </div>
+                                    <div class="action-chip-group" style="margin-left:0.5rem;">
+                                        <button type="button"
+                                                class="action-chip edit"
+                                                title="Edit medic"
+                                                onclick="openEditMedicFromDashboard({{ $medic->id }}, '{{ addslashes($medic->name) }}', '{{ addslashes($medic->phone ?? '') }}', '{{ addslashes($medic->specialization ?? '') }}', '{{ $medic->status }}')">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </button>
+                                        <button type="button"
+                                                class="action-chip archive"
+                                                title="Archive medic"
+                                                onclick="openArchiveMedicFromDashboard({{ $medic->id }}, '{{ addslashes($medic->name) }}')">
+                                            <i class="fas fa-box-archive"></i> Archive
+                                        </button>
+                                    </div>
+                                </div>
+                            @endforeach
+                            <div class="directory-empty" id="medicsDirectoryEmpty" data-empty-state style="display: {{ $medicTotal ? 'none' : 'flex' }};">
+                                <i class="fas fa-user-md" style="font-size:1.6rem;"></i>
+                                <span>No medics yet. Add one from the manage medics screen.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endisset
+
+            @isset($ambulances)
+                @php
+                    $ambTotal = $ambulances->count();
+                    $ambAvailable = $ambulances->where('status', 'Available')->count();
+                    $ambOut = $ambulances->where('status', 'Out')->count();
+                    $ambUnavailable = $ambulances->where('status', 'Unavailable')->count();
+                @endphp
+                <div class="directory-panel">
+                    <div class="directory-panel__header">
+                        <div class="directory-panel__title">
+                            <span class="badge-pill amb-available" style="margin:0;">Units</span>
+                            <h4><i class="fas fa-ambulance"></i> Ambulance readiness</h4>
+                        </div>
+                        <div class="directory-panel__meta">
+                            Track which ambulances are ready for dispatch, currently out, or unavailable.
+                        </div>
+                        <div class="directory-panel__actions">
+                            <a href="{{ route('admin.medics.index') }}#ambulance-panel"><i class="fas fa-wrench"></i> Manage ambulances</a>
+                        </div>
+                        <div class="directory-panel__stats">
+                            <div class="mini-stat">
+                                <span>Total</span>
+                                <strong>{{ $ambTotal }}</strong>
+                            </div>
+                            <div class="mini-stat">
+                                <span>Available</span>
+                                <strong>{{ $ambAvailable }}</strong>
+                            </div>
+                            <div class="mini-stat">
+                                <span>Out</span>
+                                <strong>{{ $ambOut }}</strong>
+                            </div>
+                            <div class="mini-stat">
+                                <span>Unavailable</span>
+                                <strong>{{ $ambUnavailable }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="directory-panel__search">
+                        <input type="text" id="ambulancesSearchInput" placeholder="Search ambulances by name or status...">
+                    </div>
+                    <div class="directory-panel__body">
+                        <div class="directory-list" id="ambulancesDirectoryList">
+                            @foreach($ambulances as $amb)
+                                @php $aStatus = strtolower($amb->status); @endphp
+                                <div class="directory-item" data-search="{{ strtolower($amb->name . ' ' . $amb->status) }}">
+                                    <div class="directory-avatar"><i class="fas fa-ambulance"></i></div>
+                                    <div class="directory-body">
+                                        <div class="directory-title">{{ $amb->name }}</div>
+                                        <div class="directory-meta">Status updated {{ optional($amb->updated_at)->diffForHumans() ?? 'recently' }}</div>
+                                    </div>
+                                    <div class="directory-status badge-pill
+                                        {{ $aStatus === 'available' ? 'amb-available' : '' }}
+                                        {{ $aStatus === 'out' ? 'amb-out' : '' }}
+                                        {{ $aStatus === 'unavailable' ? 'amb-unavailable' : '' }}">
+                                        {{ $amb->status }}
+                                    </div>
+                                    <div class="action-chip-group" style="margin-left:0.5rem;">
+                                        <button type="button"
+                                                class="action-chip edit"
+                                                title="Edit ambulance"
+                                                onclick="openEditAmbulanceFromDashboard({{ $amb->id }}, '{{ addslashes($amb->name) }}', '{{ $amb->status }}')">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </button>
+                                    </div>
+                                </div>
+                            @endforeach
+                            <div class="directory-empty" id="ambulancesDirectoryEmpty" data-empty-state style="display: {{ $ambTotal ? 'none' : 'flex' }};">
+                                <i class="fas fa-ambulance" style="font-size:1.6rem;"></i>
+                                <span>No ambulances registered yet.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endisset
+        </section>
+        @endif
     </div>
 </main>
 
@@ -1289,6 +1629,149 @@ const restoreModalHtml = `
     </div>
   </div>`;
 
+// Edit Ambulance (from dashboard) Modal
+const editAmbulanceModalHtml = `
+  <div id="editAmbulanceDashboardModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); z-index:2000; align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:24px; border:1px solid #e5e7eb; box-shadow:0 10px 25px rgba(0,0,0,0.12); width:min(440px, 92vw); position:relative; overflow:hidden;">
+      <div style="position:absolute; top:0; left:0; width:100%; height:4px; background:linear-gradient(90deg, #2563eb 0%, #7c3aed 100%); border-radius:24px 24px 0 0;"></div>
+      <div style="padding:18px 20px; border-bottom:1px solid #f3f4f6; display:flex; align-items:center; justify-content:space-between; margin-top:4px;">
+        <div style="font-weight:700; color:#111827; display:flex; align-items:center; gap:8px;">
+          <span style="width:28px; height:28px; border-radius:999px; background:rgba(37,99,235,0.1); display:inline-flex; align-items:center; justify-content:center; color:#2563eb;">
+            <i class="fas fa-ambulance"></i>
+          </span>
+          Edit ambulance
+        </div>
+        <button onclick="closeEditAmbulanceFromDashboard()" style="border:none; background:transparent; font-size:18px; cursor:pointer; color:#6b7280; transition:color 0.2s ease;">✕</button>
+      </div>
+      <form id="editAmbulanceDashboardForm">
+        <div style="padding:18px 20px; color:#374151;">
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <label for="editAmbulanceName" style="font-size:13px; font-weight:600; color:#374151;">Ambulance name</label>
+              <input id="editAmbulanceName" name="name" type="text" required style="border-radius:10px; border:1px solid #d1d5db; padding:8px 10px; font-size:14px;">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <label for="editAmbulanceStatus" style="font-size:13px; font-weight:600; color:#374151;">Status</label>
+              <select id="editAmbulanceStatus" name="status" required style="border-radius:10px; border:1px solid #d1d5db; padding:8px 10px; font-size:14px;">
+                <option value="Available">Available</option>
+                <option value="Out">Out</option>
+                <option value="Unavailable">Unavailable</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div style="padding:16px 20px; border-top:1px solid #f3f4f6; display:flex; gap:10px; justify-content:flex-end;">
+          <button type="button" onclick="closeEditAmbulanceFromDashboard()" class="modal-cancel-btn" style="padding:10px 16px; border-radius:10px; border:1px solid #e5e7eb; background:#000000; color:#ffffff; font-weight:600; cursor:pointer; transition:all 0.2s ease;">Cancel</button>
+          <button type="submit" id="editAmbulanceDashboardConfirm" class="modal-logout-btn" style="padding:10px 16px; border-radius:10px; border:none; background:linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); color:#fff; font-weight:600; cursor:pointer; transition:all 0.2s ease;">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>`;
+
+// Edit Medic (from dashboard) Modal
+const editMedicModalHtml = `
+  <div id="editMedicDashboardModal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.55); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); z-index:2100; align-items:center; justify-content:center; padding:1.5rem;">
+    <div style="background:#fff; border-radius:24px; border:1px solid #e5e7eb; box-shadow:0 35px 80px rgba(15,23,42,0.25); width:min(520px, 100%); position:relative; overflow:hidden;">
+      <div style="padding:1.35rem 1.75rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; background:linear-gradient(135deg, #2563eb, #7c3aed); color:#ffffff;">
+        <div style="display:flex; align-items:center; gap:0.85rem;">
+          <span style="width:44px; height:44px; border-radius:16px; background:rgba(255,255,255,0.2); display:inline-flex; align-items:center; justify-content:center; font-size:1.15rem;">
+            <i class="fas fa-user-md"></i>
+          </span>
+          <div>
+            <h3 style="margin:0; font-size:1.15rem; font-weight:800; letter-spacing:0.01em;">Edit medic</h3>
+            <p style="margin:0.2rem 0 0; font-size:0.85rem; opacity:0.9;">Keep medic contact and specialization up to date.</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeEditMedicFromDashboard()" style="background:rgba(255,255,255,0.18); border:none; color:#ffffff; width:36px; height:36px; border-radius:12px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center;">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form id="editMedicDashboardForm">
+        <div style="padding:1.5rem 1.75rem 1.25rem;">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1rem;">
+            <div style="display:flex; flex-direction:column; gap:0.4rem;">
+              <label for="editMedicName" style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.06em; font-weight:800; color:#6b7280;">
+                <i class="fas fa-user" style="margin-right:4px;"></i> Name
+              </label>
+              <input id="editMedicName" name="name" type="text" required
+                     style="border-radius:14px; border:1.5px solid rgba(148,163,184,0.5); padding:0.7rem 0.85rem; font-size:0.95rem; font-weight:600; background:#f8fafc;">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:0.4rem;">
+              <label for="editMedicPhone" style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.06em; font-weight:800; color:#6b7280;">
+                <i class="fas fa-phone" style="margin-right:4px;"></i> Phone
+              </label>
+              <input id="editMedicPhone" name="phone" type="text"
+                     style="border-radius:14px; border:1.5px solid rgba(148,163,184,0.5); padding:0.7rem 0.85rem; font-size:0.95rem; font-weight:600; background:#f8fafc;">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:0.4rem;">
+              <label for="editMedicSpecialization" style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.06em; font-weight:800; color:#6b7280;">
+                <i class="fas fa-stethoscope" style="margin-right:4px;"></i> Specialization
+              </label>
+              <input id="editMedicSpecialization" name="specialization" type="text"
+                     style="border-radius:14px; border:1.5px solid rgba(148,163,184,0.5); padding:0.7rem 0.85rem; font-size:0.95rem; font-weight:600; background:#f8fafc;">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:0.4rem;">
+              <label for="editMedicStatus" style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.06em; font-weight:800; color:#6b7280;">
+                <i class="fas fa-toggle-on" style="margin-right:4px;"></i> Status
+              </label>
+              <select id="editMedicStatus" name="status" required
+                      style="border-radius:14px; border:1.5px solid rgba(148,163,184,0.5); padding:0.7rem 0.85rem; font-size:0.95rem; font-weight:600; background:#f8fafc;">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div style="padding:0 1.75rem 1.5rem; display:flex; justify-content:flex-end; gap:0.75rem;">
+          <button type="button" onclick="closeEditMedicFromDashboard()" class="modal-cancel-btn"
+                  style="border-radius:12px; border:1px solid #e5e7eb; padding:0.85rem 1.35rem; font-weight:800; font-size:0.95rem; background:rgba(15,23,42,0.06); color:#0f172a;">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+          <button type="submit" id="editMedicDashboardConfirm" class="modal-logout-btn"
+                  style="border-radius:12px; border:none; padding:0.85rem 1.35rem; font-weight:800; font-size:0.95rem; background:linear-gradient(135deg,#f59e0b,#f97316); color:#fff; box-shadow:0 15px 35px rgba(245,158,11,0.35);">
+            <i class="fas fa-save"></i> Save changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>`;
+
+// Archive Medic (from dashboard) Modal
+const archiveMedicModalHtml = `
+  <div id="archiveMedicDashboardModal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.55); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); z-index:2100; align-items:center; justify-content:center; padding:1.5rem;">
+    <div style="background:#fff; border-radius:22px; border:1px solid rgba(148,163,184,0.35); box-shadow:0 35px 80px rgba(15,23,42,0.25); width:min(480px, 100%); overflow:hidden;">
+      <div style="padding:1.35rem 1.75rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; background:linear-gradient(135deg,#f97316,#ea580c); color:#ffffff;">
+        <div style="display:flex; align-items:center; gap:0.85rem;">
+          <span style="width:44px; height:44px; border-radius:16px; background:rgba(255,255,255,0.2); display:inline-flex; align-items:center; justify-content:center; font-size:1.15rem;">
+            <i class="fas fa-box-archive"></i>
+          </span>
+          <div>
+            <h3 style="margin:0; font-size:1.15rem; font-weight:800;">Archive medic</h3>
+            <p style="margin:0.2rem 0 0; font-size:0.85rem; opacity:0.9;">Move this medic out of the active directory. You can restore them later.</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeArchiveMedicFromDashboard()" style="background:rgba(255,255,255,0.18); border:none; color:#ffffff; width:36px; height:36px; border-radius:12px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center;">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div style="padding:1.5rem 1.75rem 1.25rem;">
+        <p id="archiveMedicDashboardText" style="margin:0; font-size:0.95rem; color:#4b5563;">
+          Are you sure you want to archive this medic?
+        </p>
+      </div>
+      <div style="padding:0 1.75rem 1.5rem; display:flex; justify-content:flex-end; gap:0.75rem;">
+        <button type="button" onclick="closeArchiveMedicFromDashboard()"
+                style="border-radius:12px; padding:0.85rem 1.35rem; border:1px solid #e5e7eb; background:#000000; color:#ffffff; font-weight:800; font-size:0.95rem;">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+        <button type="button" id="archiveMedicDashboardConfirm"
+                style="border-radius:12px; padding:0.85rem 1.35rem; background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; border:none; font-weight:800; font-size:0.95rem;">
+          <i class="fas fa-box-archive"></i> Archive
+        </button>
+      </div>
+    </div>
+  </div>`;
+
 document.addEventListener('DOMContentLoaded', function(){
   if (!document.getElementById('forceLogoutModal')) {
     const wrap = document.createElement('div');
@@ -1303,6 +1786,21 @@ document.addEventListener('DOMContentLoaded', function(){
   if (!document.getElementById('restoreDriverModal')) {
     const wrap = document.createElement('div');
     wrap.innerHTML = restoreModalHtml;
+    document.body.appendChild(wrap.firstElementChild);
+  }
+  if (!document.getElementById('editAmbulanceDashboardModal')) {
+    const wrap = document.createElement('div');
+    wrap.innerHTML = editAmbulanceModalHtml;
+    document.body.appendChild(wrap.firstElementChild);
+  }
+  if (!document.getElementById('editMedicDashboardModal')) {
+    const wrap = document.createElement('div');
+    wrap.innerHTML = editMedicModalHtml;
+    document.body.appendChild(wrap.firstElementChild);
+  }
+  if (!document.getElementById('archiveMedicDashboardModal')) {
+    const wrap = document.createElement('div');
+    wrap.innerHTML = archiveMedicModalHtml;
     document.body.appendChild(wrap.firstElementChild);
   }
 });
@@ -1442,6 +1940,171 @@ async function submitRestoreDriver(){
     alert('Failed to restore driver.');
   }
 }
+
+// Edit ambulance from dashboard functions
+let selectedAmbulanceId = null;
+function openEditAmbulanceFromDashboard(id, name, status){
+  selectedAmbulanceId = id;
+  const modal = document.getElementById('editAmbulanceDashboardModal');
+  const nameInput = document.getElementById('editAmbulanceName');
+  const statusSelect = document.getElementById('editAmbulanceStatus');
+  if (nameInput) nameInput.value = name || '';
+  if (statusSelect) statusSelect.value = status || 'Available';
+  if (modal) modal.style.display = 'flex';
+}
+function closeEditAmbulanceFromDashboard(){
+  const modal = document.getElementById('editAmbulanceDashboardModal');
+  if (modal) modal.style.display = 'none';
+  selectedAmbulanceId = null;
+}
+document.addEventListener('DOMContentLoaded', function(){
+  const form = document.getElementById('editAmbulanceDashboardForm');
+  if (form) {
+    form.addEventListener('submit', async function(e){
+      e.preventDefault();
+      if (!selectedAmbulanceId) return;
+      const nameInput = document.getElementById('editAmbulanceName');
+      const statusSelect = document.getElementById('editAmbulanceStatus');
+      const payload = {
+        name: nameInput ? nameInput.value : '',
+        status: statusSelect ? statusSelect.value : 'Available',
+        _method: 'PUT'
+      };
+      try {
+        const res = await fetch(`/admin/ambulances/${selectedAmbulanceId}`, {
+          method: 'POST',
+          headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          closeEditAmbulanceFromDashboard();
+          alert('Ambulance updated successfully.');
+          location.reload();
+        } else {
+          alert('Failed to update ambulance.');
+        }
+      } catch (err) {
+        console.error('Ambulance update error:', err);
+        alert('Failed to update ambulance.');
+      }
+    });
+  }
+});
+
+// Edit & archive medic from dashboard functions
+let selectedMedicId = null;
+function openEditMedicFromDashboard(id, name, phone, specialization, status){
+  selectedMedicId = id;
+  const modal = document.getElementById('editMedicDashboardModal');
+  const nameInput = document.getElementById('editMedicName');
+  const phoneInput = document.getElementById('editMedicPhone');
+  const specInput = document.getElementById('editMedicSpecialization');
+  const statusSelect = document.getElementById('editMedicStatus');
+  if (nameInput) nameInput.value = name || '';
+  if (phoneInput) phoneInput.value = phone || '';
+  if (specInput) specInput.value = specialization || '';
+  if (statusSelect) statusSelect.value = status || 'active';
+  if (modal) modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeEditMedicFromDashboard(){
+  const modal = document.getElementById('editMedicDashboardModal');
+  if (modal) modal.style.display = 'none';
+  selectedMedicId = null;
+  document.body.style.overflow = 'auto';
+}
+
+let selectedArchiveMedicId = null;
+function openArchiveMedicFromDashboard(id, name){
+  selectedArchiveMedicId = id;
+  const modal = document.getElementById('archiveMedicDashboardModal');
+  const text = document.getElementById('archiveMedicDashboardText');
+  if (text) {
+    text.innerHTML = `Are you sure you want to archive <strong>${name}</strong>? This medic will move out of the active directory but can be restored later.`;
+  }
+  if (modal) modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeArchiveMedicFromDashboard(){
+  const modal = document.getElementById('archiveMedicDashboardModal');
+  if (modal) modal.style.display = 'none';
+  selectedArchiveMedicId = null;
+  document.body.style.overflow = 'auto';
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  const medicForm = document.getElementById('editMedicDashboardForm');
+  if (medicForm) {
+    medicForm.addEventListener('submit', async function(e){
+      e.preventDefault();
+      if (!selectedMedicId) return;
+      const nameInput = document.getElementById('editMedicName');
+      const phoneInput = document.getElementById('editMedicPhone');
+      const specInput = document.getElementById('editMedicSpecialization');
+      const statusSelect = document.getElementById('editMedicStatus');
+      const payload = {
+        name: nameInput ? nameInput.value : '',
+        phone: phoneInput ? phoneInput.value : '',
+        specialization: specInput ? specInput.value : '',
+        status: statusSelect ? statusSelect.value : 'active',
+        _method: 'PUT'
+      };
+      try {
+        const res = await fetch(`/admin/medics/${selectedMedicId}`, {
+          method: 'POST',
+          headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          closeEditMedicFromDashboard();
+          alert('Medic updated successfully.');
+          location.reload();
+        } else {
+          alert('Failed to update medic.');
+        }
+      } catch (err) {
+        console.error('Medic update error:', err);
+        alert('Failed to update medic.');
+      }
+    });
+  }
+
+  const archiveBtn = document.getElementById('archiveMedicDashboardConfirm');
+  if (archiveBtn) {
+    archiveBtn.addEventListener('click', async function(){
+      if (!selectedArchiveMedicId) return;
+      try {
+        const res = await fetch(`/admin/medics/${selectedArchiveMedicId}/archive`, {
+          method: 'POST',
+          headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({})
+        });
+        if (res.ok) {
+          closeArchiveMedicFromDashboard();
+          alert('Medic archived successfully.');
+          location.reload();
+        } else {
+          alert('Failed to archive medic.');
+        }
+      } catch (err) {
+        console.error('Medic archive error:', err);
+        alert('Failed to archive medic.');
+      }
+    });
+  }
+});
 function toggleSidebar() {
     const sidenav = document.getElementById('sidenav');
     if (!sidenav) return;
@@ -1564,6 +2227,35 @@ function toggleSidebar() {
   });
 })();
 
+// Medics & ambulances live search (card view)
+(function(){
+  const normalize = text => String(text || '').toLowerCase().trim();
+
+  function setupDirectorySearch(inputId, itemsSelector, emptySelector){
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    const items = document.querySelectorAll(itemsSelector);
+    const emptyState = emptySelector ? document.querySelector(emptySelector) : null;
+
+    input.addEventListener('input', () => {
+      const q = normalize(input.value);
+      let visible = 0;
+      items.forEach(item => {
+        const text = item.getAttribute('data-search') || '';
+        const show = !q || text.includes(q);
+        item.style.display = show ? 'flex' : 'none';
+        if (show) visible++;
+      });
+      if (emptyState) {
+        emptyState.style.display = visible ? 'none' : 'flex';
+      }
+    });
+  }
+
+  setupDirectorySearch('medicsSearchInput', '#medicsDirectoryList .directory-item[data-search]', '#medicsDirectoryEmpty');
+  setupDirectorySearch('ambulancesSearchInput', '#ambulancesDirectoryList .directory-item[data-search]', '#ambulancesDirectoryEmpty');
+})();
+
 function toggleAvailability(driverId) {
     if (confirm('Are you sure you want to toggle this driver\'s availability?')) {
         fetch(`/admin/drivers/${driverId}/toggle-availability`, {
@@ -1587,17 +2279,6 @@ function toggleAvailability(driverId) {
         });
     }
 }
-
-// Auto-refresh the page every 10 seconds to reflect live statuses
-setInterval(function(){
-  try { 
-    // Avoid interrupting form interactions
-    const anyModalOpen = document.getElementById('forceLogoutModal') && document.getElementById('forceLogoutModal').style.display === 'flex';
-    if (!anyModalOpen) {
-      location.reload();
-    }
-  } catch(e) { location.reload(); }
-}, 10000);
 </script>
 </body>
 </html>
