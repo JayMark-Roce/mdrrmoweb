@@ -558,6 +558,37 @@
             transform: scale(1.05);
             box-shadow: 0 4px 12px rgba(239,68,68,0.4);
         }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            padding: 1.25rem 1rem 2rem;
+        }
+
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: #e5e7eb;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+        }
+
+        .nav-links a.active {
+            background: rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+            font-weight: 800;
+        }
     </style>
     <style>
 :root {
@@ -1126,12 +1157,15 @@ html, body {
 <!-- Sidenav -->
 <aside class="sidenav" id="sidenav">
     <div class="logo-container" style="display: flex; flex-direction: column; align-items: center;">
-        <img src="{{ asset('image/mdrrmologo.jpg') }}" alt="Logo" class="logo-img" style="display: block; margin: 0 auto;">
+        <img src="{{ asset('image/LOGOMDRRMO.png') }}" alt="Logo" class="logo-img" style="display: block; margin: 0 auto;">
         <div style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 800; color: #ffffff; letter-spacing: .5px;">SILANG MDRRMO</div>
+        <div id="sidebarDateTime" style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 600; color: rgba(255, 255, 255, 0.85); font-size: 0.75rem; letter-spacing: 0.3px; padding: 0 12px;">
+            <div id="sidebarDate" style="margin-bottom: 4px;"></div>
+            <div id="sidebarTime" style="font-weight: 700; font-size: 0.8rem;"></div>
+        </div>
     </div>
     <nav class="nav-links">
      <a href="{{ route('dashboard') }}" class="{{ request()->is('dashboard') ? 'active' : '' }}"><i class="fas fa-chart-pie"></i> Dashboard</a>
-      <span class="nav-link-locked" style="display: block; padding: 12px 16px; color: #9ca3af; cursor: not-allowed; opacity: 0.6; position: relative;"><i class="fas fa-pen"></i> Posting <i class="fas fa-lock" style="font-size: 10px; margin-left: 8px; opacity: 0.7;"></i></span>
       <a href="{{ url('/admin/pairing') }}" class="{{ request()->is('admin/pairing') ? 'active' : '' }}"><i class="fas fa-link"></i> Pairing</a>
       <a href="{{ url('/admin/drivers') }}" class="{{ request()->is('admin/drivers*') ? 'active' : '' }}"><i class="fas fa-car"></i> Drivers</a>
       <a href="{{ url('/admin/medics') }}" class="{{ request()->is('admin/medics*') ? 'active' : '' }}"><i class="fas fa-plus"></i> Create</a>
@@ -1201,7 +1235,7 @@ html, body {
                     @if($isArchivedView)
                         <button type="button" class="ghost" onclick="window.location.href='{{ route('admin.drivers.index') }}'"><i class="fas fa-arrow-left"></i> Back to active</button>
                     @else
-                        <button type="button" class="ghost" onclick="window.location.href='{{ route('admin.drivers.archived') }}'"><i class="fas fa-box-archive"></i> View archives</button>
+                       
                     @endif
                 </div>
             </div>
@@ -1289,6 +1323,11 @@ html, body {
                 </div>
                 <div class="table-actions">
                     <button type="button" id="exportDriversBtn"><i class="fas fa-file-export"></i> Export CSV</button>
+                    @if($isArchivedView)
+                        <a href="{{ route('admin.drivers.index') }}" class="primary"><i class="fas fa-arrow-left"></i> Back to active</a>
+                    @else
+                        <a href="{{ route('admin.drivers.archived') }}" class="primary"><i class="fas fa-box-archive"></i> View archives</a>
+                    @endif
                 </div>
             </div>
 
@@ -1298,7 +1337,6 @@ html, body {
                         <tr>
                             <th>Driver</th>
                             <th>Contact</th>
-                            <th>License</th>
                             <th>Status</th>
                             <th>Availability</th>
                             <th>Actions</th>
@@ -1333,16 +1371,6 @@ html, body {
                                     <div>{{ $driver->email }}</div>
                                     @if($driver->phone)
                                         <div class="driver-meta">{{ $driver->phone }}</div>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($driver->license_number)
-                                        <div>{{ $driver->license_number }}</div>
-                                        @if($driver->license_expiry)
-                                            <div class="driver-meta">{{ $driver->license_expiry->format('M d, Y') }}</div>
-                                        @endif
-                                    @else
-                                        <div class="driver-meta">No license</div>
                                     @endif
                                 </td>
                                 <td>
@@ -1396,7 +1424,7 @@ html, body {
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" style="padding: 2.5rem; text-align: center; color: var(--drivers-muted);">
+                                <td colspan="5" style="padding: 2.5rem; text-align: center; color: var(--drivers-muted);">
                                     <div style="display:flex; flex-direction:column; gap:0.75rem; align-items:center;">
                                         <i class="fas {{ $isArchivedView ? 'fa-box-archive' : 'fa-users' }}" style="font-size: 2.5rem;"></i>
                                         <strong style="font-size: 1.1rem;">{{ $isArchivedView ? 'No archived drivers found' : 'No drivers found' }}</strong>
@@ -1410,7 +1438,7 @@ html, body {
             </div>
         </section>
 
-        @if(isset($medics) || isset($ambulances))
+        @if(!$isArchivedView && (isset($medics) || isset($ambulances)))
         <section class="operations-grid">
             @isset($medics)
                 @php
@@ -1516,10 +1544,6 @@ html, body {
                             <div class="mini-stat">
                                 <span>Available</span>
                                 <strong>{{ $ambAvailable }}</strong>
-                            </div>
-                            <div class="mini-stat">
-                                <span>Out</span>
-                                <strong>{{ $ambOut }}</strong>
                             </div>
                             <div class="mini-stat">
                                 <span>Unavailable</span>
@@ -1654,7 +1678,6 @@ const editAmbulanceModalHtml = `
               <label for="editAmbulanceStatus" style="font-size:13px; font-weight:600; color:#374151;">Status</label>
               <select id="editAmbulanceStatus" name="status" required style="border-radius:10px; border:1px solid #d1d5db; padding:8px 10px; font-size:14px;">
                 <option value="Available">Available</option>
-                <option value="Out">Out</option>
                 <option value="Unavailable">Unavailable</option>
               </select>
             </div>
@@ -2111,6 +2134,31 @@ function toggleSidebar() {
     sidenav.classList.toggle('active');
 }
 
+// Update sidebar date and time
+function updateSidebarDateTime() {
+    const now = new Date();
+    const dateEl = document.getElementById('sidebarDate');
+    const timeEl = document.getElementById('sidebarTime');
+    
+    if (dateEl) {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateEl.textContent = now.toLocaleDateString('en-US', options);
+    }
+    
+    if (timeEl) {
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds().toString().padStart(2, '0');
+        timeEl.textContent = `${hours}:${minutes}:${seconds}`;
+    }
+}
+
+// Update date/time immediately and then every second
+document.addEventListener('DOMContentLoaded', function() {
+    updateSidebarDateTime();
+    setInterval(updateSidebarDateTime, 1000);
+});
+
 // User menu toggle + AJAX logout redirect to login
 (function(){
   const userMenu = document.getElementById('userMenu');
@@ -2203,7 +2251,7 @@ function toggleSidebar() {
       alert('No drivers to export with the current filters.');
       return;
     }
-    const headers = ['Driver','Contact','License','Status','Availability'];
+    const headers = ['Driver','Contact','Status','Availability'];
     const csvRows = rows.map(row => {
       const cells = row.querySelectorAll('td');
       return [
@@ -2211,7 +2259,6 @@ function toggleSidebar() {
         cells[1]?.innerText.trim() || '',
         cells[2]?.innerText.trim() || '',
         cells[3]?.innerText.trim() || '',
-        cells[4]?.innerText.trim() || '',
       ];
     });
     const csv = [headers, ...csvRows].map(r => r.map(val => `"${val.replace(/"/g, '""')}"`).join(',')).join('\n');

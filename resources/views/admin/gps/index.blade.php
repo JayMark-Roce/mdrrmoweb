@@ -271,6 +271,8 @@
   padding: 4px 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.12), 0 1px 3px rgba(0,0,0,0.08);
   backdrop-filter: blur(8px);
+  /* Ensure case labels (including green destination labels) always render above markers */
+  z-index: 4000;
 }
 .leaflet-control-attribution {
   font-size: 10px;
@@ -309,26 +311,26 @@
 }
     /* ==== End Inline Leaflet CSS ==== */
 
-/* Ensure nav-links styling matches other admin pages exactly */
+/* Ensure nav-links styling matches dashboard exactly */
 body.gps-page .nav-links {
     display: flex !important;
     flex-direction: column !important;
-    gap: 1rem !important;
-    width: 100% !important;
+    gap: 0.4rem !important;
+    padding: 1.25rem 1rem 2rem !important;
 }
 
 body.gps-page .nav-links a,
 body.gps-page .nav-link-locked {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
     text-decoration: none !important;
-    color: white !important;
+    color: #e5e7eb !important;
     font-size: 1rem !important;
     font-weight: 600 !important;
     padding: 0.75rem 1rem !important;
-    border-radius: 8px !important;
-    transition: background-color 0.2s !important;
-    display: block !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
+    border-radius: 12px !important;
+    transition: background 0.2s ease, color 0.2s ease !important;
 }
 
 body.gps-page .nav-link-locked {
@@ -337,18 +339,15 @@ body.gps-page .nav-link-locked {
     opacity: 0.6 !important;
 }
 
-body.gps-page .nav-links i {
-    margin-right: 0.5rem !important;
-}
-
 body.gps-page .nav-links a:hover {
-    background-color: var(--brand-orange) !important;
-    color: var(--brand-navy) !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
 }
 
 body.gps-page .nav-links a.active {
-    background-color: var(--brand-orange) !important;
-    color: var(--brand-navy) !important;
+    background: rgba(255, 255, 255, 0.25) !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
 }
 
 /* GPS Index Specific - Base Marker Popup Styling (Compact) */
@@ -1643,13 +1642,13 @@ body.fullscreen-mode::before {
 
     .gps-map-card {
         background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-        border-radius: 24px;
-        padding: 1.5rem;
+        border-radius: 20px;
+        padding: 1.1rem;
         border: 1px solid rgba(226, 232, 240, 0.6);
-        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08), 0 8px 16px rgba(0, 0, 0, 0.04);
+        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06), 0 6px 12px rgba(0, 0, 0, 0.04);
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: 1rem;
         flex: 1;
         min-height: 0;
     }
@@ -1657,21 +1656,21 @@ body.fullscreen-mode::before {
     /* Mobile Status Cards - Beautiful Modern Design */
     .compact-status-cards {
         display: flex;
-        gap: 0.75rem;
-        margin-bottom: 1rem;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
         padding: 0;
     }
 
     .compact-card {
         flex: 1;
         background: #ffffff;
-        border-radius: 12px;
-        padding: 0.75rem;
+        border-radius: 10px;
+        padding: 0.6rem 0.65rem;
         display: flex;
         align-items: center;
-        gap: 0.75rem;
+        gap: 0.6rem;
         border: 1px solid rgba(226, 232, 240, 0.6);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
         transition: all 0.2s ease;
         position: relative;
         overflow: hidden;
@@ -1700,14 +1699,14 @@ body.fullscreen-mode::before {
     }
 
     .compact-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12);
         transition: transform 0.2s ease;
     }
 
@@ -1716,7 +1715,7 @@ body.fullscreen-mode::before {
     }
 
     .compact-icon i {
-        font-size: 18px;
+        font-size: 16px;
         color: #ffffff;
         filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
     }
@@ -1730,11 +1729,11 @@ body.fullscreen-mode::before {
     }
 
     .compact-value {
-        font-size: 1.5rem;
+        font-size: 1.25rem;
         font-weight: 800;
         color: #1e293b;
         line-height: 1.2;
-        letter-spacing: -0.5px;
+        letter-spacing: -0.25px;
     }
 
     .compact-label {
@@ -1798,21 +1797,21 @@ body.fullscreen-mode::before {
         flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
-        gap: 1.5rem;
-        padding: 1.25rem;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(248, 250, 252, 0.8));
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
-        border: 1px solid rgba(226, 232, 240, 0.6);
-        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+        gap: 1rem;
+        padding: 0.8rem 1rem;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.9));
+        backdrop-filter: blur(8px);
+        border-radius: 14px;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
     }
 
     .gps-map-card h3 {
         margin: 0;
-        font-size: 1.5rem;
-        font-weight: 900;
+        font-size: 1.25rem;
+        font-weight: 800;
         color: var(--brand-navy);
-        letter-spacing: -0.5px;
+        letter-spacing: -0.25px;
     }
 
     .gps-map-card p {
@@ -2223,6 +2222,8 @@ body.fullscreen-mode::before {
 
     .case-form-card textarea {
         min-height: 90px;
+        text-align: center;
+        line-height: 1.4;
     }
 
     .case-form-card select {
@@ -2997,13 +2998,16 @@ body.fullscreen-mode::before {
 <!-- Sidenav -->
 <aside class="sidenav" id="sidenav">
     <div class="logo-container" style="display: flex; flex-direction: column; align-items: center;">
-        <img src="{{ asset('image/mdrrmologo.jpg') }}" alt="Logo" class="logo-img" style="display: block; margin: 0 auto;">
+        <img src="{{ asset('image/LOGOMDRRMO.png') }}" alt="Logo" class="logo-img" style="display: block; margin: 0 auto;">
         <div style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 800; color: #ffffff; letter-spacing: .5px;">SILANG MDRRMO</div>
+        <div id="sidebarDateTime" style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 600; color: rgba(255, 255, 255, 0.85); font-size: 0.75rem; letter-spacing: 0.3px; padding: 0 12px;">
+            <div id="sidebarDate" style="margin-bottom: 4px;"></div>
+            <div id="sidebarTime" style="font-weight: 700; font-size: 0.8rem;"></div>
+        </div>
     </div>
     <nav class="nav-links">
     <a href="{{ route('dashboard') }}" class="{{ request()->is('dashboard') ? 'active' : '' }}"><i class="fas fa-chart-pie"></i> Dashboard</a>
       @if(auth()->check())
-        <span class="nav-link-locked" style="display: block; text-decoration: none; color: #9ca3af; font-size: 1rem; font-weight: 600; padding: 0.75rem 1rem; border-radius: 8px; cursor: not-allowed; opacity: 0.6; position: relative;"><i class="fas fa-pen"></i> Posting <i class="fas fa-lock" style="font-size: 10px; margin-left: 8px; opacity: 0.7;"></i></span>
         <a href="{{ url('/admin/pairing') }}" class="{{ request()->is('admin/pairing') ? 'active' : '' }}"><i class="fas fa-link"></i> Pairing</a>
         <a href="{{ url('/admin/drivers') }}" class="{{ request()->is('admin/drivers*') ? 'active' : '' }}"><i class="fas fa-car"></i> Drivers</a>
         <a href="{{ url('/admin/medics') }}" class="{{ request()->is('admin/medics*') ? 'active' : '' }}"><i class="fas fa-plus"></i> Create</a>
@@ -3108,32 +3112,10 @@ body.fullscreen-mode::before {
                     </div>
                 </div>
                 <!-- Driver Quick Search Overlay (appears in front of the map) -->
-                <div id="driver-quick-panel" style="position:absolute; top: 96px; left:16px; z-index: 10020; background: transparent; border: none; border-radius: 9999px; display:flex; align-items:center; gap:8px; padding:0; box-shadow:none; pointer-events:auto;">
-                    <button id="quick-driver-open" title="Open driver search" style="width: 44px; height: 44px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #ffffff; border: none; border-radius: 50%; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; box-shadow: 0 4px 12px rgba(59,130,246,0.35); transition: all 0.3s ease;">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
+
                 <div id="quick-driver-results" style="position:absolute; top: 132px; left:16px; z-index: 10040; background:#fff; border:1px solid #e5e7eb; border-radius: 8px; box-shadow: 0 8px 18px rgba(0,0,0,0.12); max-height: 220px; overflow:auto; display:none; min-width: 240px; pointer-events:auto;"></div>
 
-                <!-- Floating small form for search (high z-index) -->
-                <div id="quick-driver-form" style="position:absolute; top: 132px; left:16px; z-index: 10030; background:#ffffff; border:1px solid rgba(255,255,255,0.2); border-radius:12px; padding:8px; box-shadow: 0 8px 20px rgba(0,0,0,0.16); display:none; pointer-events:auto; min-width: 260px; backdrop-filter: blur(8px);">
-                    <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; margin-bottom:6px; padding: 6px 8px; background: linear-gradient(135deg, #f8fafc, #f1f5f9); border-radius: 10px; border: 1px solid #e5e7eb;">
-                        <div style="font-weight:800; color:#1e293b; font-size:12px; display:flex; align-items:center; gap:6px;">
-                            <i class="fas fa-search" style="color:#2563eb;"></i>
-                            Driver Search
-                        </div>
-                        <button id="quick-driver-close" aria-label="Close" style="background:#ef4444; color:#fff; border:none; width: 28px; height: 28px; border-radius:6px; font-weight:900; font-size:14px; display:inline-flex; align-items:center; justify-content:center;">&times;</button>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; padding: 0 2px;">
-                        <i class="fas fa-user" style="color:#111827;"></i>
-                        <input id="quick-driver-input" type="text" placeholder="Type driver name..." style="flex:1; border:1.5px solid #e5e7eb; outline:none; background:#fff; padding:6px 8px; border-radius:6px; font-weight:600; color:#111827; font-size: 13px;" />
-                        <button id="quick-driver-clear" style="background: linear-gradient(135deg, #ef4444, #dc2626); color:#fff; border:none; border-radius:6px; padding:6px 8px; font-weight:800; font-size:12px; box-shadow: 0 2px 6px rgba(239,68,68,0.25);">Clear</button>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:6px;">
-                        <button id="btn-all-drivers" title="Show all drivers & cases" style="background: linear-gradient(135deg, #111827, #0f172a); color:#fff; border:none; border-radius:6px; padding:6px 8px; font-weight:800; font-size:11px; flex:1; box-shadow: 0 2px 6px rgba(17,24,39,0.25);">All Drivers</button>
-                        <button id="btn-active-cases" title="Show only active cases & assigned drivers" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color:#fff; border:none; border-radius:6px; padding:6px 8px; font-weight:800; font-size:11px; flex:1; box-shadow: 0 2px 6px rgba(59,130,246,0.25);">Active Cases</button>
-                    </div>
-                </div>
+                <!-- Driver quick search overlay removed as requested -->
                 
                 <!-- Fullscreen Toggle Button (centered under status bar) -->
                 <div id="fullscreen-toggle" class="fullscreen-toggle" style="bottom: 20px; left: 20px; transform: none; z-index: 105; height: 40px; width: 50px; border-radius: 8px; display:flex; align-items:center; justify-content:center;">
@@ -3162,9 +3144,7 @@ body.fullscreen-mode::before {
                     <span class="update-text">Updating...</span>
                 </div>
         
-                <div id="driver-actions-panel" class="gps-driver-actions-panel" style="position:absolute; top:20px; right:20px; width:280px; max-height:260px; overflow-y:auto; background:rgba(255,255,255,0.95); border-radius:18px; border:1px solid rgba(148,163,184,0.4); box-shadow:0 18px 30px rgba(15,23,42,0.25);">
-                    <!-- Notifications populate here -->
-                </div>
+                <!-- Driver quick actions panel removed as requested -->
                 </div> <!-- #map-container -->
             </div> <!-- .gps-map-shell -->
         </section>
@@ -3173,35 +3153,41 @@ body.fullscreen-mode::before {
         
 
 <!-- Active Cases Modal -->
-<div id="active-modal" class="modal-overlay" style="display:none;">
-    <div class="modal-content map-modal">
+<div id="active-modal" class="modal-overlay" style="display:none; z-index: 9999;">
+    <div class="modal-content map-modal map-modal-md" style="max-width: 1120px; width: 96vw;">
         <button type="button" id="close-active-modal" class="modal-close" style="position: absolute; top: 10px; right: 12px; background: var(--brand-navy); color: #ffffff; border: 0; width: 36px; height: 36px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;">
             <i class="fas fa-times"></i>
         </button>
-        <div id="activeContainer" class="modal-iframe" title="Active Cases" style="background:#fff; overflow:auto; border: 0; display: block; width: 100%; height: 100%; padding: 1rem; box-sizing: border-box; overflow: auto;">
-            <div style="padding: 1rem; text-align: center; color: var(--brand-navy); font-weight: 700; margin-bottom: 1rem;">
-                <h3 style="margin: 0 0 1rem 0; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                    <i class="fas fa-list" style="color: #2563eb;"></i>
-                    Active Cases
-                </h3>
-            </div>
-            <div style="background: #ffffff; border-radius: 12px; padding: 1rem; box-shadow: 0 8px 18px rgba(3,18,115,0.08);">
-                <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:end; margin-bottom:0.75rem;">
-                    <div style="flex:1; min-width:180px;">
-                        <label style="display:block; font-weight:600; color:#374151; margin-bottom:0.25rem; font-size:0.85rem;">Search</label>
-                        <input id="active-search" type="text" placeholder="Search by name, address, case #" class="form-input" style="padding:0.5rem 0.6rem;">
+        <div id="activeContainer" class="modal-iframe" title="Active Cases" style="background:#f8fafc; overflow:auto; border: 0; display: block; width: 100%; height: 100%; padding: 0.75rem 1rem; box-sizing: border-box;">
+            <div style="background: linear-gradient(135deg, var(--brand-navy) 0%, #1e3a8a 65%); color:#ffffff; border-radius: 12px; padding: 0.6rem 0.9rem; margin-bottom: 0.75rem; display:flex; align-items:center; justify-content:space-between; gap:0.75rem;">
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <div style="width: 32px; height: 32px; border-radius: 999px; background: rgba(15,23,42,0.25); display:flex; align-items:center; justify-content:center;">
+                        <i class="fas fa-list-check" style="color:#fbbf24;"></i>
                     </div>
                     <div>
-                        <label style="display:block; font-weight:600; color:#374151; margin-bottom:0.25rem; font-size:0.85rem;">Priority</label>
-                        <select id="active-priority" class="form-select" style="padding:0.5rem 0.6rem; min-width:150px;">
+                        <h3 style="margin:0; font-size:1rem; font-weight:800;">Active Cases</h3>
+                        <p style="margin:0; font-size:0.78rem; opacity:0.9;">Live overview of all ongoing cases and assignments.</p>
+                    </div>
+                </div>
+                <span id="active-count-pill" style="font-size:0.78rem; font-weight:700; padding:0.25rem 0.6rem; border-radius:999px; background:rgba(15,23,42,0.18); border:1px solid rgba(148,163,184,0.45);">Updated in real‑time</span>
+            </div>
+            <div style="background: #ffffff; border-radius: 12px; padding: 0.75rem 0.85rem 0.9rem; box-shadow: 0 10px 22px rgba(15,23,42,0.10); border:1px solid #e5e7eb;">
+                <div style="display:flex; gap:0.6rem; flex-wrap:wrap; align-items:flex-end; margin-bottom:0.75rem;">
+                    <div style="flex:1; min-width:180px;">
+                        <label style="display:block; font-weight:600; color:#0f172a; margin-bottom:0.15rem; font-size:0.8rem;">Search</label>
+                        <input id="active-search" type="text" placeholder="Search by name, address, case #" class="form-input" style="padding:0.45rem 0.55rem; font-size:0.82rem; border-radius:8px;">
+                    </div>
+                    <div>
+                        <label style="display:block; font-weight:600; color:#0f172a; margin-bottom:0.15rem; font-size:0.8rem;">Priority</label>
+                        <select id="active-priority" class="form-select" style="padding:0.4rem 0.6rem; min-width:150px; font-size:0.8rem; border-radius:8px;">
                             <option value="">All</option>
                             <option selected>Medium</option>
                             <option>High</option>
                         </select>
                     </div>
                     <div>
-                        <label style="display:block; font-weight:600; color:#374151; margin-bottom:0.25rem; font-size:0.85rem;">Status</label>
-                        <select id="active-status" class="form-select" style="padding:0.5rem 0.6rem; min-width:150px;">
+                        <label style="display:block; font-weight:600; color:#0f172a; margin-bottom:0.15rem; font-size:0.8rem;">Status</label>
+                        <select id="active-status" class="form-select" style="padding:0.4rem 0.6rem; min-width:150px; font-size:0.8rem; border-radius:8px;">
                             <option value="">All</option>
                             <option>Pending</option>
                             <option>Accepted</option>
@@ -3210,25 +3196,28 @@ body.fullscreen-mode::before {
                         </select>
                     </div>
                     <div>
-                        <label style="display:block; font-weight:600; color:#374151; margin-bottom:0.25rem; font-size:0.85rem;">Ambulance</label>
-                        <input id="active-ambulance" type="text" placeholder="Ambulance name" class="form-input" style="padding:0.5rem 0.6rem; min-width:180px;">
+                        <label style="display:block; font-weight:600; color:#0f172a; margin-bottom:0.15rem; font-size:0.8rem;">Ambulance</label>
+                        <input id="active-ambulance" type="text" placeholder="Ambulance name" class="form-input" style="padding:0.45rem 0.55rem; min-width:180px; font-size:0.82rem; border-radius:8px;">
                     </div>
                     <div>
-                        <button id="active-clear" class="action-btn" style="margin-top:1.6rem; background:red; box-shadow:none; width:80px; margin-right:15px;">Clear</button>
+                        <button id="active-clear" class="action-btn" style="margin-top:1.45rem; background: linear-gradient(135deg, #ef4444, #b91c1c); box-shadow:none; width:86px; margin-right:10px; font-size:0.78rem; border-radius:999px;">
+                            Clear
+                        </button>
                     </div>
                 </div>
-                <div style="overflow-x: auto; border-radius: 6px; border: 1px solid #e5e7eb;">
-                    <table id="active-cases-table" style="width: 100%; border-collapse: collapse; background: white; ">
+                <div style="overflow-x: auto; border-radius: 10px; border: 1px solid #e5e7eb; max-height: 420px;">
+                    <table id="active-cases-table" style="width: 100%; border-collapse: collapse; background: white; font-size:0.82rem;">
                         <thead>
                             <tr>
-                                <th style="background: #f1f5f9; padding: 0.5rem 0.75rem; text-align: left; font-weight: 600; color: #475569; border-bottom: 1px solid #e5e7eb; font-size: 0.8rem;">Case #</th>
-                                <th style="background: #f1f5f9; padding: 0.5rem 0.75rem; text-align: left; font-weight: 600; color: #475569; border-bottom: 1px solid #e5e7eb; font-size: 0.8rem;">Name</th>
-                                <th style="background: #f1f5f9; padding: 0.5rem 0.75rem; text-align: left; font-weight: 600; color: #475569; border-bottom: 1px solid #e5e7eb; font-size: 0.8rem;">Priority</th>
-                                <th style="background: #f1f5f9; padding: 0.5rem 0.75rem; text-align: left; font-weight: 600; color: #475569; border-bottom: 1px solid #e5e7eb; font-size: 0.8rem;">Type</th>
-                                <th style="background: #f1f5f9; padding: 0.5rem 0.75rem; text-align: left; font-weight: 600; color: #475569; border-bottom: 1px solid #e5e7eb; font-size: 0.8rem;">Status</th>
-                                <th style="background: #f1f5f9; padding: 0.5rem 0.75rem; text-align: left; font-weight: 600; color: #475569; border-bottom: 1px solid #e5e7eb; font-size: 0.8rem;">Ambulance</th>
-                                <th style="background: #f1f5f9; padding: 0.5rem 0.75rem; text-align: left; font-weight: 600; color: #475569; border-bottom: 1px solid #e5e7eb; font-size: 0.8rem;">Created</th>
-                                <th style="background: #f1f5f9; padding: 0.5rem 0.75rem; text-align: left; font-weight: 600; color: #475569; border-bottom: 1px solid #e5e7eb; font-size: 0.8rem;">Action</th>
+                                <th style="background: #f1f5f9; padding: 0.45rem 0.75rem; text-align: left; font-weight: 700; color: #0f172a; border-bottom: 1px solid #e5e7eb; font-size: 0.78rem; position:sticky; top:0; z-index:1;">Case #</th>
+                                <th style="background: #f1f5f9; padding: 0.45rem 0.75rem; text-align: left; font-weight: 700; color: #0f172a; border-bottom: 1px solid #e5e7eb; font-size: 0.78rem; position:sticky; top:0; z-index:1;">Caller</th>
+                                <th style="background: #f1f5f9; padding: 0.45rem 0.75rem; text-align: left; font-weight: 700; color: #0f172a; border-bottom: 1px solid #e5e7eb; font-size: 0.78rem; position:sticky; top:0; z-index:1;">Name</th>
+                                <th style="background: #f1f5f9; padding: 0.45rem 0.75rem; text-align: left; font-weight: 700; color: #0f172a; border-bottom: 1px solid #e5e7eb; font-size: 0.78rem; position:sticky; top:0; z-index:1;">Priority</th>
+                                <th style="background: #f1f5f9; padding: 0.45rem 0.75rem; text-align: left; font-weight: 700; color: #0f172a; border-bottom: 1px solid #e5e7eb; font-size: 0.78rem; position:sticky; top:0; z-index:1;">Type</th>
+                                <th style="background: #f1f5f9; padding: 0.45rem 0.75rem; text-align: left; font-weight: 700; color: #0f172a; border-bottom: 1px solid #e5e7eb; font-size: 0.78rem; position:sticky; top:0; z-index:1;">Status</th>
+                                <th style="background: #f1f5f9; padding: 0.45rem 0.75rem; text-align: left; font-weight: 700; color: #0f172a; border-bottom: 1px solid #e5e7eb; font-size: 0.78rem; position:sticky; top:0; z-index:1;">Ambulance</th>
+                                <th style="background: #f1f5f9; padding: 0.45rem 0.75rem; text-align: left; font-weight: 700; color: #0f172a; border-bottom: 1px solid #e5e7eb; font-size: 0.78rem; position:sticky; top:0; z-index:1;">Created</th>
+                                <th style="background: #f1f5f9; padding: 0.45rem 0.75rem; text-align: left; font-weight: 700; color: #0f172a; border-bottom: 1px solid #e5e7eb; font-size: 0.78rem; position:sticky; top:0; z-index:1;">Action</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -3240,43 +3229,45 @@ body.fullscreen-mode::before {
     </div>
 
 <!-- Geocode (Pin by Address) Modal -->
-<div id="geocode-modal" class="modal-overlay" style="display:none;">
-    <div class="modal-content map-modal map-modal-md">
-        <button type="button" id="close-geocode-modal" class="modal-close" style="position: absolute; top: 10px; right: 12px; background: var(--brand-navy); color: #ffffff; border: 0; width: 36px; height: 36px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;">
-            <i class="fas fa-times"></i>
-        </button>
-        <div id="geocodeContainer" class="modal-iframe" title="Pin by Address" style="background:#fff; overflow:auto; border: 0; display: block; width: 100%; height: 100%; padding: 1rem; box-sizing: border-box; overflow: auto;">
-            <div style="padding: 1rem; text-align: center; color: var(--brand-navy); font-weight: 700; margin-bottom: 1rem;">
-                <h3 style="margin: 0 0 0.75rem 0; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                    <i class="fas fa-search-location" style="color: #0ea5e9;"></i>
-                    Pin by Address
-                </h3>
+<div id="geocode-modal" class="modal-overlay geocode-modal-overlay" style="display:none;">
+    <div class="modal-content geocode-modal" style="max-width: 520px; width: 96vw; min-height:auto; padding: 0; border-radius: 18px; background: transparent; box-shadow: none; border:none;">
+        <div id="geocodeContainer" class="modal-iframe" title="Pin by Address" style="background:transparent; overflow:visible; border: 0; display: block; width: 100%; height:auto; max-height: 60vh; padding: 0.25rem 0.25rem 0.5rem; box-sizing: border-box;">
+            <div style="background: linear-gradient(135deg, #0ea5e9, #0369a1); color:#ffffff; border-radius: 12px 12px 0 0; padding: 0.45rem 0.7rem; display:flex; align-items:center; justify-content:space-between; gap:0.6rem;">
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <div style="width: 30px; height: 30px; border-radius: 999px; background: rgba(15,23,42,0.15); display:flex; align-items:center; justify-content:center;">
+                        <i class="fas fa-search-location" style="color:#facc15;"></i>
+                    </div>
+                    <div>
+                        <h3 style="margin:0; font-size:1rem; font-weight:800;">Pin by Address</h3>
+                        <p style="margin:0; font-size:0.78rem; opacity:0.9;">Quickly find and pin an exact pickup or destination.</p>
+                    </div>
+                </div>
             </div>
-            <div style="background: #ffffff; border-radius: 12px; padding: 1rem; box-shadow: 0 8px 18px rgba(3,18,115,0.08);">
-                <div style="display:flex; gap:0.5rem; align-items:end; flex-wrap:wrap;">
+            <div style="background: #ffffff; border-radius: 0 0 12px 12px; padding: 0.65rem 0.8rem 0.7rem; box-shadow: 0 10px 18px rgba(15,23,42,0.18); border:1px solid #e5e7eb; border-top:none;">
+                <div style="display:flex; gap:0.6rem; align-items:flex-end; flex-wrap:wrap;">
                     <div style="flex:1; min-width:220px; position: relative;">
-                        <label style="display:block; font-weight:600; color:#374151; margin-bottom:0.25rem; font-size:0.9rem;">Address</label>
-                        <input id="geocode-address-input" type="text" placeholder="Enter full address" class="form-input" style="padding:0.6rem 0.8rem;">
+                        <label style="display:block; font-weight:600; color:#0f172a; margin-bottom:0.15rem; font-size:0.82rem;">Address</label>
+                        <input id="geocode-address-input" type="text" placeholder="Enter full address" class="form-input" style="padding:0.5rem 0.75rem; font-size:0.82rem; border-radius:8px;">
                         <ul id="geocode-suggestions" class="suggestions-list"></ul>
                     </div>
                     <div>
-                        <button id="geocode-pin-btn" class="action-btn" style="background: linear-gradient(135deg, #0ea5e9, #0284c7); width:150px; height:40px;">
+                        <button id="geocode-pin-btn" class="action-btn" style="background: linear-gradient(135deg, #0ea5e9, #0284c7); width:140px; height:36px; font-size:0.8rem; border-radius:999px;">
                             <i class="fas fa-map-pin"></i>
                             Pin On Map
                         </button>
                     </div>
                 </div>
                 <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
-                    <label style="display: flex; align-items: center; gap: 0.3rem; font-size: 0.85rem; color: #374151;">
+                    <label style="display: flex; align-items: center; gap: 0.3rem; font-size: 0.8rem; color: #374151;">
                         <input type="radio" name="search-type" value="pickup" checked style="margin: 0;">
                         <span>Pickup Location</span>
                     </label>
-                    <label style="display: flex; align-items: center; gap: 0.3rem; font-size: 0.85rem; color: #374151;">
+                    <label style="display: flex; align-items: center; gap: 0.3rem; font-size: 0.8rem; color: #374151;">
                         <input type="radio" name="search-type" value="destination" style="margin: 0;">
                         <span>Destination</span>
                     </label>
                 </div>
-                <p id="geocode-help" style="margin-top:0.5rem; font-size:0.8rem; color:#6b7280;">Choose location type above, then search to find and pin the location on the map.</p>
+                <p id="geocode-help" style="margin-top:0.4rem; font-size:0.78rem; color:#6b7280;">Choose the location type, enter an address, then tap <strong>Pin On Map</strong>.</p>
             </div>
         </div>
     </div>
@@ -3284,67 +3275,77 @@ body.fullscreen-mode::before {
 
 <!-- Case Details Modal -->
 <div id="case-details-modal" class="modal-overlay" style="display:none;">
-    <div class="modal-content map-modal map-modal-sm">
-        <button type="button" id="close-case-details-modal" class="modal-close" style="position: absolute; top: 10px; right: 12px; background: var(--brand-navy); color: #ffffff; border: 0; width: 36px; height: 36px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;">
-            <i class="fas fa-times"></i>
-        </button>
-        <div class="case-details-wrapper" title="Case Details">
-            <div class="case-modal-header case-modal-header--subtle">
-                <div>
-                    <p class="case-modal-eyebrow">Case Snapshot</p>
-                    <h3>
-                        <i class="fas fa-file-medical" style="color:#4ade80;"></i>
-                        Case Details
-                    </h3>
+    <div class="modal-content map-modal map-modal-sm" style="max-width: 560px; width: 96vw; padding: 0; border-radius: 20px; overflow: hidden; background-color: #020617;">
+        <div style="background: background: radial-gradient(circle at top, #0f172a, #020617); padding: 0.8rem 1.05rem 0.8rem; color:#ecfdf5; display:flex; align-items:center; justify-content:space-between; gap:0.75rem;">
+            <div style="display:flex; align-items:flex-start; gap:0.7rem;">
+                <div style="width:32px; height:32px; border-radius:999px; background:rgba(15,23,42,0.18); display:flex; align-items:center; justify-content:center; font-size:1rem;">
+                    <i class="fas fa-file-medical"></i>
                 </div>
-                <div class="case-modal-header-meta">
-                    <span class="case-pill case-pill--ghost">
-                        <i class="fas fa-sparkles"></i>
-                        Live sync
-                    </span>
+                <div>
+                    <p style="margin:0; font-size:0.72rem; letter-spacing:0.18em; text-transform:uppercase; opacity:0.9; font-weight:700;">MDRRMO Case</p>
+                    <h3 style="margin:0.14rem 0 0; font-size:1.02rem; font-weight:800;">Case Details</h3>
                 </div>
             </div>
-            <div id="case-details-content" class="case-details-content">
+            <div style="display:flex; align-items:center; gap:0.4rem;">
+                <span style="display:inline-flex; align-items:center; gap:0.3rem; font-size:0.72rem; padding:0.25rem 0.55rem; border-radius:999px; background:rgba(15,23,42,0.25); border:1px solid rgba(148,163,184,0.5);">
+                    <i class="fas fa-sparkles" style="font-size:0.75rem;"></i>
+                    <span>Live sync</span>
+                </span>
+                <button type="button" id="close-case-details-modal" class="modal-close" style="border:none; background:rgba(15,23,42,0.65); color:#e5e7eb; width:30px; height:30px; border-radius:999px; cursor:pointer; display:flex; align-items:center; justify-content:center;">
+                    <i class="fas fa-times" style="font-size:0.9rem;"></i>
+                </button>
+            </div>
+        </div>
+        <div class="case-details-wrapper" title="Case Details" style="padding:0.85rem 1.1rem 1rem; background:#0f172a;">
+            <div id="case-details-content" class="case-details-content" style="background: radial-gradient(circle at top, #0f172a, #020617); border-radius:16px; padding:0.9rem 1rem 0.85rem; border:1px solid rgba(51,65,85,0.85); box-shadow:0 18px 45px rgba(15,23,42,0.8);">
                 <!-- Case details will be injected here -->
             </div>
         </div>
     </div>
 </div>
 
-<!-- Print Options Modal -->
+<!-- Print Options Modal (styled like geocodeContainer modal) -->
 <div id="print-options-modal" class="modal-overlay" style="display:none;">
-    <div class="modal-content map-modal map-modal-sm" style="padding:0;">
-        <button type="button" id="close-print-modal" style="position: absolute; top: 12px; right: 12px; background: #f3f4f6; color: #475569; border: none; width: 34px; height: 34px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: background 0.2s;">
-            <i class="fas fa-times"></i>
-        </button>
-        <div style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; padding: 1.5rem; text-align: center;">
-            <div style="width: 54px; height: 54px; background: rgba(255,255,255,0.2); border-radius: 12px; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
-                <i class="fas fa-print"></i>
+    <div class="modal-content geocode-modal" style="max-width: 480px; width: 96vw; min-height:auto; padding: 0; border-radius: 18px; background: transparent; box-shadow: none; border:none;">
+        <div class="modal-iframe" title="Print Case" style="background:transparent; overflow:visible; border: 0; display: block; width: 100%; height:auto; max-height: 60vh; padding: 0.25rem 0.25rem 0.5rem; box-sizing: border-box;">
+            <div style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color:#ffffff; border-radius: 12px 12px 0 0; padding: 0.45rem 0.7rem; display:flex; align-items:center; justify-content:space-between; gap:0.6rem;">
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <div style="width: 30px; height: 30px; border-radius: 999px; background: rgba(15,23,42,0.15); display:flex; align-items:center; justify-content:center;">
+                        <i class="fas fa-print" style="color:#bfdbfe;"></i>
+                    </div>
+                    <div>
+                        <h3 style="margin:0; font-size:1rem; font-weight:800;">Print Case</h3>
+                        <p style="margin:0; font-size:0.78rem; opacity:0.9;">Select the document format to generate and print.</p>
+                    </div>
+                </div>
+                <button type="button" id="close-print-modal" style="border:none; background: rgba(15,23,42,0.25); color:#ffffff; width: 28px; height: 28px; border-radius: 999px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <h3 style="margin: 0; font-size: 1.2rem; font-weight: 800;">Select Print Format</h3>
-            <p style="margin: 0.4rem 0 0; font-size: 0.9rem; opacity: 0.9;">Choose which document you want to print</p>
-        </div>
-        <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
-            <button id="print-conduction-option" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; border: none; padding: 1rem; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 1rem; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35); font-weight: 700;">
-                <div style="width: 44px; height: 44px; background: rgba(255,255,255,0.25); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
-                    <i class="fas fa-file-alt"></i>
+            <div style="background: #ffffff; border-radius: 0 0 12px 12px; padding: 0.65rem 0.8rem 0.7rem; box-shadow: 0 10px 18px rgba(15,23,42,0.18); border:1px solid #e5e7eb; border-top:none;">
+                <div style="display:flex; flex-direction:column; gap:0.55rem;">
+                    <button id="print-conduction-option" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; border: none; padding: 0.55rem 0.65rem; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 0.6rem; box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35); font-weight: 700; font-size:0.84rem;">
+                        <div style="width: 30px; height: 30px; background: rgba(15,23,42,0.22); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.0rem;">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div style="flex: 1; text-align: left;">
+                            <div>Conduction Form</div>
+                            <div style="font-size: 0.75rem; font-weight: 500; opacity: 0.95;">Official patient conduction / transport document.</div>
+                        </div>
+                        <i class="fas fa-chevron-right" style="opacity: 0.9; font-size: 0.85rem;"></i>
+                    </button>
+                    <button id="print-details-option" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: #ffffff; border: none; padding: 0.55rem 0.65rem; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 0.6rem; box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35); font-weight: 700; font-size:0.84rem;">
+                        <div style="width: 30px; height: 30px; background: rgba(15,23,42,0.22); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.0rem;">
+                            <i class="fas fa-file-invoice"></i>
+                        </div>
+                        <div style="flex: 1; text-align: left;">
+                            <div>Case Details Report</div>
+                            <div style="font-size: 0.75rem; font-weight: 500; opacity: 0.95;">Formal MDRRMO case report with assignments.</div>
+                        </div>
+                        <i class="fas fa-chevron-right" style="opacity: 0.9; font-size: 0.85rem;"></i>
+                    </button>
                 </div>
-                <div style="flex: 1; text-align: left;">
-                    <div style="font-size: 1rem;">Conduction Form</div>
-                    <div style="font-size: 0.85rem; font-weight: 500; opacity: 0.95;">Official conduction document</div>
-                </div>
-                <i class="fas fa-chevron-right" style="opacity: 0.8;"></i>
-            </button>
-            <button id="print-details-option" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: #ffffff; border: none; padding: 1rem; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 1rem; box-shadow: 0 8px 24px rgba(59, 130, 246, 0.35); font-weight: 700;">
-                <div style="width: 44px; height: 44px; background: rgba(255,255,255,0.25); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
-                    <i class="fas fa-file-invoice"></i>
-                </div>
-                <div style="flex: 1; text-align: left;">
-                    <div style="font-size: 1rem;">Case Details Report</div>
-                    <div style="font-size: 0.85rem; font-weight: 500; opacity: 0.95;">Formal MDRRMO report with assignments</div>
-                </div>
-                <i class="fas fa-chevron-right" style="opacity: 0.8;"></i>
-            </button>
+            </div>
         </div>
     </div>
 </div>
@@ -3505,9 +3506,9 @@ body.fullscreen-mode::before {
                                     <div class="form-group compact">
                                         <label class="form-label compact">
                                             <i class="fas fa-flag-checkered"></i>
-                                            Destination *
+                                            Destination (optional)
                                         </label>
-                                        <textarea id="case-destination" class="form-textarea compact" placeholder="Enter destination address" rows="2" required></textarea>
+                                        <textarea id="case-destination" class="form-textarea compact" placeholder="Enter destination address (you can set this later)" rows="2"></textarea>
                                     </div>
                                 </div>
                             </section>
@@ -3623,6 +3624,31 @@ body.fullscreen-mode::before {
 function toggleSidebar() {
     document.querySelector('.sidenav')?.classList.toggle('active');
 }
+
+// Update sidebar date and time
+function updateSidebarDateTime() {
+    const now = new Date();
+    const dateEl = document.getElementById('sidebarDate');
+    const timeEl = document.getElementById('sidebarTime');
+    
+    if (dateEl) {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateEl.textContent = now.toLocaleDateString('en-US', options);
+    }
+    
+    if (timeEl) {
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds().toString().padStart(2, '0');
+        timeEl.textContent = `${hours}:${minutes}:${seconds}`;
+    }
+}
+
+// Update date/time immediately and then every second
+document.addEventListener('DOMContentLoaded', function() {
+    updateSidebarDateTime();
+    setInterval(updateSidebarDateTime, 1000);
+});
 
 // User menu removed - logout button is now directly in header (no dropdown needed)
 
@@ -4386,6 +4412,9 @@ function openCaseDetailsModal(caseData) {
     const driverName = caseData.driver || 'Not assigned';
 
     // Create detailed case information
+    // Remember the currently viewed case for quick editing
+    window.currentCaseDetails = caseData || null;
+
     const caseDetails = `
         <div class="case-details-card compact">
             <div class="case-details-meta">
@@ -4495,9 +4524,6 @@ function openCaseDetailsModal(caseData) {
             </div>
 
             <div class="case-details-actions">
-                <button onclick="closeCaseDetailsModal()" style="background:#e2e8f0; color:#0f172a;">
-                    <i class="fas fa-times"></i> Close
-                </button>
                 <button onclick="completeCaseAsAdmin(${caseData.case_num})" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color:#fff;">
                     <i class="fas fa-check-circle"></i> Complete
                 </button>
@@ -4530,10 +4556,274 @@ function closeCaseDetailsModal() {
     closeModal('case-details-modal');
 }
 
-function updateCaseStatus(caseNum) {
-    // This function can be implemented later for status updates
-    showInlineNotice('Status update functionality will be implemented soon!', {
-        title: 'Coming Soon'
+async function updateCaseStatus(caseNum) {
+    const caseData = (window.currentCaseDetails && String(window.currentCaseDetails.case_num) === String(caseNum))
+        ? window.currentCaseDetails
+        : null;
+
+    // Build a compact inline edit sheet inside the case details modal
+    const hostModal = document.getElementById('case-details-modal');
+    if (!hostModal) return;
+
+    // Remove any existing edit sheet first
+    const existing = document.getElementById('case-edit-sheet');
+    if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
+
+    const priority = (caseData && caseData.priority) || 'Medium';
+    const status = (caseData && caseData.status) || 'Pending';
+    const notes = (caseData && (caseData.notes || caseData.remarks || '')) || '';
+
+    // Core editable details
+    const callerName = (caseData && caseData.caller_name) || '';
+    const callerContact = (caseData && caseData.caller_contact) || '';
+    const patientName = (caseData && caseData.name) || '';
+    const patientContact = (caseData && caseData.contact) || '';
+    const pickupAddress = (caseData && caseData.address) || '';
+    const pickupLandmark = (caseData && caseData.landmark) || '';
+    const destinationAddress = (caseData && (caseData.to_go_to_address || caseData.destination || caseData.to_go_to || caseData.destination_address)) || '';
+    const destinationLandmark = (caseData && caseData.to_go_to_landmark) || '';
+
+    const sheet = document.createElement('div');
+    sheet.id = 'case-edit-sheet';
+    sheet.style.cssText = `
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(15,23,42,0.45);
+        z-index: 10100;
+    `;
+    sheet.innerHTML = `
+        <div style="
+            width: min(420px, 94vw);
+            background: #ffffff;
+            border-radius: 18px;
+            box-shadow: 0 18px 45px rgba(15,23,42,0.35);
+            border: 1px solid rgba(148,163,184,0.35);
+            overflow: hidden;
+            font-family: inherit;
+        ">
+            <div style="padding: 0.9rem 1.15rem; background: linear-gradient(135deg, #0f172a, #1e293b); color:#e5e7eb; display:flex; align-items:center; justify-content:space-between; gap:0.5rem;">
+                <div style="display:flex; flex-direction:column; gap:0.1rem;">
+                    <span style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.12em; opacity:0.75;">Quick Edit</span>
+                    <span style="font-weight:800; font-size:0.98rem;">Case #${caseNum}</span>
+                </div>
+                <button type="button" id="case-edit-close-btn" style="border:none; background:rgba(15,23,42,0.5); color:#e5e7eb; width:26px; height:26px; border-radius:7px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="case-edit-form" style="padding: 0.9rem 1.15rem 1rem; display:flex; flex-direction:column; gap:0.75rem; max-height: 70vh; overflow-y: auto;">
+                <div style="display:flex; flex-direction:column; gap:0.35rem; padding-bottom:0.4rem; border-bottom:1px solid #e5e7eb; margin-bottom:0.4rem;">
+                    <span style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#6b7280;">Caller & Patient</span>
+                    <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                        <div style="flex:1 1 48%; min-width:0;">
+                            <label style="font-size:0.78rem; font-weight:600; color:#4b5563; display:block; margin-bottom:0.15rem;">
+                                Caller Name
+                            </label>
+                            <input name="caller_name" type="text" value="${callerName.replace(/"/g, '&quot;')}" style="width:100%; border-radius:10px; border:1px solid #d1d5db; padding:0.4rem 0.6rem; font-size:0.86rem; background:#f9fafb;">
+                        </div>
+                        <div style="flex:1 1 48%; min-width:0;">
+                            <label style="font-size:0.78rem; font-weight:600; color:#4b5563; display:block; margin-bottom:0.15rem;">
+                                Caller Contact
+                            </label>
+                            <input name="caller_contact" type="text" value="${callerContact.replace(/"/g, '&quot;')}" style="width:100%; border-radius:10px; border:1px solid #d1d5db; padding:0.4rem 0.6rem; font-size:0.86rem; background:#f9fafb;">
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                        <div style="flex:1 1 48%; min-width:0;">
+                            <label style="font-size:0.78rem; font-weight:600; color:#4b5563; display:block; margin-bottom:0.15rem;">
+                                Patient Name
+                            </label>
+                            <input name="name" type="text" value="${patientName.replace(/"/g, '&quot;')}" style="width:100%; border-radius:10px; border:1px solid #d1d5db; padding:0.4rem 0.6rem; font-size:0.86rem; background:#f9fafb;">
+                        </div>
+                        <div style="flex:1 1 48%; min-width:0;">
+                            <label style="font-size:0.78rem; font-weight:600; color:#4b5563; display:block; margin-bottom:0.15rem;">
+                                Patient Contact
+                            </label>
+                            <input name="contact" type="text" value="${patientContact.replace(/"/g, '&quot;')}" style="width:100%; border-radius:10px; border:1px solid #d1d5db; padding:0.4rem 0.6rem; font-size:0.86rem; background:#f9fafb;">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:0.35rem; padding-bottom:0.4rem; border-bottom:1px solid #e5e7eb; margin-bottom:0.4rem;">
+                    <span style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#6b7280;">Locations</span>
+                    <div style="display:flex; flex-direction:column; gap:0.35rem;">
+                        <div>
+                            <label style="font-size:0.78rem; font-weight:600; color:#4b5563; display:block; margin-bottom:0.15rem;">
+                                Pickup Address
+                            </label>
+                            <textarea name="address" rows="2" style="width:100%; border-radius:10px; border:1px solid #d1d5db; padding:0.4rem 0.6rem; font-size:0.86rem; background:#f9fafb; resize:vertical;">${pickupAddress}</textarea>
+                        </div>
+                        <div>
+                            <label style="font-size:0.78rem; font-weight:600; color:#4b5563; display:block; margin-bottom:0.15rem;">
+                                Pickup Landmark (optional)
+                            </label>
+                            <input name="landmark" type="text" value="${pickupLandmark.replace(/"/g, '&quot;')}" style="width:100%; border-radius:10px; border:1px solid #d1d5db; padding:0.4rem 0.6rem; font-size:0.86rem; background:#f9fafb;">
+                        </div>
+                        <div>
+                            <label style="font-size:0.78rem; font-weight:600; color:#4b5563; display:block; margin-bottom:0.15rem;">
+                                Destination Address
+                            </label>
+                            <textarea name="to_go_to_address" rows="2" style="width:100%; border-radius:10px; border:1px solid #d1d5db; padding:0.4rem 0.6rem; font-size:0.86rem; background:#f9fafb; resize:vertical;">${destinationAddress}</textarea>
+                        </div>
+                        <div>
+                            <label style="font-size:0.78rem; font-weight:600; color:#4b5563; display:block; margin-bottom:0.15rem;">
+                                Destination Landmark (optional)
+                            </label>
+                            <input name="to_go_to_landmark" type="text" value="${destinationLandmark.replace(/"/g, '&quot;')}" style="width:100%; border-radius:10px; border:1px solid #d1d5db; padding:0.4rem 0.6rem; font-size:0.86rem; background:#f9fafb;">
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; margin-top:0.1rem;">
+                            <small style="font-size:0.72rem; color:#6b7280; line-height:1.3;">
+                                Use <strong>Pin by Address</strong> to precisely update pickup or destination on the map.
+                            </small>
+                            <button type="button" id="open-pin-by-address-from-edit" style="border:none; background:linear-gradient(135deg,#0ea5e9,#0284c7); color:#ffffff; padding:0.35rem 0.7rem; border-radius:999px; font-size:0.75rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:0.35rem;">
+                                <i class="fas fa-map-pin"></i>
+                                Pin by Address
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:0.4rem;">
+                    <label style="font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#4b5563;">
+                        Priority
+                    </label>
+                    <select name="priority" style="width:100%; border-radius:10px; border:1px solid #d1d5db; padding:0.45rem 0.65rem; font-size:0.86rem; background:#f9fafb;">
+                        ${['Low','Medium','High','Critical','Emergency'].map(p => `
+                            <option value="${p}" ${p === priority ? 'selected' : ''}>${p}</option>
+                        `).join('')}
+                    </select>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:0.4rem;">
+                    <label style="font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#4b5563;">
+                        Status
+                    </label>
+                    <select name="status" style="width:100%; border-radius:10px; border:1px solid #d1d5db; padding:0.45rem 0.65rem; font-size:0.86rem; background:#f9fafb;">
+                        ${['Pending','Accepted','In Progress','Completed','Cancelled'].map(s => `
+                            <option value="${s}" ${s === status ? 'selected' : ''}>${s}</option>
+                        `).join('')}
+                    </select>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:0.4rem;">
+                    <label style="font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#4b5563;">
+                        Notes (optional)
+                    </label>
+                    <textarea name="notes" rows="3" style="width:100%; border-radius:10px; border:1px solid #d1d5db; padding:0.45rem 0.65rem; font-size:0.86rem; background:#f9fafb; resize:vertical;">${notes}</textarea>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:0.25rem;">
+                    <button type="button" id="case-edit-cancel" style="border:none; background:#e5e7eb; color:#111827; padding:0.45rem 0.9rem; border-radius:999px; font-size:0.82rem; font-weight:700; cursor:pointer;">
+                        Cancel
+                    </button>
+                    <button type="submit" id="case-edit-save" style="border:none; background:linear-gradient(135deg,#10b981,#059669); color:#ffffff; padding:0.45rem 1.1rem; border-radius:999px; font-size:0.82rem; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:0.4rem;">
+                        <i class="fas fa-save"></i>
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    `;
+
+    hostModal.appendChild(sheet);
+
+    const closeSheet = () => {
+        if (sheet && sheet.parentNode) sheet.parentNode.removeChild(sheet);
+    };
+
+    sheet.addEventListener('click', (e) => {
+        if (e.target === sheet) {
+            closeSheet();
+        }
+    });
+    sheet.querySelector('#case-edit-close-btn')?.addEventListener('click', closeSheet);
+    sheet.querySelector('#case-edit-cancel')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeSheet();
+    });
+
+    const form = sheet.querySelector('#case-edit-form');
+    const saveBtn = sheet.querySelector('#case-edit-save');
+
+    const pinByAddressBtn = sheet.querySelector('#open-pin-by-address-from-edit');
+    if (pinByAddressBtn) {
+        pinByAddressBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Remember which case we're editing for pin updates
+            window.currentCaseNumber = caseNum;
+            openModal('geocode-modal');
+        });
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!saveBtn) return;
+
+        const formData = new FormData(form);
+        const payload = {
+            priority: formData.get('priority') || priority,
+            status: formData.get('status') || status,
+            notes: (formData.get('notes') || '').toString().trim() || null,
+            caller_name: (formData.get('caller_name') || '').toString().trim() || null,
+            caller_contact: (formData.get('caller_contact') || '').toString().trim() || null,
+            name: (formData.get('name') || '').toString().trim() || null,
+            contact: (formData.get('contact') || '').toString().trim() || null,
+            address: (formData.get('address') || '').toString().trim() || null,
+            landmark: (formData.get('landmark') || '').toString().trim() || null,
+            to_go_to_address: (formData.get('to_go_to_address') || '').toString().trim() || null,
+            to_go_to_landmark: (formData.get('to_go_to_landmark') || '').toString().trim() || null
+        };
+
+        saveBtn.disabled = true;
+        const originalLabel = saveBtn.innerHTML;
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+        try {
+            const response = await fetch(`/admin/cases/${caseNum}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                const msg = result && (result.message || result.error) || 'Unable to update case. Please try again.';
+                showInlineNotice(msg, {
+                    title: 'Update Failed',
+                    type: 'danger'
+                });
+                return;
+            }
+
+            // Update local cache and marker styling
+            const updated = Object.assign({}, caseData || {}, result.case || payload, { 
+                priority: payload.priority,
+                status: payload.status
+            });
+            window.currentCaseDetails = updated;
+            updateCaseMarkerStatus(caseNum, updated);
+
+            showNotification(`Case #${caseNum} updated successfully. Drivers will see the latest details.`, 'success');
+
+            // Refresh the details card with the new data
+            openCaseDetailsModal(updated);
+            closeSheet();
+        } catch (err) {
+            console.error('Error updating case:', err);
+            showInlineNotice('Unexpected error while updating case. Please try again.', {
+                title: 'Update Failed',
+                type: 'danger'
+            });
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = originalLabel;
+        }
     });
 }
 
@@ -5443,9 +5733,12 @@ function createDropPin(variant, iconClass, options = {}) {
     if (variant) classes.push(variant);
     if (options.centered) classes.push('centered-pin');
 
-    const iconSize = options.centered ? [60, 60] : [1, 1];
-    const iconAnchor = options.centered ? [30, 30] : [26, 60];
-    const popupAnchor = [0, options.centered ? -30 : -40];
+    // Use realistic dimensions so Leaflet can anchor the visual pin correctly,
+    // which keeps the tip of the pin aligned to the coordinates at all zoom levels.
+    // For pickup (non-centered) we align the visual tip exactly in the middle of the geofence.
+    const iconSize = options.centered ? [60, 60] : [52, 74];      // 52x52 icon + drop tail
+    const iconAnchor = options.centered ? [30, 30] : [26, 70];    // nudge so tail tip sits inside geofence center
+    const popupAnchor = [0, options.centered ? -30 : -46];
 
     return L.divIcon({
         className: '',
@@ -5470,7 +5763,8 @@ function createCaseIcon(caseNum, isActive = false) {
             <span style="font-size: 8px; margin-top: 2px; opacity: 0.95;">${statusLabel}</span>
         </div>
     `;
-    return L.divIcon({ className: '', html, iconSize: [1,1], iconAnchor: [28, 64] });
+    // Anchor closer to the visual center so the orange pin appears centered inside its geofence circle
+    return L.divIcon({ className: '', html, iconSize: [56, 72], iconAnchor: [28, 56] });
 }
 
 
@@ -5644,7 +5938,9 @@ function createDriverIcon(label, photoUrl, ageSec = 0, ambId = null) {
         ${lastSeenHtml}
       </div>
     `;
-    return L.divIcon({ className: '', html, iconSize: [1,1], iconAnchor: [30, 64] });
+    // Match visual dimensions of the driver badge + label so the marker
+    // is anchored by its visual bottom on the map.
+    return L.divIcon({ className: '', html, iconSize: [60, 82], iconAnchor: [30, 82] });
 }
 
 // Routing helper using OSRM to follow roads
@@ -5876,6 +6172,15 @@ async function geocodeAndPinFromAddress(address, type = 'pickup') {
 
             // Add destination marker
             currentDestinationMarker = L.marker([lat, lng], { icon: destinationIcon, draggable: true }).addTo(map);
+            // Label destination for the currently edited case if available
+            if (typeof window.currentCaseNumber !== 'undefined' && window.currentCaseNumber !== null) {
+                currentDestinationMarker.bindTooltip(`Case ${window.currentCaseNumber} Destination`, {
+                    permanent: true,
+                    direction: 'bottom',
+                    offset: [0, 18],
+                    className: 'case-label'
+                });
+            }
             
             // When dragging destination pin
             currentDestinationMarker.on('dragend', function(e) {
@@ -6031,9 +6336,16 @@ function fetchAmbulanceData() {
 
                 if (amb.destination_latitude && amb.destination_longitude) {
                     const destLatLng = [amb.destination_latitude, amb.destination_longitude];
+                    // Green routing pin showing where the driver is heading
                     destMarkers[amb.id]?.setLatLng(destLatLng) ||
-                    (destMarkers[amb.id] = L.marker(destLatLng, { icon: destIcon })
-                        .addTo(map).bindPopup(`📍 Destination for ${amb.name}`));
+                    (destMarkers[amb.id] = L.marker(destLatLng, { icon: destIcon, zIndexOffset: 1000 })
+                        .addTo(map).bindTooltip(`${amb.name} is going here`, {
+                            permanent: true,
+                            direction: 'top',
+                            // Lift the label a bit higher so it clearly floats above the green pin
+                            offset: [0, -34],
+                            className: 'case-label'
+                        }));
                 } else if (destMarkers[amb.id]) {
                     map.removeLayer(destMarkers[amb.id]);
                     delete destMarkers[amb.id];
@@ -6247,6 +6559,15 @@ map.on('click', async function (e) {
             icon: destinationIcon,
             draggable: true
         }).addTo(map);
+        // Label destination for the currently edited case if available
+        if (typeof window.currentCaseNumber !== 'undefined' && window.currentCaseNumber !== null) {
+            currentDestinationMarker.bindTooltip(`Case ${window.currentCaseNumber} Destination`, {
+                permanent: true,
+                direction: 'bottom',
+                offset: [0, 18],
+                className: 'case-label'
+            });
+        }
         
         // Make destination pin draggable
         currentDestinationMarker.on('dragend', function(e) {
@@ -6530,6 +6851,7 @@ document.getElementById('case-creation-form')?.addEventListener('submit', async 
     const callerContact = document.getElementById('caller-contact').value.trim();
     const patientName = document.getElementById('case-name').value.trim();
     const patientContact = document.getElementById('case-contact').value.trim();
+    const destinationText = document.getElementById('case-destination').value.trim();
 
     const formData = {
         caller_name: callerName,
@@ -6539,7 +6861,7 @@ document.getElementById('case-creation-form')?.addEventListener('submit', async 
         age: document.getElementById('case-age').value || null,
         date_of_birth: document.getElementById('case-date-of-birth').value || null,
         address: document.getElementById('case-address').value,
-        destination: document.getElementById('case-destination').value,
+        destination: destinationText || null,
         type: document.getElementById('case-type').value,
         ambulance_ids: selectedAmbulances,
         latitude: window.clickedLatitude,
@@ -6550,8 +6872,8 @@ document.getElementById('case-creation-form')?.addEventListener('submit', async 
     };
     
     // Validate required fields
-    if (!formData.caller_name || !formData.caller_contact || !formData.address || !formData.destination || selectedAmbulances.length === 0) {
-        showInlineNotice('Please complete the caller details, location, and driver selection.', {
+    if (!formData.caller_name || !formData.caller_contact || !formData.address || selectedAmbulances.length === 0) {
+        showInlineNotice('Please complete caller name, caller contact, pickup address, and select at least one driver.', {
             title: 'Form Incomplete',
             type: 'warning'
         });
@@ -6562,14 +6884,6 @@ document.getElementById('case-creation-form')?.addEventListener('submit', async 
     if (!formData.latitude || !formData.longitude) {
         showInlineNotice('Please set a pickup location by clicking on the map.', {
             title: 'Pickup Needed',
-            type: 'warning'
-        });
-        return;
-    }
-    
-    if (!formData.destination_latitude || !formData.destination_longitude) {
-        showInlineNotice('Please set a destination location using the search button or Ctrl+Click on the map.', {
-            title: 'Destination Needed',
             type: 'warning'
         });
         return;
@@ -6815,7 +7129,8 @@ async function loadExistingCases() {
                         caseMarkers[destKey].setLatLng(destLatLng);
                     } else {
                         const destMarker = L.marker(destLatLng, { icon: destinationIcon, interactive: false }).addTo(map);
-                        destMarker.bindTooltip(`Destination #${caseData.case_num}`, {
+                        destMarker.bindTooltip(`Case ${caseData.case_num} Destination`, {
+                            permanent: true,
                             direction: 'bottom',
                             offset: [0, 18],
                             className: 'case-label'
@@ -6873,9 +7188,30 @@ async function printCaseDetails(caseNum) {
 
 // Load active (non-completed) cases and render with filters
 let activeCasesCache = [];
+const ACTIVE_CASES_RENDER_LIMIT = 300; // soft cap to avoid super heavy DOM when there are thousands of cases
+let activeCasesInitialized = false;
+
+function setActiveCasesLoading() {
+    const tbody = document.querySelector('#active-cases-table tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    const tr = document.createElement('tr');
+    const td = document.createElement('td');
+    td.colSpan = 9;
+    td.style.padding = '1rem';
+    td.style.textAlign = 'center';
+    td.style.color = '#6b7280';
+    td.innerHTML = '<i class="fas fa-circle-notch fa-spin" style="margin-right:6px;"></i>Loading active cases...';
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+}
 
 async function loadActiveCases() {
     try {
+        // Show loading row only on first load to avoid flicker on refreshes
+        if (!activeCasesInitialized) {
+            setActiveCasesLoading();
+        }
         const response = await fetch('/admin/cases', {
             method: 'GET',
             headers: {
@@ -6890,8 +7226,12 @@ async function loadActiveCases() {
         totalCasesCount = rawCases.length;
         activeCasesCount = rawCases.filter(c => c.driver_accepted === true || c.status === 'In Progress' || c.status === 'Accepted').length;
         updateStatusCounts();
-        // For rendering markers: exclude completed
-        activeCasesCache = rawCases.filter(c => c.status !== 'Completed');
+        // For rendering markers & table: exclude completed
+        let nonCompleted = rawCases.filter(c => c.status !== 'Completed');
+        // Newest first so the most relevant cases show up at the top
+        nonCompleted.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+        // Soft cap to improve table performance if there are thousands of rows
+        activeCasesCache = nonCompleted.slice(0, ACTIVE_CASES_RENDER_LIMIT);
         rawCases.forEach(c => {
             if (c && c.case_num && c.status !== 'Completed' && completedCaseNums && completedCaseNums.delete) {
                 completedCaseNums.delete(parseInt(c.case_num));
@@ -6907,6 +7247,7 @@ async function loadActiveCases() {
                 if (ambId) activeAmbulanceIds.add(parseInt(ambId));
             });
         } catch(_){}
+        activeCasesInitialized = true;
         renderActiveCasesTable();
     } catch (error) {
         console.error('Error loading active cases:', error);
@@ -7198,7 +7539,7 @@ function generateCaseDetailsPrintHtml(caseData) {
     // Get logo path
     const baseUrl = window.location.origin;
     const logoPath = baseUrl + '/image/mdrrmologo.png';
-    const logoPathJpg = baseUrl + '/image/mdrrmologo.jpg';
+    const logoPathJpg = baseUrl + '/image/LOGOMDRRMO.png';
     const logoPathWebp = baseUrl + '/image/mdrrmologo.webp';
     
     return `
@@ -7430,7 +7771,7 @@ function renderActiveCasesTable(forcedList, errorText) {
     if (errorText) {
         const tr = document.createElement('tr');
         const td = document.createElement('td');
-        td.colSpan = 8;
+        td.colSpan = 9;
         td.style.padding = '1rem';
         td.style.textAlign = 'center';
         td.style.color = '#ef4444';
@@ -7443,7 +7784,7 @@ function renderActiveCasesTable(forcedList, errorText) {
     let filtered = list.filter(c => {
         const matchesPriority = !filters.priority || (c.priority || 'Medium') === filters.priority;
         const matchesStatus = !filters.status || (c.status || 'Pending') === filters.status;
-        const haystack = `${c.case_num || ''} ${c.name || ''} ${c.address || ''}`.toLowerCase();
+        const haystack = `${c.caller_name || ''} ${c.case_num || ''} ${c.name || ''} ${c.address || ''}`.toLowerCase();
         const matchesSearch = !filters.search || haystack.includes(filters.search);
         const ambName = (c.ambulance && c.ambulance.name ? c.ambulance.name : '').toLowerCase();
         const matchesAmb = !filters.ambulance || ambName.includes(filters.ambulance);
@@ -7453,7 +7794,7 @@ function renderActiveCasesTable(forcedList, errorText) {
     if (filtered.length === 0) {
         const tr = document.createElement('tr');
         const td = document.createElement('td');
-        td.colSpan = 8;
+        td.colSpan = 9;
         td.style.padding = '1rem';
         td.style.textAlign = 'center';
         td.textContent = 'No active cases';
@@ -7466,6 +7807,7 @@ function renderActiveCasesTable(forcedList, errorText) {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td style="padding: 0.5rem 0.75rem;">#${caseData.case_num}</td>
+            <td style="padding: 0.5rem 0.75rem;">${caseData.caller_name || '—'}</td>
             <td style="padding: 0.5rem 0.75rem;">${caseData.name || 'Unidentified Patient'}</td>
             <td style="padding: 0.5rem 0.75rem;"><span style="background:${getPriorityColor(caseData.priority || 'Medium')}; color:#fff; padding:2px 8px; border-radius:12px; font-size:12px; font-weight:700;">${caseData.priority || 'Medium'}</span></td>
             <td style="padding: 0.5rem 0.75rem;">${caseData.type || ''}</td>
@@ -7493,10 +7835,21 @@ function renderActiveCasesTable(forcedList, errorText) {
     });
 }
 
+// Simple debounce helper for filter inputs
+function debounce(fn, delay) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(null, args), delay);
+    };
+}
+
+const debouncedRenderActiveCasesTable = debounce(() => renderActiveCasesTable(), 200);
+
 // Filter input wiring
 document.addEventListener('input', function(e) {
     if (e.target && ['active-search','active-priority','active-status','active-ambulance'].includes(e.target.id)) {
-        renderActiveCasesTable();
+        debouncedRenderActiveCasesTable();
     }
 });
 
@@ -7660,24 +8013,9 @@ async function refreshCaseStatuses() {
                 const lat = parseFloat(cur.latitude), lng = parseFloat(cur.longitude);
                 const marker = driverMarkers[ambId];
                 if (!marker || Number.isNaN(lat) || Number.isNaN(lng)) continue;
-                
-                // Check if driver is actively navigating (has destination coordinates)
-                const ambData = ambulanceDataMap[ambId];
-                const isNavigating = ambData && ambData.destination_latitude && ambData.destination_longitude;
-                
-                // Only draw trail if driver is actively navigating to a pin
-                if (isNavigating) {
-                    const driverLatLng = marker.getLatLng();
-                    if (!driverLatLng || Number.isNaN(driverLatLng.lat) || Number.isNaN(driverLatLng.lng)) continue;
-                    const destLat = parseFloat(ambData.destination_latitude);
-                    const destLng = parseFloat(ambData.destination_longitude);
-                    
-                    if (!Number.isNaN(destLat) && !Number.isNaN(destLng)) {
-                        const routedTrail = await drawRoutedLine([driverLatLng.lat, driverLatLng.lng], [destLat, destLng], { color: '#ff8c42', weight: 6, opacity: 0.95 });
-                        driverToCaseTraces[cur.case_num] = routedTrail;
-                    }
-                }
-                
+                // NOTE: driver-to-pin routing line (green/orange trail) intentionally disabled
+                // as it looked visually off. We still track which ambulances are active.
+
                 // Track ambulance as active (regardless of navigation status)
                 activeAmbulanceIds.add(parseInt(ambId));
                 // Track the current active case number for filtering pins
@@ -7737,7 +8075,7 @@ function redrawTrailsFromCache() {
             return pool[0];
         };
 
-        // Clear previous trails
+        // Clear previous trails (routing between driver and pins is now disabled)
         Object.values(driverToCaseTraces || {}).forEach(line => { try { map.removeLayer(line); } catch(_){} });
         driverToCaseTraces = {};
 
@@ -7747,31 +8085,7 @@ Object.keys(casesByAmb).forEach(async (ambId) => {
             const lat = parseFloat(cur.latitude), lng = parseFloat(cur.longitude);
             const marker = driverMarkers[ambId];
             if (!marker || Number.isNaN(lat) || Number.isNaN(lng)) return;
-            
-            // Check if driver is actively navigating (has destination coordinates)
-            const ambData = ambulanceDataMap[ambId];
-            const isNavigating = ambData && ambData.destination_latitude && ambData.destination_longitude;
-            
-            // Only draw trail if driver is actively navigating to a pin
-            if (isNavigating) {
-                const driverLatLng = marker.getLatLng();
-                if (!driverLatLng || Number.isNaN(driverLatLng.lat) || Number.isNaN(driverLatLng.lng)) return;
-                const destLat = parseFloat(ambData.destination_latitude);
-                const destLng = parseFloat(ambData.destination_longitude);
-                
-                if (!Number.isNaN(destLat) && !Number.isNaN(destLng)) {
-                    // Draw an immediate straight fallback, then upgrade to routed when available
-                    const fallback = L.polyline([[driverLatLng.lat, driverLatLng.lng],[destLat,destLng]], { color: '#ff8c42', weight: 4, opacity: 0.6, dashArray: '6,6', pane: 'trailsPane' }).addTo(map);
-                    const routedTrail = await drawRoutedLine([driverLatLng.lat, driverLatLng.lng], [destLat, destLng], { color: '#ff8c42', weight: 6, opacity: 0.95 });
-                    try { map.removeLayer(fallback); } catch(_){}
-                    const caseKey = String(cur.case_num);
-                    if (completedCaseNums && completedCaseNums.has(parseInt(caseKey))) {
-                        try { map.removeLayer(routedTrail); } catch(_){}
-                    } else {
-                        driverToCaseTraces[caseKey] = routedTrail;
-                    }
-                }
-            }
+            // Driver routing (green/orange line) intentionally removed; nothing to draw here.
         });
     } catch (e) { /* no-op */ }
 }
@@ -8982,6 +9296,8 @@ function positionQuickResults(){
 // ===== GEOFENCING SYSTEM =====
 let currentGeofenceNotification = null;
 let acknowledgedNotifications = new Set();
+let geofenceNotificationQueue = [];
+let geofenceModalVisible = false;
 
 // Function to play notification sound
 function playGeofenceSound() {
@@ -9040,7 +9356,16 @@ function showGeofenceNotification(notification) {
         return; // Already acknowledged
     }
     
+    // If a notification is already being shown, queue this one so they appear one at a time
+    const modalEl = document.getElementById('geofence-notification-modal');
+    const isCurrentlyVisible = modalEl && modalEl.style.display === 'flex';
+    if (geofenceModalVisible || isCurrentlyVisible || currentGeofenceNotification) {
+        geofenceNotificationQueue.push(notification);
+        return;
+    }
+    
     currentGeofenceNotification = notification;
+    geofenceModalVisible = true;
     const modal = document.getElementById('geofence-notification-modal');
     const content = document.getElementById('geofence-notification-content');
     
@@ -9130,11 +9455,21 @@ function closeGeofenceModal() {
     // Always allow closing the modal (user can dismiss it)
     // For destination notifications, closing just acknowledges it, doesn't complete the case
     modal.style.display = 'none';
+    geofenceModalVisible = false;
 
     // Acknowledge the notification
     if (currentGeofenceNotification) {
         acknowledgeGeofenceNotification(currentGeofenceNotification.case_num, currentGeofenceNotification.location_type);
         currentGeofenceNotification = null;
+    }
+
+    // If there are queued notifications, show the next one
+    if (geofenceNotificationQueue.length > 0) {
+        const nextNotification = geofenceNotificationQueue.shift();
+        // Small timeout to avoid rapid flicker if many arrive together
+        setTimeout(() => {
+            showGeofenceNotification(nextNotification);
+        }, 150);
     }
 }
 
@@ -9445,6 +9780,138 @@ setInterval(updateGeofenceCircleColors, 3000);
 // Initial check
 checkGeofenceNotifications();
 updateGeofenceCircleColors();
+
+
+
+    // ======================================================================================================================================
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // 1. GET ALL PARAMS
+    const locationToPin = urlParams.get('location');
+    const latParam = urlParams.get('lat');
+    const lngParam = urlParams.get('lng');
+    const nameParam = urlParams.get('caller_name');
+    const contactParam = urlParams.get('caller_contact');
+
+    let targetLat = null;
+    let targetLng = null;
+
+    // --- Initialize global variables to prevent ReferenceErrors ---
+    window.currentPinMarker = window.currentPinMarker || null;
+    window.currentGeofenceNotification = window.currentGeofenceNotification || null;
+    window.clickedLatitude = window.clickedLatitude || null;
+    window.clickedLongitude = window.clickedLongitude || null;
+
+    // Helper to fill form fields
+    function fillCaseForm() {
+        if (nameParam) {
+            const nameField = document.getElementById('caller-name');
+            if (nameField) nameField.value = nameParam;
+        }
+        if (contactParam) {
+            const contactField = document.getElementById('caller-contact');
+            if (contactField) contactField.value = contactParam;
+        }
+    }
+
+    // 2. EXTRACT COORDINATES
+    if (latParam && lngParam && !isNaN(parseFloat(latParam)) && !isNaN(parseFloat(lngParam))) {
+        targetLat = parseFloat(latParam);
+        targetLng = parseFloat(lngParam);
+    } 
+    else if (locationToPin) {
+        const coordMatch = locationToPin.trim().match(/^(-?\d+(\.\d+)?)[,\s]+(-?\d+(\.\d+)?)$/);
+        if (coordMatch) {
+            targetLat = parseFloat(coordMatch[1]);
+            targetLng = parseFloat(coordMatch[3]);
+        }
+    }
+
+    // 3. PINNING LOGIC
+    if (targetLat !== null && targetLng !== null) {
+        const addrField = document.getElementById('case-address');
+        const coordString = `${targetLat.toFixed(6)}, ${targetLng.toFixed(6)}`;
+
+        if (addrField) {
+            if (locationToPin && locationToPin.trim() !== "") {
+                addrField.value = locationToPin;
+            } else {
+                addrField.value = coordString;
+            }
+        }
+
+        // Wait slightly for map to load
+        setTimeout(() => {
+            if (window.currentPinMarker) map.removeLayer(window.currentPinMarker);
+            
+            // Set globals
+            window.clickedLatitude = targetLat;
+            window.clickedLongitude = targetLng;
+            
+            // Drop Pin & Pan
+            window.currentPinMarker = L.marker([targetLat, targetLng], { icon: pinIcon, draggable: true }).addTo(map);
+            map.setView([targetLat, targetLng], 17);
+            
+            // Open Modal & Fill Data
+            openModal('case-creation-modal');
+            fillCaseForm();
+
+            if (addrField) {
+                const isJustCoords = /^(-?\d+(\.\d+)?)[,\s]+(-?\d+(\.\d+)?)$/.test(addrField.value.trim());
+                if (isJustCoords) {
+                    setAddressFromLatLng(targetLat, targetLng, 'pickup');
+                }
+            }
+
+            // Drag listener
+            window.currentPinMarker.on('dragend', function(e) {
+                const newPos = e.target.getLatLng();
+                window.clickedLatitude = newPos.lat;
+                window.clickedLongitude = newPos.lng;
+                
+                const pinCoords = document.getElementById('pin-coordinates');
+                if (pinCoords) pinCoords.textContent = `${newPos.lat.toFixed(6)}, ${newPos.lng.toFixed(6)}`;
+                if (addrField) addrField.value = `${newPos.lat.toFixed(6)}, ${newPos.lng.toFixed(6)}`;
+                
+                setAddressFromLatLng(window.clickedLatitude, window.clickedLongitude, 'pickup');
+                updateConnectionLine();
+            });
+            
+            const pinCoords = document.getElementById('pin-coordinates');
+            if (pinCoords) pinCoords.textContent = coordString;
+            
+        }, 800); 
+
+    } else if (locationToPin) {
+        // Fallback for text-only addresses
+        const geocodeInput = document.getElementById('geocode-address-input');
+        if (geocodeInput) geocodeInput.value = locationToPin;
+        
+        const addrField = document.getElementById('case-address');
+        if (addrField) addrField.value = locationToPin;
+
+        setTimeout(() => {
+            geocodeAndPinFromAddress(locationToPin, 'pickup');
+            setTimeout(fillCaseForm, 1500); 
+        }, 1000);
+    }
+
+    // --- Example of checkForCompletedCases function safely using the variable ---
+    async function checkForCompletedCases() {
+        try {
+            if (!window.currentGeofenceNotification) {
+                window.currentGeofenceNotification = {}; // safely initialize if not defined
+            }
+            // Your geofence checking logic here...
+        } catch (err) {
+            console.error("Error checking for completed cases:", err);
+        }
+    }
+
+    // Optional: run periodically
+    setInterval(checkForCompletedCases, 5000);
+});
 </script>
 
 </body>

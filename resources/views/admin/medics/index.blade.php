@@ -124,29 +124,32 @@ html, body {
 }
 
 .tab-navigation {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.85rem;
     background: #f8fafc;
-    padding: 0.5rem;
+    padding: 0.75rem;
     border-radius: 16px;
     border: 1px solid rgba(226, 232, 240, 0.8);
+    width: 100%;
 }
 
 .tab-btn {
     border: none;
-    border-radius: 12px;
-    padding: 0.85rem 1.35rem;
+    border-radius: 14px;
+    padding: 0.95rem 1.5rem;
     font-weight: 800;
     font-size: 0.95rem;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.55rem;
     transition: all 0.2s ease;
     background: transparent;
     color: var(--muted);
     position: relative;
+    width: 100%;
 }
 
 .tab-btn:hover {
@@ -167,6 +170,10 @@ html, body {
 
 .panel-content.active {
     display: block;
+}
+
+#driver-panel {
+    scroll-margin-top: 140px;
 }
 
 @keyframes fadeIn {
@@ -390,6 +397,20 @@ html, body {
 .status-badge.unavailable {
     background: rgba(239, 68, 68, 0.15);
     color: #dc2626;
+}
+
+.status-display {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    background: rgba(37, 99, 235, 0.08);
+    color: var(--accent);
+    font-weight: 800;
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
 }
 
 .action-buttons {
@@ -725,17 +746,12 @@ body .nav-links a.active {
     }
 
     .tab-navigation {
-        flex-direction: column;
-    }
-
-    .tab-btn {
-        width: 100%;
-        justify-content: center;
+        grid-template-columns: 1fr;
     }
 }
     </style>
 </head>
-<body>
+<body data-has-success="{{ session()->has('success') ? 'true' : 'false' }}">
 <!-- Toggle Button for Mobile -->
 <button class="toggle-btn" onclick="toggleSidebar()">
     <i class="fas fa-bars"></i>
@@ -744,12 +760,15 @@ body .nav-links a.active {
 <!-- Sidenav -->
 <aside class="sidenav" id="sidenav">
     <div class="logo-container" style="display: flex; flex-direction: column; align-items: center;">
-        <img src="{{ asset('image/mdrrmologo.jpg') }}" alt="Logo" class="logo-img" style="display: block; margin: 0 auto;">
+        <img src="{{ asset('image/LOGOMDRRMO.png') }}" alt="Logo" class="logo-img" style="display: block; margin: 0 auto;">
         <div style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 800; color: #ffffff; letter-spacing: .5px;">SILANG MDRRMO</div>
+        <div id="sidebarDateTime" style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 600; color: rgba(255, 255, 255, 0.85); font-size: 0.75rem; letter-spacing: 0.3px; padding: 0 12px;">
+            <div id="sidebarDate" style="margin-bottom: 4px;"></div>
+            <div id="sidebarTime" style="font-weight: 700; font-size: 0.8rem;"></div>
+        </div>
     </div>
     <nav class="nav-links">
         <a href="{{ route('dashboard') }}" class="{{ request()->is('dashboard') ? 'active' : '' }}"><i class="fas fa-chart-pie"></i> Dashboard</a>
-        <span class="nav-link-locked" style="display: block; padding: 12px 16px; color: #9ca3af; cursor: not-allowed; opacity: 0.6; position: relative;"><i class="fas fa-pen"></i> Posting <i class="fas fa-lock" style="font-size: 10px; margin-left: 8px; opacity: 0.7;"></i></span>
         <a href="{{ url('/admin/pairing') }}" class="{{ request()->is('admin/pairing') ? 'active' : '' }}"><i class="fas fa-link"></i> Pairing</a>
         <a href="{{ url('/admin/drivers') }}" class="{{ request()->is('admin/drivers*') ? 'active' : '' }}"><i class="fas fa-car"></i> Drivers</a>
         <a href="{{ url('/admin/medics') }}" class="{{ request()->is('admin/medics*') ? 'active' : '' }}"><i class="fas fa-plus"></i> Create</a>
@@ -842,9 +861,6 @@ body .nav-links a.active {
                         </div>
                     </div>
                     <div class="form-actions">
-                        <a href="{{ route('login') }}" class="btn btn-secondary">
-                            <i class="fas fa-sign-in-alt"></i> Already registered?
-                        </a>
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-user-plus"></i> Register
                         </button>
@@ -867,7 +883,7 @@ body .nav-links a.active {
                     <h5 style="margin: 0 0 1rem 0; font-size: 1.1rem; font-weight: 800; color: var(--heading);">
                         <i class="fas fa-plus-circle"></i> Add New Medic
                     </h5>
-                    <form action="{{ route('admin.medics.store') }}" method="POST" style="background: #f8fafc; padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(226, 232, 240, 0.8);">
+                    <form id="medicCreateForm" action="{{ route('admin.medics.store') }}" method="POST" style="background: #f8fafc; padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(226, 232, 240, 0.8);">
                         @csrf
                         
                         @if($errors->any())
@@ -894,13 +910,10 @@ body .nav-links a.active {
                                 <label><i class="fas fa-stethoscope"></i> Specialization</label>
                                 <input type="text" name="specialization" value="{{ old('specialization') }}" placeholder="Enter specialization">
                             </div>
-                            <div class="form-field">
-                                <label><i class="fas fa-toggle-on"></i> Status</label>
-                                <select name="status" required>
-                                    <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
-                                    <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                                </select>
-                            </div>
+                        </div>
+                        <input type="hidden" name="status" value="active">
+                        <div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--muted); font-weight: 600;">
+                            Status automatically set to <span style="color: var(--accent); font-weight: 800;">Active</span>.
                         </div>
                         <div class="form-actions" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(226, 232, 240, 0.8);">
                             <button type="submit" class="btn btn-success">
@@ -927,7 +940,7 @@ body .nav-links a.active {
                     <h5 style="margin: 0 0 1rem 0; font-size: 1.1rem; font-weight: 800; color: var(--heading);">
                         <i class="fas fa-plus-circle"></i> Add New Ambulance
                     </h5>
-                    <form action="{{ route('admin.ambulances.store') }}" method="POST" style="background: #f8fafc; padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(226, 232, 240, 0.8);">
+                    <form id="ambulanceCreateForm" action="{{ route('admin.ambulances.store') }}" method="POST" style="background: #f8fafc; padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(226, 232, 240, 0.8);">
                         @csrf
                         <div class="form-grid">
                             <div class="form-field">
@@ -938,8 +951,6 @@ body .nav-links a.active {
                                 <label>Status</label>
                                 <select name="status" required>
                                     <option value="Available">Available</option>
-                                    <option value="Out">Out</option>
-                                    <option value="Unavailable">Unavailable</option>
                                 </select>
                             </div>
                         </div>
@@ -989,7 +1000,7 @@ body .nav-links a.active {
                         </h5>
                         <div class="form-grid">
                             <div class="form-field">
-                                <label>Full Name</label>
+                                <label>Full Name *</label>
                                 <input type="text" name="name" value="{{ old('name') }}" required placeholder="Enter driver's full name">
                             </div>
                             <div class="form-field">
@@ -997,7 +1008,7 @@ body .nav-links a.active {
                                 <input type="text" name="phone" value="{{ old('phone') }}" placeholder="Enter phone number">
                             </div>
                             <div class="form-field">
-                                <label>Email</label>
+                                <label>Email *</label>
                                 <input type="email" name="email" value="{{ old('email') }}" required placeholder="Enter email address">
                             </div>
                             <div class="form-field">
@@ -1014,11 +1025,11 @@ body .nav-links a.active {
                                 </select>
                             </div>
                             <div class="form-field">
-                                <label>Password</label>
+                                <label>Password *</label>
                                 <input type="password" name="password" required placeholder="Enter password">
                             </div>
                             <div class="form-field">
-                                <label>Confirm Password</label>
+                                <label>Confirm Password *</label>
                                 <input type="password" name="password_confirmation" required placeholder="Confirm password">
                             </div>
                             <div class="form-field" style="grid-column: 1 / -1;">
@@ -1046,15 +1057,10 @@ body .nav-links a.active {
                                 <label>Employee ID</label>
                                 <input type="text" name="employee_id" value="{{ old('employee_id') }}" placeholder="Enter employee ID">
                             </div>
-                            <div class="form-field">
-                                <label>Status</label>
-                                <select name="status" required>
-                                    <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
-                                    <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                                    <option value="suspended" {{ old('status') == 'suspended' ? 'selected' : '' }}>Suspended</option>
-                                    <option value="on_leave" {{ old('status') == 'on_leave' ? 'selected' : '' }}>On Leave</option>
-                                </select>
-                            </div>
+                        </div>
+                        <input type="hidden" name="status" value="active">
+                        <div style="margin-top: -0.25rem; font-size: 0.9rem; color: var(--muted); font-weight: 600; padding-top: 10px;">
+                            Driver status is locked to <span style="color: var(--accent); font-weight: 800;">Active</span> on creation.
                         </div>
                         <h5 style="margin: 2rem 0 1.5rem 0; font-size: 1.1rem; font-weight: 800; color: var(--heading);">
                             <i class="fas fa-phone"></i> Emergency Contact
@@ -1146,11 +1152,9 @@ body .nav-links a.active {
                         <input id="edit_specialization" type="text" name="specialization" placeholder="Enter specialization">
                     </div>
                     <div class="form-field">
-                        <label for="edit_status"><i class="fas fa-toggle-on"></i> Status</label>
-                        <select id="edit_status" name="status" required>
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
+                        <label><i class="fas fa-toggle-on"></i> Status</label>
+                        <div class="status-display" id="edit_status_display">Active</div>
+                        <input id="edit_status" type="hidden" name="status" value="active">
                     </div>
                 </div>
             </div>
@@ -1306,6 +1310,31 @@ function toggleSidebar() {
     sidenav.classList.toggle('active');
 }
 
+// Update sidebar date and time
+function updateSidebarDateTime() {
+    const now = new Date();
+    const dateEl = document.getElementById('sidebarDate');
+    const timeEl = document.getElementById('sidebarTime');
+    
+    if (dateEl) {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateEl.textContent = now.toLocaleDateString('en-US', options);
+    }
+    
+    if (timeEl) {
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds().toString().padStart(2, '0');
+        timeEl.textContent = `${hours}:${minutes}:${seconds}`;
+    }
+}
+
+// Update date/time immediately and then every second
+document.addEventListener('DOMContentLoaded', function() {
+    updateSidebarDateTime();
+    setInterval(updateSidebarDateTime, 1000);
+});
+
 function showPanel(panelName) {
     // Hide all panels
     const panels = document.querySelectorAll('.panel-content');
@@ -1342,7 +1371,12 @@ function openEditModal(id, name, phone, specialization, status) {
     document.getElementById('edit_name').value = name;
     document.getElementById('edit_phone').value = phone || '';
     document.getElementById('edit_specialization').value = specialization || '';
-    document.getElementById('edit_status').value = status;
+    const statusValue = status || 'active';
+    document.getElementById('edit_status').value = statusValue;
+    const statusDisplay = document.getElementById('edit_status_display');
+    if (statusDisplay) {
+        statusDisplay.textContent = statusValue.charAt(0).toUpperCase() + statusValue.slice(1);
+    }
     document.getElementById('editMedicModal').style.display = 'flex';
     document.body.style.overflow = 'hidden';
 }
@@ -1424,17 +1458,40 @@ function showDriverSection(index) {
     currentDriverSection = index;
 }
 
-function nextDriverStep() {
-    if (currentDriverSection < 3) {
-        showDriverSection(currentDriverSection + 1);
+function scrollDriverPanelIntoView() {
+    const driverPanel = document.getElementById('driver-panel');
+    if (driverPanel) {
+        driverPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+function validateDriverSection(index) {
+    const section = document.getElementById(`driver-section-${index}`);
+    if (!section) return true;
+    const requiredFields = section.querySelectorAll('input[required], select[required], textarea[required]');
+    for (const field of requiredFields) {
+        if (!field.checkValidity()) {
+            field.reportValidity();
+            field.focus();
+            return false;
+        }
+    }
+    return true;
+}
+
+function nextDriverStep() {
+    if (currentDriverSection < 3 && validateDriverSection(currentDriverSection)) {
+        showDriverSection(currentDriverSection + 1);
+        scrollDriverPanelIntoView();
     }
 }
 
 function prevDriverStep() {
     if (currentDriverSection > 1) {
         showDriverSection(currentDriverSection - 1);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        scrollDriverPanelIntoView();
     }
 }
 
@@ -1463,6 +1520,30 @@ function setupDriverFormSubmission() {
             form.appendChild(skillsInput);
         }
     });
+}
+
+const POST_CREATE_REDIRECT_KEY = 'redirectAfterCreate';
+
+function attachRedirectListeners() {
+    ['medicCreateForm', 'ambulanceCreateForm'].forEach(id => {
+        const form = document.getElementById(id);
+        if (!form) return;
+        form.addEventListener('submit', () => {
+            sessionStorage.setItem(POST_CREATE_REDIRECT_KEY, 'drivers');
+        });
+    });
+}
+
+function handlePostCreateRedirect() {
+    const flag = sessionStorage.getItem(POST_CREATE_REDIRECT_KEY);
+    const hasSuccess = document.body.dataset.hasSuccess === 'true';
+    if (flag !== 'drivers') return;
+    if (hasSuccess) {
+        sessionStorage.removeItem(POST_CREATE_REDIRECT_KEY);
+        window.location.href = '{{ route('admin.drivers.index') }}';
+    } else {
+        sessionStorage.removeItem(POST_CREATE_REDIRECT_KEY);
+    }
 }
 
 // User menu toggle
@@ -1500,6 +1581,8 @@ function setupDriverFormSubmission() {
 document.addEventListener('DOMContentLoaded', function(){
     showDriverSection(1);
     setupDriverFormSubmission();
+    attachRedirectListeners();
+    handlePostCreateRedirect();
 
     @if(session('success'))
         showSuccessModal('{{ session('success') }}');

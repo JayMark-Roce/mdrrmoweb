@@ -741,11 +741,12 @@ body::before {
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
-    border-radius: 28px 28px 0 0;
-    animation: gradientShift 3s ease infinite;
-    background-size: 200% 100%;
+    /* Blue accent line at the top of the map card – visually removed to keep footer clean */
+    height: 0;
+    background: transparent;
+    border-radius: 0;
+    animation: none;
+    background-size: 0 0;
 }
 
 #map {
@@ -2930,6 +2931,52 @@ let knownCaseNums = new Set();
 let alertQueue = [];
 let alertVisible = false;
 const PAGE_REFRESH_INTERVAL_MS = 60000; // Auto refresh every 60 seconds
+let lastCaseUpdateTimestamps = {}; // Track last update timestamp per case to detect edits
+
+// Helper to detect case edits and gently notify driver when an accepted case changes
+function detectEditedCases(cases) {
+    if (!Array.isArray(cases) || !cases.length) return;
+    
+    cases.forEach(c => {
+        if (!c || typeof c.case_num === 'undefined') return;
+        const key = String(c.case_num);
+        const updatedAt = c.updated_at || c.modified_at || c.completed_at || null;
+        if (!updatedAt) {
+            // Seed map for cases that don't yet have an updated_at
+            if (!lastCaseUpdateTimestamps[key]) {
+                lastCaseUpdateTimestamps[key] = null;
+            }
+            return;
+        }
+        
+        // First time we see this case, just record timestamp
+        if (typeof lastCaseUpdateTimestamps[key] === 'undefined') {
+            lastCaseUpdateTimestamps[key] = updatedAt;
+            return;
+        }
+        
+        // If timestamp changed, surface a toast for accepted cases only
+        if (lastCaseUpdateTimestamps[key] !== updatedAt) {
+            lastCaseUpdateTimestamps[key] = updatedAt;
+            if (acceptedCases.has(c.case_num)) {
+                showToast(
+                    `Case #${c.case_num} has been updated by admin. Review the latest details before proceeding.`,
+                    'info',
+                    () => {
+                        const casesModal = document.getElementById('cases-modal');
+                        if (casesModal) {
+                            casesModal.style.display = 'block';
+                        }
+                        // Refresh UI to reflect latest data
+                        loadAllCases();
+                    },
+                    3800,
+                    'Case Updated'
+                );
+            }
+        }
+    });
+}
 
 function isCaseCompleted(caseData) {
     if (!caseData) return false;
@@ -3021,6 +3068,9 @@ async function loadCaseNotificationsOnly() {
                     acceptedCases.add(caseData.case_num);
                 }
             });
+
+            // Detect case edits and notify driver (based on updated_at changes)
+            detectEditedCases(activeCases);
         }
     } catch (error) {
         console.error('Error loading case notifications:', error);
@@ -3068,6 +3118,9 @@ async function loadAllCases() {
             
             displayCaseNotifications(activeCases);
             
+            // Detect edits using full list so updates from admin are picked up
+            detectEditedCases(cases);
+
             // Pass the full cases list so completed cases still trigger cleanup
             addCaseMarkersToMap(cases);
         }

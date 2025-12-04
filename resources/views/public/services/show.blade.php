@@ -5,46 +5,45 @@
     <title>{{ $service->title }} | MDRRMO</title>
       <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="{{ asset('css/stylie.css') }}?v={{ filemtime(public_path('css/style.css')) }}">
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body class="bg-gray-100 text-gray-800" style="margin-left: 260px;">
 
-  <nav class="navbar navbar-expand-lg navbar-dark py-3" style="background-color:#031273;">
-  <div class="container-fluid">
+<!-- Toggle Button for Mobile -->
+<button class="toggle-btn" onclick="toggleSidebar()" style="display: none; position: fixed; top: 1rem; left: 1rem; z-index: 1001; background: #031273; color: #ffffff; border: none; padding: 0.55rem 0.85rem; border-radius: 10px; cursor: pointer; font-size: 1.1rem; box-shadow: 0 12px 35px rgba(3, 18, 115, 0.35);">
+    <i class="fas fa-bars"></i>
+</button>
 
-    <!-- Brand on the left -->
- <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
-  <img src="{{ asset('image/mdrrmologo.jpg') }}" alt="MDRRMO Logo" class="navbar-logo">
-</a>
-
-
-    <!-- Centered nav links (inside collapse) -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
-      aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse justify-content-center" id="navbarContent">
-     <ul class="navbar-nav mx-auto " style="width: 300px; display: flex; justify-content: space-between;">
-
-    <li class="nav-item">
-        <a class="nav-link" href="{{ url('/') }}">Home</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{{ url('/services') }}">Services</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{{ url('/contact') }}">Contact</a>
-    </li>
-    </ul>
-
+<!-- Sidenav -->
+<aside class="sidenav" id="sidenav" style="position: fixed; left: 0; top: 0; width: 260px; height: 100vh; background: linear-gradient(180deg, #031273 0%, #1e3a8a 100%); z-index: 1000; overflow-y: auto; transition: transform 0.3s ease; box-shadow: 15px 0 35px rgba(15, 23, 42, 0.35);">
+    <div class="logo-container" style="display: flex; flex-direction: column; align-items: center; padding: 1.5rem 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+        <img src="{{ asset('image/LOGOMDRRMO.png') }}" alt="Logo" class="logo-img" style="display: block; margin: 0 auto; width: 80px; height: 80px; object-fit: contain;">
+        <div style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 800; color: #ffffff; letter-spacing: .5px;">SILANG MDRRMO</div>
+        <div id="sidebarDateTime" style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 600; color: rgba(255, 255, 255, 0.85); font-size: 0.75rem; letter-spacing: 0.3px; padding: 0 12px;">
+            <div id="sidebarDate" style="margin-bottom: 4px;"></div>
+            <div id="sidebarTime" style="font-weight: 700; font-size: 0.8rem;"></div>
+        </div>
     </div>
+    <nav class="nav-links" style="display: flex; flex-direction: column; gap: 0.35rem; padding: 1.25rem 1rem 2rem;">
+        <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}" style="display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: #e5e7eb; font-size: 1rem; font-weight: 600; padding: 0.75rem 1rem; border-radius: 12px; transition: background 0.2s ease, color 0.2s ease;"><i class="fas fa-home"></i> Home</a>
+        <a href="{{ url('/services') }}" class="{{ request()->is('services*') ? 'active' : '' }}" style="display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: #e5e7eb; font-size: 1rem; font-weight: 600; padding: 0.75rem 1rem; border-radius: 12px; transition: background 0.2s ease, color 0.2s ease; {{ request()->is('services*') ? 'background: rgba(255, 255, 255, 0.25); color: #ffffff; font-weight: 800;' : '' }}"><i class="fas fa-concierge-bell"></i> Services</a>
+        <a href="{{ url('/contact') }}" class="{{ request()->is('contact*') ? 'active' : '' }}" style="display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: #e5e7eb; font-size: 1rem; font-weight: 600; padding: 0.75rem 1rem; border-radius: 12px; transition: background 0.2s ease, color 0.2s ease;"><i class="fas fa-envelope"></i> Contact</a>
+    </nav>
+</aside>
 
-    <!-- Date/time always visible on right (outside collapse) -->
-    <span class="navbar-text text-white ms-auto" id="datetime"></span>
-
-  </div>
-</nav>
+<style>
+.nav-links a:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+}
+@media (max-width: 768px) {
+    .toggle-btn { display: flex !important; }
+    .sidenav { transform: translateX(-100%); }
+    .sidenav.active { transform: translateX(0); }
+    body { margin-left: 0 !important; }
+}
+</style>
     {{-- 🔹 Service Info --}}
     <div class="container mx-auto px-4 py-8 max-w-4xl">
         <div class="bg-white p-6 rounded shadow-sm border border-gray-300">
@@ -170,6 +169,40 @@ window.addEventListener('scroll', () => {
 });
 
   </script>
+  
+<script>
+function toggleSidebar() {
+    const sidenav = document.getElementById('sidenav');
+    if (!sidenav) return;
+    sidenav.classList.toggle('active');
+}
+
+// Update sidebar date and time
+function updateSidebarDateTime() {
+    const now = new Date();
+    const dateEl = document.getElementById('sidebarDate');
+    const timeEl = document.getElementById('sidebarTime');
+    
+    if (dateEl) {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateEl.textContent = now.toLocaleDateString('en-US', options);
+    }
+    
+    if (timeEl) {
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds().toString().padStart(2, '0');
+        timeEl.textContent = `${hours}:${minutes}:${seconds}`;
+    }
+}
+
+// Update date/time immediately and then every second
+document.addEventListener('DOMContentLoaded', function() {
+    updateSidebarDateTime();
+    setInterval(updateSidebarDateTime, 1000);
+});
+</script>
+  
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

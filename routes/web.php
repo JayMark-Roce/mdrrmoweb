@@ -141,6 +141,7 @@ Route::prefix('admin/cases')->middleware(['auth'])->group(function () {
     Route::get('/needing-redeployment', [CaseController::class, 'getCasesNeedingRedeployment'])->name('admin.cases.needing-redeployment');
     Route::get('/recent-actions', [CaseController::class, 'getRecentDriverActions'])->name('admin.cases.recent-actions');
     Route::get('/{case}', [CaseController::class, 'show'])->name('admin.cases.show');
+    Route::patch('/{case}', [CaseController::class, 'update'])->name('admin.cases.update');
     Route::delete('/{case}', [CaseController::class, 'destroy'])->name('admin.cases.destroy');
     Route::post('/{case}/archive', [CaseController::class, 'archive'])->name('admin.cases.archive');
     Route::post('/archived/{archivedCase}/restore', [CaseController::class, 'restore'])->name('admin.cases.restore');
@@ -575,3 +576,29 @@ Route::prefix('admin/pairing')->middleware(['auth'])->group(function () {
     Route::post('/driver-ambulance/{id}/complete', [PairingController::class, 'completeDriverAmbulancePairing'])->name('admin.pairing.driver-ambulance.complete');
     Route::post('/driver-ambulance/{id}/cancel', [PairingController::class, 'cancelDriverAmbulancePairing'])->name('admin.pairing.driver-ambulance.cancel');
 });
+
+
+
+//COLLAB
+
+use App\Http\Controllers\ReportedCasesController;
+use App\Http\Controllers\PushNotificationController;
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/reported-cases', [ReportedCasesController::class, 'index'])
+        ->name('reported-cases');
+    Route::post('/admin/reports/{id}/status', [ReportedCasesController::class, 'updateStatus'])->name('admin.reports.updateStatus');
+});
+Route::get('/reverse-geocode', function () {
+    $lat = request('lat');
+    $lon = request('lon');
+
+    $url = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=$lat&lon=$lon";
+
+    $response = Http::withHeaders([
+        'User-Agent' => 'Laravel-App'
+    ])->get($url);
+
+    return $response->json();
+});
+Route::post('/send-push', [PushNotificationController::class, 'send']);

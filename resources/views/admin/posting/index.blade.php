@@ -16,6 +16,41 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 
     <!-- Vite for Tailwind/JS if needed -->
+    <style>
+        .nav-links {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 1rem !important;
+            width: 100% !important;
+        }
+
+        .nav-links a {
+            text-decoration: none !important;
+            color: white !important;
+            font-size: 1rem !important;
+            font-weight: 600 !important;
+            padding: 0.75rem 1rem !important;
+            border-radius: 8px !important;
+            transition: background-color 0.2s !important;
+            display: block !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .nav-links i {
+            margin-right: 0.5rem !important;
+        }
+
+        .nav-links a:hover {
+            background-color: #f28c28 !important;
+            color: #0c2d5a !important;
+        }
+
+        .nav-links a.active {
+            background-color: #f28c28 !important;
+            color: #0c2d5a !important;
+        }
+    </style>
 
 </head>
 <body class="posting-no-scroll">
@@ -27,24 +62,24 @@
     <!-- Sidenav -->
     <aside class="sidenav" id="sidenav">
     <div class="logo-container" style="display: flex; flex-direction: column; align-items: center;">
-        <img src="{{ asset('image/mdrrmologo.jpg') }}" alt="Logo" class="logo-img" style="display: block; margin: 0 auto;">
+        <img src="{{ asset('image/LOGOMDRRMO.png') }}" alt="Logo" class="logo-img" style="display: block; margin: 0 auto;">
         <div style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 800; color: #ffffff; letter-spacing: .5px;">SILANG MDRRMO</div>
+        <div id="sidebarDateTime" style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 600; color: rgba(255, 255, 255, 0.85); font-size: 0.75rem; letter-spacing: 0.3px; padding: 0 12px;">
+            <div id="sidebarDate" style="margin-bottom: 4px;"></div>
+            <div id="sidebarTime" style="font-weight: 700; font-size: 0.8rem;"></div>
+        </div>
     </div>
     <nav class="nav-links">
-    <a href="{{ route('dashboard') }}" class="{{ request()->is('dashboard') ? 'active' : '' }}"><i class="fas fa-chart-pie"></i> Dashboard</a>
-      <a href="{{ url('/admin/posting') }}" class="{{ request()->is('admin/posting*') ? 'active' : '' }}"><i class="fas fa-pen"></i> Posting</a>
-      <a href="{{ url('/admin/pairing') }}" class="{{ request()->is('admin/pairing') ? 'active' : '' }}"><i class="fas fa-link"></i> Pairing</a>
-      <a href="{{ url('/admin/drivers') }}" class="{{ request()->is('admin/drivers*') ? 'active' : '' }}"><i class="fas fa-car"></i> Drivers</a>
-      <a href="{{ url('/admin/medics') }}" class="{{ request()->is('admin/medics*') ? 'active' : '' }}"><i class="fas fa-plus"></i> Create</a>
-      <a href="{{ url('/admin/gps') }}" class="{{ request()->is('admin/gps') ? 'active' : '' }}"><i class="fas fa-map-marker-alt mr-1"></i> GPS Tracker</a>
-        <div class="logout-form">
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit">
-                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                </button>
-            </form>
-        </div>
+        <a href="{{ route('dashboard') }}" class="{{ request()->is('dashboard') ? 'active' : '' }}"><i class="fas fa-chart-pie"></i> Dashboard</a>
+        @if(auth()->check())
+            <a href="{{ url('/admin/pairing') }}" class="{{ request()->is('admin/pairing') ? 'active' : '' }}"><i class="fas fa-link"></i> Pairing</a>
+            <a href="{{ url('/admin/drivers') }}" class="{{ request()->is('admin/drivers*') ? 'active' : '' }}"><i class="fas fa-car"></i> Drivers</a>
+            <a href="{{ url('/admin/medics') }}" class="{{ request()->is('admin/medics*') ? 'active' : '' }}"><i class="fas fa-plus"></i> Create</a>
+            <a href="{{ url('/admin/gps') }}" class="{{ request()->is('admin/gps') ? 'active' : '' }}"><i class="fas fa-map-marker-alt mr-1"></i> GPS Tracker</a>
+            <a href="{{ url('/admin/reports') }}" class="{{ request()->is('admin/reports*') ? 'active' : '' }}"><i class="fas fa-file-alt"></i> Reports</a>
+        @else
+            <a href="{{ route('login') }}"><i class="fas fa-sign-in-alt"></i> Login</a>
+        @endif
     </nav>
 </aside>
 
@@ -741,6 +776,33 @@
       showPostingError(@json($errors->first()));
     @endif
   })();
+</script>
+
+<script>
+// Update sidebar date and time
+function updateSidebarDateTime() {
+    const now = new Date();
+    const dateEl = document.getElementById('sidebarDate');
+    const timeEl = document.getElementById('sidebarTime');
+    
+    if (dateEl) {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateEl.textContent = now.toLocaleDateString('en-US', options);
+    }
+    
+    if (timeEl) {
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds().toString().padStart(2, '0');
+        timeEl.textContent = `${hours}:${minutes}:${seconds}`;
+    }
+}
+
+// Update date/time immediately and then every second
+document.addEventListener('DOMContentLoaded', function() {
+    updateSidebarDateTime();
+    setInterval(updateSidebarDateTime, 1000);
+});
 </script>
 
 </body>

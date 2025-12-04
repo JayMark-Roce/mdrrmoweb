@@ -364,6 +364,41 @@ class CaseController extends Controller
     }
 
     /**
+     * Update core case details from the GPS case details quick-edit sheet.
+     */
+    public function update(Request $request, EmergencyCase $case)
+    {
+        $validated = $request->validate([
+            'priority' => 'nullable|string|max:50',
+            'status' => 'nullable|string|in:Pending,Accepted,In Progress,Completed,Cancelled',
+            'caller_name' => 'nullable|string|max:255',
+            'caller_contact' => 'nullable|string|max:255',
+            'name' => 'nullable|string|max:255',
+            'contact' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:500',
+            'landmark' => 'nullable|string|max:255',
+            'to_go_to_address' => 'nullable|string|max:500',
+            'to_go_to_landmark' => 'nullable|string|max:255',
+            // Notes are handled in the UI but are not yet a persisted field on the model
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        // Do not attempt to fill non-column helper fields
+        unset($validated['notes']);
+
+        $case->fill($validated);
+        $case->save();
+
+        // Reload relationships for a consistent response with other endpoints
+        $case->load('ambulance');
+
+        return response()->json([
+            'success' => true,
+            'case' => $case,
+        ]);
+    }
+
+    /**
      * Update case status (for driver acceptance)
      */
     public function updateStatus(Request $request, EmergencyCase $case)

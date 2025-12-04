@@ -189,27 +189,91 @@ html, body {
     gap: 0.35rem;
 }
 
-.hero-insight-card small {
-    font-size: 0.75rem;
+.hero-insight-head {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.hero-insight-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: #ffffff;
+}
+
+.hero-insight-icon.success {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.hero-insight-icon.accent {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+.hero-insight-title {
+    display: block;
+    font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     font-weight: 800;
     color: var(--muted);
 }
 
-.hero-insight-card h4 {
-    margin: 0;
-    font-size: 2rem;
-    font-weight: 900;
+.hero-insight-subtitle {
+    margin: 0.2rem 0 0;
+    font-size: 1rem;
+    font-weight: 800;
     color: var(--heading);
 }
 
-.hero-insight-card .insight-trend {
-    display: inline-flex;
+.hero-stat-split {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+}
+
+.hero-stat-split.single {
+    display: flex;
+    justify-content: center;
+    gap: 0.85rem;
+}
+
+.hero-stat {
+    background: rgba(248, 250, 252, 0.85);
+    border-radius: 14px;
+    padding: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    border: 1px solid rgba(226, 232, 240, 0.6);
     align-items: center;
-    gap: 0.4rem;
+    text-align: center;
+}
+
+.hero-stat-value {
+    font-size: 1.75rem;
+    font-weight: 900;
+    color: var(--heading);
+    line-height: 1;
+}
+
+.hero-stat-label {
+    font-size: 0.8rem;
     font-weight: 700;
-    font-size: 0.9rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+@media (max-width: 640px) {
+    .hero-stat-split {
+        grid-template-columns: 1fr;
+    }
 }
 
 .table-section {
@@ -394,6 +458,7 @@ html, body {
 .status-badge.completed {
     background: rgba(16, 185, 129, 0.15);
     color: #059669;
+
 }
 
 .status-badge.cancelled {
@@ -408,38 +473,65 @@ html, body {
 
 .action-buttons {
     display: flex;
-    gap: 0.6rem;
     flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 .action-btn {
-    border: none;
-    border-radius: 10px;
-    padding: 0.5rem 1.1rem;
-    font-size: 0.82rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.55rem 1rem;
+    font-size: 0.8rem;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
     font-weight: 800;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.01em;
+    background: #ffffff;
+    color: #0f172a;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    height: 50px;
+    width: 120px;
+}
+
+.action-btn .btn-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    background: rgba(148, 163, 184, 0.2);
+    color: inherit;
 }
 
 .action-btn.complete {
-    background: rgba(16, 185, 129, 0.12);
-    color: #047857;
-    box-shadow: 0 8px 18px rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.5);
+    background: linear-gradient(135deg, #059669, #10b981);
+    color: #ffffff;
+    box-shadow: 0 12px 26px rgba(16, 185, 129, 0.3);
+}
+
+.action-btn.complete .btn-icon {
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .action-btn.cancel {
-    background: rgba(239, 68, 68, 0.12);
-    color: #b91c1c;
-    box-shadow: 0 8px 18px rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.45);
+    background: #ffffff;
+    color: #b42318;
+}
+
+.action-btn.cancel .btn-icon {
+    background: rgba(239, 68, 68, 0.15);
 }
 
 .action-btn:hover {
     transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.15);
 }
 
 .empty-state {
@@ -863,13 +955,16 @@ body .nav-links a.active {
 <!-- Sidenav -->
 <aside class="sidenav" id="sidenav">
     <div class="logo-container" style="display: flex; flex-direction: column; align-items: center;">
-        <img src="{{ asset('image/mdrrmologo.jpg') }}" alt="Logo" class="logo-img" style="display: block; margin: 0 auto;">
+        <img src="{{ asset('image/LOGOMDRRMO.png') }}" alt="Logo" class="logo-img" style="display: block; margin: 0 auto;">
         <div style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 800; color: #ffffff; letter-spacing: .5px;">SILANG MDRRMO</div>
+        <div id="sidebarDateTime" style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 600; color: rgba(255, 255, 255, 0.85); font-size: 0.75rem; letter-spacing: 0.3px; padding: 0 12px;">
+            <div id="sidebarDate" style="margin-bottom: 4px;"></div>
+            <div id="sidebarTime" style="font-weight: 700; font-size: 0.8rem;"></div>
+        </div>
     </div>
     <nav class="nav-links">
         <a href="{{ route('dashboard') }}" class="{{ request()->is('dashboard') ? 'active' : '' }}"><i class="fas fa-chart-pie"></i> Dashboard</a>
         @if(auth()->check())
-            <span class="nav-link-locked" style="display: block; text-decoration: none; color: #9ca3af; font-size: 1rem; font-weight: 600; padding: 0.75rem 1rem; border-radius: 8px; cursor: not-allowed; opacity: 0.6; position: relative;"><i class="fas fa-pen"></i> Posting <i class="fas fa-lock" style="font-size: 10px; margin-left: 8px; opacity: 0.7;"></i></span>
             <a href="{{ url('/admin/pairing') }}" class="{{ request()->is('admin/pairing') ? 'active' : '' }}"><i class="fas fa-link"></i> Pairing</a>
             <a href="{{ url('/admin/drivers') }}" class="{{ request()->is('admin/drivers*') ? 'active' : '' }}"><i class="fas fa-car"></i> Drivers</a>
             <a href="{{ url('/admin/medics') }}" class="{{ request()->is('admin/medics*') ? 'active' : '' }}"><i class="fas fa-plus"></i> Create</a>
@@ -938,14 +1033,38 @@ body .nav-links a.active {
             @endphp
             <div class="hero-insights">
                 <article class="hero-insight-card">
-                    <small>Driver-Medic Teams</small>
-                    <h4>{{ $groupedDriverMedicPairings->count() }}</h4>
-                    <div class="insight-trend"><i class="fas fa-user-md" style="color: var(--success);"></i><span>{{ $activeDriverMedic }} active</span></div>
+                    <div class="hero-insight-head">
+                        <div class="hero-insight-icon success">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <div>
+                            <span class="hero-insight-title">Driver-Medic Teams</span>
+                            <p class="hero-insight-subtitle">Coordinated crews</p>
+                        </div>
+                    </div>
+                    <div class="hero-stat-split single">
+                        <div class="hero-stat">
+                            <span class="hero-stat-value">{{ $activeDriverMedic }}</span>
+                            <span class="hero-stat-label">Active</span>
+                        </div>
+                    </div>
                 </article>
                 <article class="hero-insight-card">
-                    <small>Driver-Ambulance</small>
-                    <h4>{{ $groupedDriverAmbulancePairings->count() }}</h4>
-                    <div class="insight-trend"><i class="fas fa-ambulance" style="color: var(--accent);"></i><span>{{ $activeDriverAmbulance }} active</span></div>
+                    <div class="hero-insight-head">
+                        <div class="hero-insight-icon accent">
+                            <i class="fas fa-ambulance"></i>
+                        </div>
+                        <div>
+                            <span class="hero-insight-title">Driver-Ambulance</span>
+                            <p class="hero-insight-subtitle">Fleet readiness</p>
+                        </div>
+                    </div>
+                    <div class="hero-stat-split single">
+                        <div class="hero-stat">
+                            <span class="hero-stat-value">{{ $activeDriverAmbulance }}</span>
+                            <span class="hero-stat-label">Active</span>
+                        </div>
+                    </div>
                 </article>
             </div>
         </section>
@@ -1063,11 +1182,13 @@ body .nav-links a.active {
                                 <td>
                                     @if($isActive)
                                         <div class="action-buttons">
-                                            <button onclick="openActionModal('driver_medic', '{{ $groupKey }}', 'complete')" class="action-btn complete">
-                                                Mark Complete
+                                            <button type="button" onclick="bulkActionGroup('driver_medic', '{{ $groupKey }}', 'complete')" class="action-btn complete">
+                                                <span class="btn-icon"><i class="fas fa-check"></i></span>
+                                                <span>Mark Complete</span>
                                             </button>
-                                            <button onclick="openActionModal('driver_medic', '{{ $groupKey }}', 'cancel')" class="action-btn cancel">
-                                                Cancel Pairing
+                                            <button type="button" onclick="bulkActionGroup('driver_medic', '{{ $groupKey }}', 'cancel')" class="action-btn cancel">
+                                                <span class="btn-icon"><i class="fas fa-ban"></i></span>
+                                                <span>Cancel Pairing</span>
                                             </button>
                                         </div>
                                     @else
@@ -1191,11 +1312,13 @@ body .nav-links a.active {
                                     <td>
                                         @if($isActive)
                                             <div class="action-buttons">
-                                                <button onclick="openActionModal('driver_ambulance', '{{ $groupKey }}', 'complete')" class="action-btn complete">
-                                                    Mark Complete
+                                                <button type="button" onclick="bulkActionGroup('driver_ambulance', '{{ $groupKey }}', 'complete')" class="action-btn complete">
+                                                    <span class="btn-icon"><i class="fas fa-check"></i></span>
+                                                    <span>Mark Complete</span>
                                                 </button>
-                                                <button onclick="openActionModal('driver_ambulance', '{{ $groupKey }}', 'cancel')" class="action-btn cancel">
-                                                    Cancel Pairing
+                                                <button type="button" onclick="bulkActionGroup('driver_ambulance', '{{ $groupKey }}', 'cancel')" class="action-btn cancel">
+                                                    <span class="btn-icon"><i class="fas fa-ban"></i></span>
+                                                    <span>Cancel Pairing</span>
                                                 </button>
                                             </div>
                                         @else
@@ -1414,6 +1537,31 @@ function toggleSidebar() {
         sidenav.classList.toggle('active');
     }
 }
+
+// Update sidebar date and time
+function updateSidebarDateTime() {
+    const now = new Date();
+    const dateEl = document.getElementById('sidebarDate');
+    const timeEl = document.getElementById('sidebarTime');
+    
+    if (dateEl) {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateEl.textContent = now.toLocaleDateString('en-US', options);
+    }
+    
+    if (timeEl) {
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds().toString().padStart(2, '0');
+        timeEl.textContent = `${hours}:${minutes}:${seconds}`;
+    }
+}
+
+// Update date/time immediately and then every second
+document.addEventListener('DOMContentLoaded', function() {
+    updateSidebarDateTime();
+    setInterval(updateSidebarDateTime, 1000);
+});
 
 // Modal Functions
 function openPairingTypeModal() {
@@ -1976,11 +2124,13 @@ document.addEventListener('DOMContentLoaded', function(){
             
             const actionsHtml = pairing.isActive 
                 ? `<div class="action-buttons">
-                    <button onclick="bulkActionGroup('driver_medic', '${pairing.groupKey}', 'complete')" class="action-btn complete" title="Complete">
-                        <i class="fas fa-check"></i>
+                    <button type="button" onclick="bulkActionGroup('driver_medic', '${pairing.groupKey}', 'complete')" class="action-btn complete" title="Mark Complete">
+                        <span class="btn-icon"><i class="fas fa-check"></i></span>
+                        <span>Mark Complete</span>
                     </button>
-                    <button onclick="bulkActionGroup('driver_medic', '${pairing.groupKey}', 'cancel')" class="action-btn cancel" title="Cancel">
-                        <i class="fas fa-times"></i>
+                    <button type="button" onclick="bulkActionGroup('driver_medic', '${pairing.groupKey}', 'cancel')" class="action-btn cancel" title="Cancel Pairing">
+                        <span class="btn-icon"><i class="fas fa-ban"></i></span>
+                        <span>Cancel Pairing</span>
                     </button>
                 </div>`
                 : '<span style="color: var(--muted); font-size: 0.85rem;">No actions</span>';
@@ -2034,11 +2184,13 @@ document.addEventListener('DOMContentLoaded', function(){
             
             const actionsHtml = pairing.isActive 
                 ? `<div class="action-buttons">
-                    <button onclick="bulkActionGroup('driver_ambulance', '${pairing.groupKey}', 'complete')" class="action-btn complete" title="Complete">
-                        <i class="fas fa-check"></i>
+                    <button type="button" onclick="bulkActionGroup('driver_ambulance', '${pairing.groupKey}', 'complete')" class="action-btn complete" title="Mark Complete">
+                        <span class="btn-icon"><i class="fas fa-check"></i></span>
+                        <span>Mark Complete</span>
                     </button>
-                    <button onclick="bulkActionGroup('driver_ambulance', '${pairing.groupKey}', 'cancel')" class="action-btn cancel" title="Cancel">
-                        <i class="fas fa-times"></i>
+                    <button type="button" onclick="bulkActionGroup('driver_ambulance', '${pairing.groupKey}', 'cancel')" class="action-btn cancel" title="Cancel Pairing">
+                        <span class="btn-icon"><i class="fas fa-ban"></i></span>
+                        <span>Cancel Pairing</span>
                     </button>
                 </div>`
                 : '<span style="color: var(--muted); font-size: 0.85rem;">No actions</span>';
