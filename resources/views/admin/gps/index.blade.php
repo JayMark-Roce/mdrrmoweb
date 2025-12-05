@@ -2901,7 +2901,29 @@ body.fullscreen-mode::before {
         border-radius: 50%;
         box-shadow:
             inset 0 0 0 3px rgba(255, 255, 255, 0.35),
-            0 12px 22px rgba(15, 23, 42, 0.25);
+            0 12px 22px rgba(15, 23, 42, 0.25),
+            0 0 0 4px rgba(217, 70, 239, 0.2); /* Purple glow for better visibility */
+    }
+    
+    /* Enhanced visibility for destination markers */
+    .neo-drop-pin.destination i {
+        animation: pulseGlow 2s ease-in-out infinite;
+        filter: drop-shadow(0 4px 8px rgba(217, 70, 239, 0.4));
+    }
+    
+    @keyframes pulseGlow {
+        0%, 100% {
+            box-shadow:
+                inset 0 0 0 3px rgba(255, 255, 255, 0.35),
+                0 12px 22px rgba(15, 23, 42, 0.25),
+                0 0 0 4px rgba(217, 70, 239, 0.2);
+        }
+        50% {
+            box-shadow:
+                inset 0 0 0 3px rgba(255, 255, 255, 0.35),
+                0 12px 22px rgba(15, 23, 42, 0.25),
+                0 0 0 8px rgba(217, 70, 239, 0.3);
+        }
     }
 
     .map-modal {
@@ -2964,6 +2986,337 @@ body.fullscreen-mode::before {
         }
     }
 
+    /* Driver Selection Styles */
+    .driver-selection-container {
+        max-height: 280px;
+        overflow-y: auto;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 1rem;
+        background: linear-gradient(to bottom, #ffffff, #f8fafc);
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+    }
+
+    .driver-selection-container::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .driver-selection-container::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+    }
+
+    .driver-selection-container::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+    }
+
+    .driver-selection-container::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+
+    .driver-option {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        background: #ffffff;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        position: relative;
+    }
+
+    .driver-option:last-child {
+        margin-bottom: 0;
+    }
+
+    .driver-option--enabled:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transform: translateY(-1px);
+    }
+
+    .driver-option--ready {
+        background: linear-gradient(135deg, #ffffff, #f0fdf4);
+        border-color: #bbf7d0;
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
+    }
+
+    .driver-option--ready:hover {
+        background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+        border-color: #86efac;
+        box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
+        transform: translateY(-2px);
+    }
+
+    .driver-option--disabled {
+        background: linear-gradient(to right, #fef2f2, #fee2e2);
+        border-color: #fecaca;
+        cursor: not-allowed;
+        opacity: 0.85;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    }
+
+    .driver-option__checkbox-wrapper {
+        position: relative;
+        flex-shrink: 0;
+        margin-top: 0.125rem;
+    }
+
+    .driver-option__checkbox {
+        width: 20px;
+        height: 20px;
+        margin: 0;
+        cursor: pointer;
+        accent-color: #2563eb;
+        transform: scale(1.1);
+    }
+
+    .driver-option__checkbox:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+
+    .driver-option__status-indicator {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    }
+
+    .driver-option__status-indicator--enabled {
+        background: #10b981;
+        color: #ffffff;
+    }
+
+    .driver-option__status-indicator--disabled {
+        background: #ef4444;
+        color: #ffffff;
+    }
+
+    .driver-option__content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .driver-option__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.5rem;
+    }
+
+    .driver-option__name-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 0.375rem;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .driver-option__name {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #1e293b;
+    }
+
+    .driver-option--disabled .driver-option__name {
+        color: #991b1b;
+    }
+
+    .driver-option__online-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.25rem 0.625rem;
+        background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+        color: #166534;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border: 1px solid #86efac;
+        width: fit-content;
+        box-shadow: 0 1px 2px rgba(22, 101, 52, 0.1);
+    }
+
+    .driver-option__online-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #10b981;
+        display: inline-block;
+        box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2), 0 0 4px rgba(16, 185, 129, 0.4);
+        animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+        0%, 100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+        50% {
+            opacity: 0.8;
+            transform: scale(1.1);
+        }
+    }
+
+    .driver-option__icon {
+        color: #2563eb;
+        font-size: 1.1rem;
+    }
+
+    .driver-option--disabled .driver-option__icon {
+        color: #dc2626;
+    }
+
+    .driver-option__ambulance-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.375rem 0.75rem;
+        background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+        color: #1e40af;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border: 1px solid #93c5fd;
+        box-shadow: 0 1px 2px rgba(30, 64, 175, 0.1);
+    }
+
+    .driver-option__ambulance-badge i {
+        font-size: 0.75rem;
+    }
+
+    .driver-option__warning {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background: linear-gradient(135deg, #fee2e2, #fecaca);
+        border: 1px solid #fca5a5;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #991b1b;
+        margin-top: 0.5rem;
+        box-shadow: 0 1px 2px rgba(153, 27, 27, 0.1);
+    }
+
+    .driver-option__warning i {
+        font-size: 0.875rem;
+        color: #dc2626;
+    }
+
+    .driver-option__info {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        border: 1px solid #fcd34d;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        color: #92400e;
+        margin-top: 0.5rem;
+        box-shadow: 0 1px 2px rgba(146, 64, 14, 0.1);
+    }
+
+    .driver-option__info i {
+        font-size: 0.875rem;
+        color: #f59e0b;
+        margin-top: 0.125rem;
+        flex-shrink: 0;
+    }
+
+    .driver-option__link {
+        color: #2563eb;
+        text-decoration: underline;
+        font-weight: 600;
+        transition: color 0.2s ease;
+    }
+
+    .driver-option__link:hover {
+        color: #1d4ed8;
+    }
+
+    .driver-option__ready-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+        border: 1px solid #86efac;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #166534;
+        margin-top: 0.5rem;
+        box-shadow: 0 1px 3px rgba(16, 185, 129, 0.15);
+    }
+
+    .driver-option__ready-indicator i {
+        font-size: 0.875rem;
+        color: #10b981;
+    }
+
+    .driver-selection-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+        text-align: center;
+        color: #64748b;
+        gap: 0.5rem;
+    }
+
+    .driver-selection-empty i {
+        font-size: 2rem;
+        color: #94a3b8;
+        margin-bottom: 0.5rem;
+    }
+
+    .driver-selection-empty span {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+        .driver-option {
+            padding: 0.875rem;
+        }
+
+        .driver-option__header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .driver-option__name-wrapper {
+            width: 100%;
+        }
+
+        .driver-option__ambulance-badge {
+            align-self: flex-start;
+        }
+    }
+
 </style>
 </head>
 
@@ -3006,17 +3359,13 @@ body.fullscreen-mode::before {
         </div>
     </div>
     <nav class="nav-links">
-    <a href="{{ route('dashboard') }}" class="{{ request()->is('dashboard') ? 'active' : '' }}"><i class="fas fa-chart-pie"></i> Dashboard</a>
-      @if(auth()->check())
-        <a href="{{ url('/admin/pairing') }}" class="{{ request()->is('admin/pairing') ? 'active' : '' }}"><i class="fas fa-link"></i> Pairing</a>
-        <a href="{{ url('/admin/drivers') }}" class="{{ request()->is('admin/drivers*') ? 'active' : '' }}"><i class="fas fa-car"></i> Drivers</a>
-        <a href="{{ url('/admin/medics') }}" class="{{ request()->is('admin/medics*') ? 'active' : '' }}"><i class="fas fa-plus"></i> Create</a>
-        <a href="{{ url('/admin/gps') }}" class="{{ request()->is('admin/gps') ? 'active' : '' }}"><i class="fas fa-map-marker-alt mr-1"></i> GPS Tracker</a>
-        <a href="{{ url('/admin/reports') }}" class="{{ request()->is('admin/reports*') ? 'active' : '' }}"><i class="fas fa-file-alt"></i> Reports</a>
-        
-      @else
-        <a href="{{ route('login') }}"><i class="fas fa-sign-in-alt"></i> Login</a>
-      @endif
+     <a href="{{ route('dashboard') }}" class="{{ request()->is('dashboard') ? 'active' : '' }}"><i class="fas fa-chart-pie"></i> Dashboard</a>
+      <a href="{{ url('/admin/pairing') }}" class="{{ request()->is('admin/pairing') ? 'active' : '' }}"><i class="fas fa-link"></i> Pairing</a>
+      <a href="{{ url('/admin/drivers') }}" class="{{ request()->is('admin/drivers*') ? 'active' : '' }}"><i class="fas fa-car"></i> Drivers</a>
+      <a href="{{ url('/admin/medics') }}" class="{{ request()->is('admin/medics*') ? 'active' : '' }}"><i class="fas fa-plus"></i> Create</a>
+      <a href="{{ url('/admin/gps') }}" class="{{ request()->is('admin/gps') ? 'active' : '' }}"><i class="fas fa-map-marker-alt mr-1"></i> GPS Tracker</a>
+      <a href="{{ url('/admin/reports') }}" class="{{ request()->is('admin/reports*') ? 'active' : '' }}"><i class="fas fa-file-alt"></i> Reports</a>
+      <a href="{{ route('reported-cases') }}" class="{{ request()->routeIs('reported-cases') ? 'active' : '' }}"><i class="fas fa-file-alt"></i> Reported Cases</a>
     </nav>
 </aside>
 
@@ -3548,7 +3897,7 @@ body.fullscreen-mode::before {
                                         Select Driver *
                                         <span id="selected-count" style="color: #6b7280; font-size: 0.8rem; font-weight:600;">(0 selected)</span>
                                     </label>
-                                    <div id="driver-checkboxes" style="max-height: 220px; overflow-y: auto; border: 1px solid #d1d5db; border-radius: 12px; padding: 0.75rem; background: #f9fafb;">
+                                    <div id="driver-checkboxes" class="driver-selection-container">
                                         @forelse($driversWithAmbulances as $driverInfo)
                                             @php
                                                 $hasAmbulance = !empty($driverInfo['ambulance_id']) && !empty($driverInfo['ambulance_name']);
@@ -3557,41 +3906,69 @@ body.fullscreen-mode::before {
                                                 $isDisabled = $isOffline || !$hasAmbulance;
                                                 $disabledReason = $isOffline ? 'Driver is Offline' : ($hasAmbulance ? '' : 'No Ambulance Assigned');
                                             @endphp
-                                            <label style="display: flex; align-items: center; padding: 0.5rem; margin-bottom: 0.5rem; background: {{ $isDisabled ? '#fef2f2' : 'white' }}; border-radius: 8px; cursor: {{ $isDisabled ? 'not-allowed' : 'pointer' }}; border: 1px solid {{ $isDisabled ? '#fecaca' : '#e5e7eb' }}; transition: all 0.2s ease; opacity: {{ $isDisabled ? '0.7' : '1' }};" 
-                                                   onmouseover="this.style.background='{{ $isDisabled ? '#fef2f2' : '#f3f4f6' }}'" 
-                                                   onmouseout="this.style.background='{{ $isDisabled ? '#fef2f2' : 'white' }}'">
-                                                <input type="checkbox" name="drivers[]" value="{{ $driverInfo['driver_id'] }}" 
-                                                       style="margin-right: 0.75rem; transform: scale(1.1);" 
-                                                       onchange="updateSelectedCount()"
-                                                       {{ $isDisabled ? 'disabled' : '' }}
-                                                       data-driver-id="{{ $driverInfo['driver_id'] }}"
-                                                       data-ambulance-id="{{ $driverInfo['ambulance_id'] ?? '' }}">
-                                                <div style="flex: 1;">
-                                                    <div style="font-weight: 600; color: {{ $isDisabled ? '#991b1b' : '#1f2937' }};">
-                                                        {{ $driverInfo['driver_name'] }}@if($hasAmbulance) - {{ $driverInfo['ambulance_name'] }}@endif
-                                                        @if($isDisabled && $disabledReason)
-                                                            <span style="font-size: 0.75rem; color: #dc2626; font-weight: 700; margin-left: 0.5rem;">
-                                                                <i class="fas fa-exclamation-triangle"></i> {{ $disabledReason }}
-                                                            </span>
+                                            <label class="driver-option {{ $isDisabled ? 'driver-option--disabled' : 'driver-option--enabled' }} {{ !$isDisabled && $hasAmbulance ? 'driver-option--ready' : '' }}" 
+                                                   onmouseover="if(!this.classList.contains('driver-option--disabled')) this.style.background='{{ !$isDisabled && $hasAmbulance ? '#f0fdf4' : '#f8fafc' }}'; this.style.borderColor='{{ !$isDisabled && $hasAmbulance ? '#86efac' : '#cbd5e1' }}';" 
+                                                   onmouseout="if(!this.classList.contains('driver-option--disabled')) this.style.background='{{ !$isDisabled && $hasAmbulance ? '#ffffff' : '#ffffff' }}'; this.style.borderColor='{{ !$isDisabled && $hasAmbulance ? '#bbf7d0' : '#e2e8f0' }}';">
+                                                <div class="driver-option__checkbox-wrapper">
+                                                    <input type="checkbox" name="drivers[]" value="{{ $driverInfo['driver_id'] }}" 
+                                                           class="driver-option__checkbox"
+                                                           onchange="updateSelectedCount()"
+                                                           {{ $isDisabled ? 'disabled' : '' }}
+                                                           data-driver-id="{{ $driverInfo['driver_id'] }}"
+                                                           data-ambulance-id="{{ $driverInfo['ambulance_id'] ?? '' }}">
+                                                    <div class="driver-option__status-indicator {{ $isDisabled ? 'driver-option__status-indicator--disabled' : 'driver-option__status-indicator--enabled' }}">
+                                                        @if($isDisabled)
+                                                            <i class="fas fa-ban"></i>
+                                                        @else
+                                                            <i class="fas fa-check-circle"></i>
                                                         @endif
                                                     </div>
-                                                    @if(!$hasAmbulance && !$isOffline)
-                                                        <div style="font-size: 0.75rem; color: #f59e0b; margin-top: 0.25rem;">
-                                                            <i class="fas fa-info-circle"></i> Pair this driver with an ambulance in <a href="{{ route('admin.pairing.index') }}" target="_blank" style="color: #2563eb; text-decoration: underline;">Pairing Management</a>
+                                                </div>
+                                                <div class="driver-option__content">
+                                                    <div class="driver-option__header">
+                                                        <div class="driver-option__name-wrapper">
+                                                            <div class="driver-option__name">
+                                                                <i class="fas fa-user-circle driver-option__icon"></i>
+                                                                <span>{{ $driverInfo['driver_name'] }}</span>
+                                                            </div>
+                                                            @if(!$isDisabled && $hasAmbulance)
+                                                                <div class="driver-option__online-badge">
+                                                                    <span class="driver-option__online-dot"></span>
+                                                                    <span>Online</span>
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                        @if($hasAmbulance)
+                                                            <div class="driver-option__ambulance-badge">
+                                                                <i class="fas fa-ambulance"></i>
+                                                                <span>{{ $driverInfo['ambulance_name'] }}</span>
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                    @if($isDisabled && $disabledReason)
+                                                        <div class="driver-option__warning">
+                                                            <i class="fas fa-exclamation-circle"></i>
+                                                            <span>{{ $disabledReason }}</span>
                                                         </div>
                                                     @endif
-                                                    @if($hasAmbulance)
-                                                        <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 0.2rem;">
-                                                            <div id="case-count-{{ $driverInfo['ambulance_id'] }}" style="font-size: 0.75rem; color: #6b7280; background: #f3f4f6; padding: 0.2rem 0.4rem; border-radius: 4px;">
-                                                                Loading...
-                                                            </div>
+                                                    @if(!$hasAmbulance && !$isOffline)
+                                                        <div class="driver-option__info">
+                                                            <i class="fas fa-info-circle"></i>
+                                                            <span>Pair this driver with an ambulance in <a href="{{ route('admin.pairing.index') }}" target="_blank" class="driver-option__link">Pairing Management</a></span>
+                                                        </div>
+                                                    @endif
+                                                    @if(!$isDisabled && $hasAmbulance)
+                                                        <div class="driver-option__ready-indicator">
+                                                            <i class="fas fa-check-double"></i>
+                                                            <span>Ready to assign</span>
                                                         </div>
                                                     @endif
                                                 </div>
                                             </label>
                                         @empty
-                                            <div style="padding: 1rem; text-align: center; color: #6b7280;">
-                                                <i class="fas fa-info-circle"></i> No active drivers found.
+                                            <div class="driver-selection-empty">
+                                                <i class="fas fa-info-circle"></i>
+                                                <span>No active drivers found.</span>
                                             </div>
                                         @endforelse
                                     </div>
@@ -3616,6 +3993,39 @@ body.fullscreen-mode::before {
 
 <script>
     
+// Service Worker handling for development (localhost/127.0.0.1)
+// Unregister service worker if running on localhost to avoid HTTPS/HTTP conflicts
+(function handleServiceWorker() {
+    if ('serviceWorker' in navigator && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === '::1')) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            if (registrations.length > 0) {
+                console.log('Unregistering', registrations.length, 'service worker(s) for local development');
+                Promise.all(registrations.map(function(registration) {
+                    return registration.unregister().then(function(success) {
+                        if (success) {
+                            console.log('Service worker unregistered successfully');
+                        }
+                        return success;
+                    });
+                })).then(function() {
+                    // Clear all caches
+                    if ('caches' in window) {
+                        caches.keys().then(function(cacheNames) {
+                            return Promise.all(cacheNames.map(function(cacheName) {
+                                return caches.delete(cacheName);
+                            }));
+                        }).then(function() {
+                            console.log('All caches cleared. Please refresh the page.');
+                        });
+                    }
+                });
+            }
+        }).catch(function(error) {
+            console.log('Service worker unregistration error:', error);
+        });
+    }
+})();
+
 // Cleanup: remove deprecated modals if still present (avoids brief flash from cached DOM)
 (function removeDeprecatedModals() {
     try {
@@ -6055,7 +6465,8 @@ function showCaseConnectionLine(caseData) {
         if (!caseMarkers[destMarkerId]) {
             const destMarker = L.marker(destination, { 
                 icon: destinationIcon,
-                draggable: false
+                draggable: false,
+                zIndexOffset: 1000  // Ensure destination markers appear above other markers
             }).addTo(map);
             
             destMarker.bindTooltip(`Destination #${caseData.case_num}`, {
@@ -6176,8 +6587,12 @@ async function geocodeAndPinFromAddress(address, type = 'pickup') {
             window.destinationLatitude = lat;
             window.destinationLongitude = lng;
 
-            // Add destination marker
-            currentDestinationMarker = L.marker([lat, lng], { icon: destinationIcon, draggable: true }).addTo(map);
+            // Add destination marker with improved visibility
+            currentDestinationMarker = L.marker([lat, lng], { 
+                icon: destinationIcon, 
+                draggable: true,
+                zIndexOffset: 1000  // Ensure destination markers appear above other markers
+            }).addTo(map);
             // Label destination for the currently edited case if available
             if (typeof window.currentCaseNumber !== 'undefined' && window.currentCaseNumber !== null) {
                 currentDestinationMarker.bindTooltip(`Case ${window.currentCaseNumber} Destination`, {
@@ -6560,10 +6975,11 @@ map.on('click', async function (e) {
         window.destinationLatitude = e.latlng.lat;
         window.destinationLongitude = e.latlng.lng;
         
-        // Place destination marker
+        // Place destination marker with improved visibility
         currentDestinationMarker = L.marker([e.latlng.lat, e.latlng.lng], { 
             icon: destinationIcon,
-            draggable: true
+            draggable: true,
+            zIndexOffset: 1000  // Ensure destination markers appear above other markers
         }).addTo(map);
         // Label destination for the currently edited case if available
         if (typeof window.currentCaseNumber !== 'undefined' && window.currentCaseNumber !== null) {
@@ -7023,15 +7439,71 @@ document.getElementById('case-creation-form')?.addEventListener('submit', async 
             // Clear coordinates
             window.clickedLatitude = null;
             window.clickedLongitude = null;
+            window.destinationLatitude = null;
+            window.destinationLongitude = null;
+            
+            // Validate result structure
+            if (!result || !result.case_num) {
+                console.error('Invalid response structure:', result);
+                showNotification('Case created but failed to display on map. Please refresh the page.', 'warning');
+                return;
+            }
             
             // Add a persistent marker on the map for the new case
             const caseMarker = L.marker([formData.latitude, formData.longitude], { 
                 icon: createCaseIcon(result.case_num, false), // New cases start as pending (gray)
-                draggable: false
+                draggable: false,
+                zIndexOffset: 500  // Ensure case markers appear above base markers but below destination markers
             }).addTo(map);
             
             // Store case marker for future reference
             caseMarkers[result.case_num] = caseMarker;
+            
+            // Add geofence circle for pickup location
+            if (formData.latitude && formData.longitude) {
+                const pickupGeofenceCircle = L.circle([formData.latitude, formData.longitude], {
+                    radius: GEOFENCE_RADIUS,
+                    color: '#6b7280',
+                    fillColor: '#6b7280',
+                    fillOpacity: 0.2,
+                    weight: 2
+                }).addTo(map);
+                
+                geofenceCircles[`${result.case_num}_pickup`] = pickupGeofenceCircle;
+            }
+            
+            // Add destination marker and geofence circle if destination coordinates exist
+            if (formData.destination_latitude && formData.destination_longitude) {
+                const destLatLng = [parseFloat(formData.destination_latitude), parseFloat(formData.destination_longitude)];
+                
+                // Add geofence circle for destination
+                const destGeofenceCircle = L.circle(destLatLng, {
+                    radius: GEOFENCE_RADIUS,
+                    color: '#6b7280',
+                    fillColor: '#6b7280',
+                    fillOpacity: 0.2,
+                    weight: 2
+                }).addTo(map);
+                
+                geofenceCircles[`${result.case_num}_destination`] = destGeofenceCircle;
+                
+                // Add destination marker with improved visibility
+                const destKey = `dest_${result.case_num}`;
+                const destMarker = L.marker(destLatLng, { 
+                    icon: destinationIcon, 
+                    interactive: false,
+                    zIndexOffset: 1000  // Ensure destination markers appear above other markers
+                }).addTo(map);
+                
+                destMarker.bindTooltip(`Case ${result.case_num} Destination`, {
+                    permanent: true,
+                    direction: 'bottom',
+                    offset: [0, 18],
+                    className: 'case-label'
+                });
+                
+                caseMarkers[destKey] = destMarker;
+            }
             
             // Auto-fit bounds to show all markers including new case
             setTimeout(() => autoFitMapBounds(), 400);
@@ -7171,24 +7643,7 @@ function updateAmbulanceDropdown() {
         });
     }
     
-    // Update the checkbox form case counts - check all ambulance elements
-    document.querySelectorAll('[id^="case-count-"]').forEach(element => {
-        const ambulanceId = element.id.replace('case-count-', '');
-        const caseCount = ambulanceCaseCounts[ambulanceId] || 0;
-        element.textContent = `${caseCount} case${caseCount !== 1 ? 's' : ''}`;
-        
-        // Update color based on case count
-        if (caseCount === 0) {
-            element.style.background = '#f0fdf4';
-            element.style.color = '#166534';
-        } else if (caseCount <= 2) {
-            element.style.background = '#fef3c7';
-            element.style.color = '#92400e';
-        } else {
-            element.style.background = '#fee2e2';
-            element.style.color = '#dc2626';
-        }
-    });
+    // Case count display removed from driver selection
 }
 
 // Load existing cases (excluding completed ones)
@@ -7225,7 +7680,8 @@ async function loadExistingCases() {
                 const isActive = (caseData.driver_accepted === true || caseData.status === 'In Progress' || caseData.status === 'Accepted');
                 const caseMarker = L.marker([caseData.latitude, caseData.longitude], { 
                     icon: createCaseIcon(caseData.case_num, isActive), // Use dashboard-style case icon
-                    draggable: false
+                    draggable: false,
+                    zIndexOffset: 500  // Ensure case markers appear above base markers but below destination markers
                 }).addTo(map);
                 
                 // Store case marker
@@ -7261,7 +7717,11 @@ async function loadExistingCases() {
                     if (caseMarkers[destKey]) {
                         caseMarkers[destKey].setLatLng(destLatLng);
                     } else {
-                        const destMarker = L.marker(destLatLng, { icon: destinationIcon, interactive: false }).addTo(map);
+                        const destMarker = L.marker(destLatLng, { 
+                            icon: destinationIcon, 
+                            interactive: false,
+                            zIndexOffset: 1000  // Ensure destination markers appear above other markers
+                        }).addTo(map);
                         destMarker.bindTooltip(`Case ${caseData.case_num} Destination`, {
                             permanent: true,
                             direction: 'bottom',

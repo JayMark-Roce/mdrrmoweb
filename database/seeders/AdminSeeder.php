@@ -12,10 +12,10 @@ class AdminSeeder extends Seeder
     {
         // Create default admin if not exists
         User::firstOrCreate(
-            ['email' => 'admin@example.com'],
+            ['email' => 'mdrrmo@admin.com'],
             [
-                'name' => 'Administrator',
-                'password' => Hash::make('password'),
+                'name' => 'admin',
+                'password' => Hash::make('mdrrmo123'),
                 'email_verified_at' => now(),
             ]
         );

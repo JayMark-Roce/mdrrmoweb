@@ -547,6 +547,11 @@ Route::prefix('admin/medics')->middleware(['auth'])->group(function () {
     Route::post('/{id}/restore', [MedicController::class, 'restore'])->name('admin.medics.restore');
 });
 
+// Admin user registration (for authenticated admins)
+Route::middleware(['auth'])->group(function () {
+    Route::post('/admin/users/register', [\App\Http\Controllers\Auth\RegisteredUserController::class, 'storeAdmin'])->name('admin.users.register');
+});
+
 // ===============================
 // 🔗 Admin Pairing
 // ===============================

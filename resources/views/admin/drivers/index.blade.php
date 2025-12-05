@@ -1171,6 +1171,7 @@ html, body {
       <a href="{{ url('/admin/medics') }}" class="{{ request()->is('admin/medics*') ? 'active' : '' }}"><i class="fas fa-plus"></i> Create</a>
       <a href="{{ url('/admin/gps') }}" class="{{ request()->is('admin/gps') ? 'active' : '' }}"><i class="fas fa-map-marker-alt mr-1"></i> GPS Tracker</a>
       <a href="{{ url('/admin/reports') }}" class="{{ request()->is('admin/reports*') ? 'active' : '' }}"><i class="fas fa-file-alt"></i> Reports</a>
+      <a href="{{ route('reported-cases') }}" class="{{ request()->routeIs('reported-cases') ? 'active' : '' }}"><i class="fas fa-file-alt"></i> Reported Cases</a>
     </nav>
 </aside>
 
@@ -1845,25 +1846,57 @@ function closeForceLogoutModal(){
   if (modal) modal.style.display = 'none';
 }
 async function submitForceLogout(){
-  if (!selectedDriverId) return;
+  if (!selectedDriverId) {
+    alert('No driver selected.');
+    return;
+  }
+  
+  const confirmBtn = document.getElementById('forceLogoutConfirm');
+  if (confirmBtn) {
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = 'Logging out...';
+  }
+  
   try {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]');
+    if (!csrfToken) {
+      throw new Error('CSRF token not found');
+    }
+    
     const res = await fetch(`/admin/drivers/${selectedDriverId}/force-logout`, {
       method: 'POST',
       headers: {
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-        'Content-Type': 'application/json'
+        'X-CSRF-TOKEN': csrfToken.getAttribute('content'),
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
       }
     });
+    
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`HTTP ${res.status}: ${errorText}`);
+    }
+    
     const data = await res.json();
+    console.log('Force logout response:', data);
+    
     if (data && data.success){
       closeForceLogoutModal();
-      alert('Driver has been logged out successfully.');
+      alert(`Driver has been logged out successfully.\n\nDriver ID: ${data.driver_id || selectedDriverId}\nCache Key: ${data.cache_key || 'N/A'}\nCache Set: ${data.cache_set ? 'Yes' : 'No'}`);
       location.reload();
     } else {
-      alert('Failed to log out driver.');
+      alert('Failed to log out driver. Server did not return success.');
+      console.error('Force logout failed:', data);
     }
   } catch (e) {
-    alert('Failed to log out driver.');
+    console.error('Force logout error:', e);
+    alert(`Failed to log out driver: ${e.message}`);
+  } finally {
+    const confirmBtn = document.getElementById('forceLogoutConfirm');
+    if (confirmBtn) {
+      confirmBtn.disabled = false;
+      confirmBtn.textContent = 'Log out';
+    }
   }
 }
 

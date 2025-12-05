@@ -163,12 +163,53 @@ class GpsUpdateController extends Controller
 
             // Check if admin requested forced logout for the assigned driver
             $mustLogout = false;
+            $driver = null;
+            
             try {
+                // First, try to get driver via direct relationship
                 $driver = $ambulance->driver;
-                if ($driver) {
-                    $mustLogout = Cache::pull('driver:force_logout:' . $driver->id, false) ? true : false;
+                
+                // If no direct relationship, check active pairing
+                if (!$driver) {
+                    $activePairing = \App\Models\DriverAmbulancePairing::where('ambulance_id', $ambulance->id)
+                        ->where('status', 'active')
+                        ->orderByDesc('pairing_date')
+                        ->first();
+                    
+                    if ($activePairing) {
+                        $driver = $activePairing->driver;
+                    }
                 }
-            } catch (\Throwable $e) {}
+                
+                // Check cache for logout flag if we found a driver
+                if ($driver) {
+                    $cacheKey = 'driver:force_logout:' . $driver->id;
+                    $cacheValue = Cache::pull($cacheKey, false);
+                    $mustLogout = $cacheValue ? true : false;
+                    
+                    if ($mustLogout) {
+                        Log::info('Driver force logout detected', [
+                            'driver_id' => $driver->id,
+                            'driver_name' => $driver->name,
+                            'ambulance_id' => $ambulance->id,
+                            'cache_key' => $cacheKey,
+                            'via_pairing' => !$ambulance->driver
+                        ]);
+                    }
+                } else {
+                    // Log warning if no driver found for this ambulance
+                    Log::warning('No driver found for ambulance when checking force logout', [
+                        'ambulance_id' => $ambulance->id,
+                        'ambulance_name' => $ambulance->name
+                    ]);
+                }
+            } catch (\Throwable $e) {
+                Log::error('Error checking driver force logout', [
+                    'ambulance_id' => $ambulance->id,
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+            }
 
             // Check geofence proximity
             $geofenceAlert = null;

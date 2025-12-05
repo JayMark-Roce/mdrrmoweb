@@ -347,10 +347,29 @@ class DriverController extends Controller
             'is_available' => false,
             'last_seen_at' => now(),
         ]);
+        
         // Flag for the driver client to detect on next heartbeat
-        Cache::put('driver:force_logout:' . $driver->id, true, now()->addMinutes(10));
-        Log::info('Admin forced logout for driver', ['driver_id' => $driver->id, 'by' => auth()->id()]);
+        $cacheKey = 'driver:force_logout:' . $driver->id;
+        Cache::put($cacheKey, true, now()->addMinutes(10));
+        
+        // Verify cache was set
+        $cacheSet = Cache::has($cacheKey);
+        
+        Log::info('Admin forced logout for driver', [
+            'driver_id' => $driver->id,
+            'driver_name' => $driver->name,
+            'ambulance_id' => $driver->ambulance_id,
+            'cache_key' => $cacheKey,
+            'cache_set' => $cacheSet,
+            'by' => auth()->id(),
+            'by_name' => auth()->user()->name ?? 'Unknown'
+        ]);
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success' => true,
+            'driver_id' => $driver->id,
+            'cache_key' => $cacheKey,
+            'cache_set' => $cacheSet
+        ]);
     }
 }

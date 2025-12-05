@@ -150,8 +150,23 @@ body::before {
 
 @media (max-width: 600px) {
     .container {
-        padding: 0.75rem;
-        padding-bottom: calc(env(safe-area-inset-bottom) + 100px);
+        padding: 0.25rem 0.5rem;
+        padding-bottom: calc(env(safe-area-inset-bottom) + 80px);
+    }
+    
+    .map-wrap {
+        margin: 0.25rem auto !important;
+        padding: 0 !important;
+    }
+    
+    .map-card {
+        border-radius: 12px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    #map {
+        border-radius: 12px !important;
     }
 }
 
@@ -201,13 +216,13 @@ body::before {
 
 @media (max-width: 600px) {
     .top-header {
-        margin: 0.5rem auto;
-        padding: 1rem;
-        border-radius: 20px;
-        gap: 0.75rem;
+        margin: 0.25rem auto;
+        padding: 0.5rem 0.75rem;
+        border-radius: 12px;
+        gap: 0.5rem;
         flex-wrap: wrap;
-        width: calc(100% - 1.5rem);
-        max-width: calc(100vw - 1.5rem);
+        width: calc(100% - 0.5rem);
+        max-width: calc(100vw - 0.5rem);
         box-sizing: border-box;
     }
     
@@ -272,11 +287,11 @@ body::before {
 
 @media (max-width: 600px) {
     .top-header .title {
-        font-size: 0.95rem;
+        font-size: 0.85rem;
     }
     
     #ambulance-name-display {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
     }
 }
 
@@ -806,6 +821,16 @@ body::before {
     overflow: visible;
 }
 
+@media (max-width: 600px) {
+    .driver-case-pin {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        border: 2px solid #ffffff;
+        gap: 1px;
+    }
+}
+
 .driver-case-pin::before {
     content: '';
     position: absolute;
@@ -886,6 +911,24 @@ body::before {
     font-weight: 900;
     z-index: 1;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 600px) {
+    .driver-case-core {
+        font-size: 0.7rem;
+    }
+    
+    .driver-case-pin span {
+        font-size: 6px;
+        top: -24px;
+        padding: 2px 8px;
+    }
+    
+    .driver-case-pin::after {
+        bottom: -12px;
+        width: 12px;
+        height: 12px;
+    }
 }
 
 /* Beautiful Destination Pin Styling */
@@ -1403,18 +1446,175 @@ body::before {
 
 /* Mobile-specific improvements for modals */
 @media (max-width: 600px) {
+    #cases-modal,
+    #notifications-modal {
+        align-items: flex-end !important;
+        padding: 0 !important;
+    }
+    
+    #cases-modal-panel,
+    #notifications-modal-panel {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        border-radius: 20px 20px 0 0 !important;
+        max-height: 90vh !important;
+        min-height: 50vh !important;
+    }
+    
     #cases-container-wrap,
     #notifications-container-wrap {
-        padding: 1rem !important;
-        max-height: calc(95vh - 100px) !important;
+        padding: 0.75rem !important;
+        max-height: calc(90vh - 60px) !important;
     }
     
     .modal-header-emergency {
-        padding: 1rem 1.25rem !important;
+        padding: 0.75rem 1rem !important;
     }
     
     .modal-header-emergency h3 {
-        font-size: 1.1rem !important;
+        font-size: 0.95rem !important;
+    }
+    
+    .action-icon-btn {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 14px !important;
+    }
+    
+    /* Compact case cards in modals */
+    #cases-container > div,
+    #notifications-container > div {
+        margin-bottom: 0.75rem !important;
+        padding: 0.75rem 1rem !important;
+        border-radius: 12px !important;
+    }
+    
+    #cases-container h3,
+    #notifications-container h3 {
+        font-size: 1rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    #cases-container p,
+    #notifications-container p {
+        font-size: 0.85rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    #cases-container button,
+    #notifications-container button {
+        padding: 0.65rem 1rem !important;
+        font-size: 0.85rem !important;
+        border-radius: 10px !important;
+    }
+    
+    /* Compact popups */
+    .leaflet-popup-content-wrapper {
+        border-radius: 10px !important;
+        padding: 0 !important;
+    }
+    
+    .leaflet-popup-content {
+        margin: 0 !important;
+        min-width: 200px !important;
+        max-width: 260px !important;
+        font-size: 0.8rem !important;
+    }
+    
+    .leaflet-popup-content > div {
+        min-width: 200px !important;
+        max-width: 260px !important;
+        padding: 8px 12px !important;
+    }
+    
+    .leaflet-popup-content h3,
+    .leaflet-popup-content div[style*="font-size:22px"],
+    .leaflet-popup-content div[style*="font-size:20px"] {
+        font-size: 16px !important;
+    }
+    
+    .leaflet-popup-content div[style*="font-size:12px"] {
+        font-size: 11px !important;
+    }
+    
+    .leaflet-popup-content button {
+        padding: 6px 10px !important;
+        font-size: 11px !important;
+        border-radius: 8px !important;
+    }
+    
+    .popup-close-internal {
+        width: 20px !important;
+        height: 20px !important;
+        font-size: 11px !important;
+        line-height: 16px !important;
+        top: 4px !important;
+        right: 6px !important;
+    }
+    
+    /* Compact status indicator */
+    .status {
+        font-size: 0.8rem !important;
+        padding: 0.5rem 0.75rem !important;
+        margin: 0.5rem 0 !important;
+    }
+    
+    .status-glow {
+        width: 8px !important;
+        height: 8px !important;
+    }
+    
+    /* Compact modals */
+    #retry-modal > div,
+    #resend-request-modal > div {
+        width: 95% !important;
+        max-width: 95% !important;
+        margin: 5vh auto !important;
+        padding: 1rem !important;
+        border-radius: 12px !important;
+    }
+    
+    #retry-modal h3,
+    #resend-request-modal h3 {
+        font-size: 16px !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    #retry-modal p,
+    #resend-request-modal p {
+        font-size: 13px !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    #retry-modal button,
+    #resend-request-modal button {
+        padding: 0.65rem 1rem !important;
+        font-size: 0.85rem !important;
+        border-radius: 8px !important;
+    }
+    
+    /* Compact new case alert body */
+    #new-case-alert-body > div {
+        padding: 0.75rem !important;
+    }
+    
+    #new-case-alert-body h3,
+    #new-case-alert-body div[style*="font-size:1.25rem"] {
+        font-size: 1rem !important;
+    }
+    
+    #new-case-alert-body div[style*="font-size:1rem"] {
+        font-size: 0.9rem !important;
+    }
+    
+    #new-case-alert-body div[style*="font-size:0.9rem"] {
+        font-size: 0.8rem !important;
+    }
+    
+    #new-case-alert-body button {
+        padding: 0.65rem 1rem !important;
+        font-size: 0.85rem !important;
     }
 }
 
@@ -1457,37 +1657,37 @@ body::before {
 </div>
 
 <!-- Fixed Bottom Action Bar (Modern Design) -->
-<div id="bottom-action-bar" style="position: fixed; left: 50%; transform: translateX(-50%); bottom: 1rem; z-index: 3000; width: calc(100% - 1.5rem); max-width: 600px; padding: 0; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border: 1px solid var(--driver-card-border); display: block; overflow: hidden;">
+<div id="bottom-action-bar" style="position: fixed; left: 50%; transform: translateX(-50%); bottom: 0.5rem; z-index: 3000; width: calc(100% - 1rem); max-width: 600px; padding: 0; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border: 1px solid var(--driver-card-border); display: block; overflow: hidden;">
     <div style="position: relative;">
-        <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--brand-orange);"></div>
-        <div style="display: flex; gap: 0.75rem; align-items: stretch; padding: 1rem;">
-            <button id="open-cases-modal-mobile" class="btn-view-cases" style="flex: 1; margin: 0; padding: 1rem; border-radius: 12px; font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: var(--touch-target); -webkit-tap-highlight-color: transparent; touch-action: manipulation; transition: all 0.2s ease; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; border: none; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);">
-                <i class="fas fa-list" style="font-size: 1.1rem;"></i> <span>Cases</span>
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--brand-orange);"></div>
+        <div style="display: flex; gap: 0.5rem; align-items: stretch; padding: 0.75rem;">
+            <button id="open-cases-modal-mobile" class="btn-view-cases" style="flex: 1; margin: 0; padding: 0.75rem 0.5rem; border-radius: 10px; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem; min-height: var(--touch-target); -webkit-tap-highlight-color: transparent; touch-action: manipulation; transition: all 0.2s ease; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; border: none; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);">
+                <i class="fas fa-list" style="font-size: 0.95rem;"></i> <span>Cases</span>
             </button>
-            <button id="open-notifications-modal-mobile" class="btn" style="flex: 1; margin: 0; padding: 1rem; border-radius: 12px; font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: var(--touch-target); -webkit-tap-highlight-color: transparent; touch-action: manipulation; transition: all 0.2s ease; background: linear-gradient(135deg, #f59e0b, #ff8c42); color: #fff; border: none; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);">
-                <i class="fas fa-bell" style="font-size: 1.1rem;"></i> <span>Alerts</span>
+            <button id="open-notifications-modal-mobile" class="btn" style="flex: 1; margin: 0; padding: 0.75rem 0.5rem; border-radius: 10px; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem; min-height: var(--touch-target); -webkit-tap-highlight-color: transparent; touch-action: manipulation; transition: all 0.2s ease; background: linear-gradient(135deg, #f59e0b, #ff8c42); color: #fff; border: none; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);">
+                <i class="fas fa-bell" style="font-size: 0.95rem;"></i> <span>Alerts</span>
             </button>
-            <button id="stop-navigation-mobile" class="btn-stop-nav" style="flex: 1; margin: 0; padding: 1rem; border-radius: 12px; font-weight: 700; font-size: 0.95rem; display:none; align-items: center; justify-content: center; gap: 0.5rem; min-height: var(--touch-target); -webkit-tap-highlight-color: transparent; touch-action: manipulation; transition: all 0.2s ease; background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; border: none; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);" title="Clear current route">
-                <i class="fas fa-stop" style="font-size: 1.1rem;"></i> <span>Stop</span>
+            <button id="stop-navigation-mobile" class="btn-stop-nav" style="flex: 1; margin: 0; padding: 0.75rem 0.5rem; border-radius: 10px; font-weight: 700; font-size: 0.85rem; display:none; align-items: center; justify-content: center; gap: 0.4rem; min-height: var(--touch-target); -webkit-tap-highlight-color: transparent; touch-action: manipulation; transition: all 0.2s ease; background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; border: none; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);" title="Clear current route">
+                <i class="fas fa-stop" style="font-size: 0.95rem;"></i> <span>Stop</span>
             </button>
         </div>
     </div>
-    <div style="height: env(safe-area-inset-bottom); min-height: 8px;"></div>
+    <div style="height: env(safe-area-inset-bottom); min-height: 4px;"></div>
 </div>
 
 <!-- New Case Alert (Top Center) - Modern Design -->
-<div id="new-case-alert" style="display:none; position: fixed; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 11000; width: min(95vw, 520px); max-width: calc(100vw - 1rem);">
-    <div style="background:linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow:hidden; border:1px solid var(--driver-card-border); position:relative;">
-        <div style="position:absolute; top:0; left:0; right:0; height:3px; background:var(--brand-orange);"></div>
-        <div style="display:flex; justify-content: space-between; align-items:center; padding:1rem 1.25rem; background:var(--driver-card-bg); border-bottom:1px solid var(--driver-card-border);">
-            <div style="font-weight:900; color:var(--driver-navy); font-size:0.95rem; display:flex; align-items:center; gap:0.5rem; flex:1;">
-                <i class="fas fa-exclamation-circle" style="color:var(--driver-orange); font-size:1.1rem;"></i> <span>New Emergency Case</span>
+<div id="new-case-alert" style="display:none; position: fixed; top: 0.5rem; left: 50%; transform: translateX(-50%); z-index: 11000; width: min(98vw, 520px); max-width: calc(100vw - 0.5rem);">
+    <div style="background:linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow:hidden; border:1px solid var(--driver-card-border); position:relative;">
+        <div style="position:absolute; top:0; left:0; right:0; height:2px; background:var(--brand-orange);"></div>
+        <div style="display:flex; justify-content: space-between; align-items:center; padding:0.75rem 1rem; background:var(--driver-card-bg); border-bottom:1px solid var(--driver-card-border);">
+            <div style="font-weight:900; color:var(--driver-navy); font-size:0.85rem; display:flex; align-items:center; gap:0.4rem; flex:1;">
+                <i class="fas fa-exclamation-circle" style="color:var(--driver-orange); font-size:0.95rem;"></i> <span>New Emergency Case</span>
             </div>
-            <button id="dismiss-new-case-alert" aria-label="Close" class="dismiss-new-case-btn" style="min-width:var(--touch-target); min-height:var(--touch-target); -webkit-tap-highlight-color:transparent; touch-action:manipulation;">✕</button>
+            <button id="dismiss-new-case-alert" aria-label="Close" class="dismiss-new-case-btn" style="min-width:36px; min-height:36px; width:36px; height:36px; font-size:12px; -webkit-tap-highlight-color:transparent; touch-action:manipulation;">✕</button>
         </div>
-        <div id="new-case-alert-body" style="padding:1.25rem; color:#1f2937;"></div>
+        <div id="new-case-alert-body" style="padding:0.75rem; color:#1f2937;"></div>
     </div>
-    <div style="height:8px"></div>
+    <div style="height:4px"></div>
   </div>
 
 <!-- Cases Modal - Modern Design -->
@@ -1536,49 +1736,70 @@ body::before {
     function createCaseIcon(caseNum, isActive) {
         const display = caseNum ? `#${caseNum}` : '•';
         const statusLabel = isActive ? 'Active' : 'Pending';
+        const isMobile = window.innerWidth <= 600;
+        const iconSize = isMobile ? 40 : 60;
+        const triangleSize = isMobile ? 12 : 18;
+        const totalHeight = iconSize + triangleSize;
+        const fontSize = isMobile ? '0.7rem' : '1rem';
+        const labelSize = isMobile ? '6px' : '7px';
         const html = `
-            <div class="driver-case-pin ${isActive ? 'is-active' : 'is-idle'}" style="cursor: pointer;">
-                <div class="driver-case-core" style="font-size: 1rem; line-height: 1; font-weight: 900;">${display}</div>
-                <span style="font-size: 7px; margin-top: 2px; opacity: 0.95;">${statusLabel}</span>
+            <div class="driver-case-pin ${isActive ? 'is-active' : 'is-idle'}" style="cursor: pointer; width: ${iconSize}px; height: ${iconSize}px;">
+                <div class="driver-case-core" style="font-size: ${fontSize}; line-height: 1; font-weight: 900;">${display}</div>
+                <span style="font-size: ${labelSize}; margin-top: 2px; opacity: 0.95;">${statusLabel}</span>
             </div>
         `;
-        // Icon is 60px wide, 60px tall, plus 18px triangle at bottom = 78px total height
-        // Anchor at center bottom of triangle: [30 (half width), 78 (total height)]
-        return L.divIcon({ className: '', html, iconSize: [60, 78], iconAnchor: [30, 78] });
+        // Anchor at center bottom of triangle
+        return L.divIcon({ className: '', html, iconSize: [iconSize, totalHeight], iconAnchor: [iconSize / 2, totalHeight] });
     }
 
     // Beautiful Driver/Ambulance Icon Creation Function
     function createDriverLocationIcon() {
+        const isMobile = window.innerWidth <= 600;
+        const iconSize = isMobile ? 44 : 64;
+        const triangleSize = isMobile ? 14 : 20;
+        const totalHeight = iconSize + triangleSize;
+        const borderSize = isMobile ? 3 : 4;
+        const iconFontSize = isMobile ? '20px' : '28px';
+        const labelFontSize = isMobile ? '8px' : '10px';
+        const labelPadding = isMobile ? '3px 10px' : '5px 14px';
+        const labelTop = isMobile ? '-28px' : '-36px';
         const html = `
             <div class="driver-location-pin" style="cursor: pointer; position: relative;">
-                <div style="width: 64px; height: 64px; border-radius: 20px; background: linear-gradient(145deg, #10b981, #059669); border: 4px solid #ffffff; box-shadow: 0 16px 40px rgba(16, 185, 129, 0.5), 0 6px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4); display: flex; align-items: center; justify-content: center; position: relative; overflow: visible;">
-                    <div style="position: absolute; inset: -2px; border-radius: 22px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), transparent);"></div>
-                    <i class="fas fa-ambulance" style="font-size: 28px; color: #ffffff; z-index: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.3);"></i>
+                <div style="width: ${iconSize}px; height: ${iconSize}px; border-radius: ${isMobile ? '14px' : '20px'}; background: linear-gradient(145deg, #10b981, #059669); border: ${borderSize}px solid #ffffff; box-shadow: 0 16px 40px rgba(16, 185, 129, 0.5), 0 6px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4); display: flex; align-items: center; justify-content: center; position: relative; overflow: visible;">
+                    <div style="position: absolute; inset: -2px; border-radius: ${isMobile ? '16px' : '22px'}; background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), transparent);"></div>
+                    <i class="fas fa-ambulance" style="font-size: ${iconFontSize}; color: #ffffff; z-index: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.3);"></i>
                 </div>
-                <div style="position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); width: 20px; height: 20px; background: #10b981; clip-path: polygon(50% 100%, 0% 0, 100% 0); opacity: 0.95; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3)); z-index: -1;"></div>
-                <span style="position: absolute; top: -36px; left: 50%; transform: translateX(-50%); background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); color: #0f172a; font-size: 10px; font-weight: 800; padding: 5px 14px; border-radius: 999px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25), 0 2px 4px rgba(0, 0, 0, 0.1); white-space: nowrap; border: 1px solid rgba(226, 232, 240, 0.6);">You are here</span>
+                <div style="position: absolute; bottom: -${triangleSize}px; left: 50%; transform: translateX(-50%); width: ${triangleSize}px; height: ${triangleSize}px; background: #10b981; clip-path: polygon(50% 100%, 0% 0, 100% 0); opacity: 0.95; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3)); z-index: -1;"></div>
+                <span style="position: absolute; top: ${labelTop}; left: 50%; transform: translateX(-50%); background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); color: #0f172a; font-size: ${labelFontSize}; font-weight: 800; padding: ${labelPadding}; border-radius: 999px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25), 0 2px 4px rgba(0, 0, 0, 0.1); white-space: nowrap; border: 1px solid rgba(226, 232, 240, 0.6);">You are here</span>
             </div>
         `;
-        // Icon is 64px wide, 64px tall, plus 20px triangle at bottom = 84px total height
-        // Anchor at center bottom of triangle: [32 (half width), 84 (total height)]
-        return L.divIcon({ className: '', html, iconSize: [64, 84], iconAnchor: [32, 84] });
+        // Anchor at center bottom of triangle
+        return L.divIcon({ className: '', html, iconSize: [iconSize, totalHeight], iconAnchor: [iconSize / 2, totalHeight] });
     }
 
     // Beautiful Destination Icon Creation Function
     function createDestinationIcon() {
+        const isMobile = window.innerWidth <= 600;
+        const iconSize = isMobile ? 40 : 56;
+        const triangleSize = isMobile ? 12 : 18;
+        const totalHeight = iconSize + triangleSize;
+        const borderSize = isMobile ? 2 : 3;
+        const iconFontSize = isMobile ? '16px' : '22px';
+        const labelFontSize = isMobile ? '7px' : '9px';
+        const labelPadding = isMobile ? '3px 8px' : '4px 12px';
+        const labelTop = isMobile ? '-24px' : '-32px';
         const html = `
             <div class="driver-dest-pin" style="cursor: pointer; position: relative;">
-                <div style="width: 56px; height: 56px; border-radius: 18px; background: linear-gradient(145deg, #f97316, #ea580c); border: 3px solid #ffffff; box-shadow: 0 12px 32px rgba(249, 115, 22, 0.5), 0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; position: relative; overflow: visible;">
-                    <div style="position: absolute; inset: -2px; border-radius: 20px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), transparent);"></div>
-                    <i class="fas fa-flag-checkered" style="font-size: 22px; color: #ffffff; z-index: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.3);"></i>
+                <div style="width: ${iconSize}px; height: ${iconSize}px; border-radius: ${isMobile ? '12px' : '18px'}; background: linear-gradient(145deg, #f97316, #ea580c); border: ${borderSize}px solid #ffffff; box-shadow: 0 12px 32px rgba(249, 115, 22, 0.5), 0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; position: relative; overflow: visible;">
+                    <div style="position: absolute; inset: -2px; border-radius: ${isMobile ? '14px' : '20px'}; background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), transparent);"></div>
+                    <i class="fas fa-flag-checkered" style="font-size: ${iconFontSize}; color: #ffffff; z-index: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.3);"></i>
                 </div>
-                <div style="position: absolute; bottom: -16px; left: 50%; transform: translateX(-50%); width: 18px; height: 18px; background: #f97316; clip-path: polygon(50% 100%, 0% 0, 100% 0); opacity: 0.95; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3)); z-index: -1;"></div>
-                <span style="position: absolute; top: -32px; left: 50%; transform: translateX(-50%); background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); color: #0f172a; font-size: 9px; font-weight: 800; padding: 4px 12px; border-radius: 999px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25), 0 2px 4px rgba(0, 0, 0, 0.1); white-space: nowrap; border: 1px solid rgba(226, 232, 240, 0.6);">Destination</span>
+                <div style="position: absolute; bottom: -${triangleSize}px; left: 50%; transform: translateX(-50%); width: ${triangleSize}px; height: ${triangleSize}px; background: #f97316; clip-path: polygon(50% 100%, 0% 0, 100% 0); opacity: 0.95; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3)); z-index: -1;"></div>
+                <span style="position: absolute; top: ${labelTop}; left: 50%; transform: translateX(-50%); background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); color: #0f172a; font-size: ${labelFontSize}; font-weight: 800; padding: ${labelPadding}; border-radius: 999px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25), 0 2px 4px rgba(0, 0, 0, 0.1); white-space: nowrap; border: 1px solid rgba(226, 232, 240, 0.6);">Destination</span>
             </div>
         `;
-        // Icon is 56px wide, 56px tall, plus 18px triangle at bottom = 74px total height
-        // Anchor at center bottom of triangle: [28 (half width), 74 (total height)]
-        return L.divIcon({ className: '', html, iconSize: [56, 74], iconAnchor: [28, 74] });
+        // Anchor at center bottom of triangle
+        return L.divIcon({ className: '', html, iconSize: [iconSize, totalHeight], iconAnchor: [iconSize / 2, totalHeight] });
     }
     
     // ===== End Icon Creation Functions =====
@@ -2035,6 +2256,43 @@ body::before {
             return res.json();
         })
         .then(async (data) => {
+            // Check for admin-forced logout FIRST - before any other processing
+            if (data && data.must_logout) {
+                // Stop all tracking immediately
+                try { 
+                    tracking = false;
+                    if (sendIntervalId) {
+                        clearInterval(sendIntervalId);
+                        sendIntervalId = null;
+                    }
+                } catch(e) {
+                    console.error('Error stopping tracking:', e);
+                }
+                
+                // Release wake lock if active
+                try {
+                    if (wakeLock) {
+                        await releaseWakeLock();
+                    }
+                } catch(e) {
+                    console.error('Error releasing wake lock:', e);
+                }
+                
+                // Show logout notification
+                try { 
+                    showToast('You have been logged out by the admin.', 'error', null, 3000, 'Logged Out');
+                } catch(e) {
+                    console.error('Error showing logout toast:', e);
+                }
+                
+                // Redirect to login page after short delay
+                setTimeout(() => { 
+                    window.location.href = '/driver/login'; 
+                }, 2000);
+                return;
+            }
+            
+            // Continue with normal processing only if not logged out
             lastSuccessfulSendAt = Date.now();
             consecutiveSendFailures = 0;
             setStatus(`✅ GPS sent at ${new Date().toLocaleTimeString()}`, '#00ffe7');
@@ -2051,14 +2309,6 @@ body::before {
                 const locationType = data.geofence_alert.location_type || 'destination';
                 const locationLabel = locationType === 'pickup' ? 'pickup location' : 'destination';
                 showToast(`You have reached the ${locationLabel} for Case #${data.geofence_alert.case_num}! Admin will be notified.`, 'geofence', null, 5000);
-            }
-            
-            // Admin-forced logout signal
-            if (data && data.must_logout) {
-                try { clearInterval(sendIntervalId); } catch(e) {}
-                try { showToast('You have been logged out by the admin.', 'error'); } catch(e) {}
-                setTimeout(() => { window.location.href = '/driver/login'; }, 1500);
-                return;
             }
             
             // Check if there's a pending resend request and mark it as completed
@@ -4378,6 +4628,7 @@ function showNotification(message, type = 'info') {
 // Toast helper with click-to-open support
 function showToast(message, type = 'info', onClick = null, duration = 3200, customTitle = null) {
     const notification = document.createElement('div');
+    const isMobile = window.innerWidth <= 600;
     
     // Determine title and background based on type
     let title = 'New Case Issued';
@@ -4397,27 +4648,33 @@ function showToast(message, type = 'info', onClick = null, duration = 3200, cust
         // Keep default orange gradient for custom titles without specific type
     }
     
+    const padding = isMobile ? '8px 12px' : '10px 14px';
+    const titleSize = isMobile ? '14px' : '16px';
+    const messageSize = isMobile ? '11px' : '12px';
+    const maxWidth = isMobile ? '92vw' : '320px';
+    const borderRadius = isMobile ? '10px' : '12px';
+    
     notification.style.cssText = `
         position: fixed;
-        top: 16px;
+        top: ${isMobile ? '8px' : '16px'};
         left: 50%;
         transform: translateX(-50%) translateY(-12px);
         background: ${bgGradient};
         color: #ffffff;
-        padding: 10px 14px;
-        border-radius: 12px;
-        border: 2px solid rgba(255,255,255,0.9);
+        padding: ${padding};
+        border-radius: ${borderRadius};
+        border: ${isMobile ? '1.5px' : '2px'} solid rgba(255,255,255,0.9);
         box-shadow: 0 8px 18px rgba(0,0,0,0.18);
         z-index: 12000;
-        max-width: 320px;
+        max-width: ${maxWidth};
         cursor: ${onClick ? 'pointer' : 'default'};
         transition: transform .18s ease, opacity .18s ease;
         opacity: 0;
     `;
     // Two-line design: title + subtitle
     notification.innerHTML = `
-        <div style="font-weight: 900; font-size: 16px; line-height: 1.1;">${title}</div>
-        <div style="font-weight: 700; font-size: 12px; opacity:.95;">${message || 'Admin issued you a new case'}</div>
+        <div style="font-weight: 900; font-size: ${titleSize}; line-height: 1.1;">${title}</div>
+        <div style="font-weight: 700; font-size: ${messageSize}; opacity:.95;">${message || 'Admin issued you a new case'}</div>
     `;
     if (onClick) {
         notification.addEventListener('click', (e) => {
@@ -4843,16 +5100,28 @@ function updateDriverGeofenceCircles(driverLat, driverLng) {
         const locationLabel = nearestLocation === 'pickup' ? 'pickup location' : 'destination';
         const proximityText = `📍 Near ${locationLabel} (${Math.round(nearestDistance)}m away)`;
         
+        const isMobile = window.innerWidth <= 600;
+        const topPos = isMobile ? '60px' : '80px';
+        const padding = isMobile ? '8px 16px' : '12px 24px';
+        const fontSize = isMobile ? '12px' : '14px';
+        const borderRadius = isMobile ? '10px' : '12px';
+        const gap = isMobile ? '6px' : '8px';
+        
         if (!document.getElementById('geofence-proximity-indicator')) {
             const indicator = document.createElement('div');
             indicator.id = 'geofence-proximity-indicator';
-            indicator.style.cssText = 'position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 12px 24px; border-radius: 12px; font-weight: 800; font-size: 14px; z-index: 2000; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4); display: flex; align-items: center; gap: 8px;';
+            indicator.style.cssText = `position: fixed; top: ${topPos}; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #10b981, #059669); color: white; padding: ${padding}; border-radius: ${borderRadius}; font-weight: 800; font-size: ${fontSize}; z-index: 2000; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4); display: flex; align-items: center; gap: ${gap};`;
             indicator.innerHTML = `<i class="fas fa-map-marker-alt"></i> <span>${proximityText}</span>`;
             document.body.appendChild(indicator);
         } else {
             const indicator = document.getElementById('geofence-proximity-indicator');
             indicator.innerHTML = `<i class="fas fa-map-marker-alt"></i> <span>${proximityText}</span>`;
             indicator.style.display = 'flex';
+            indicator.style.top = topPos;
+            indicator.style.padding = padding;
+            indicator.style.fontSize = fontSize;
+            indicator.style.borderRadius = borderRadius;
+            indicator.style.gap = gap;
         }
     } else {
         // Hide proximity indicator if far away from all locations
