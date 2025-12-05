@@ -326,11 +326,18 @@ html, body {
     border-radius: 14px;
     border: 1.5px solid rgba(148, 163, 184, 0.5);
     padding: 0.65rem 0.85rem;
+    padding-right: 2.5rem;
     font-size: 0.92rem;
     font-weight: 600;
     color: var(--heading);
     background: #f8fafc;
     transition: border 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.table-filter-select {
+    padding-right: 0.85rem;
 }
 
 .table-filter-input:focus,
@@ -348,6 +355,12 @@ html, body {
     transform: translateY(-50%);
     color: var(--accent);
     display: none;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.table-filter-field {
+    position: relative;
 }
 
 .table-card {
@@ -1130,8 +1143,13 @@ body .nav-links a.active {
                                 $medics = $pairings->pluck('medic')->filter();
                                 $allStatuses = $pairings->pluck('status')->unique();
                                 $isActive = $allStatuses->contains('active');
+                                $driverName = $driver ? strtolower($driver->name) : '';
+                                $driverPhone = $driver && $driver->phone ? strtolower($driver->phone) : '';
+                                $medicNames = $medics->map(function($m) { return strtolower($m->name . ' ' . ($m->specialization ?? '')); })->implode(' ');
+                                $notes = strtolower($firstPairing->notes ?? '');
+                                $searchableText = $driverName . ' ' . $driverPhone . ' ' . $medicNames . ' ' . $notes;
                             @endphp
-                            <tr>
+                            <tr data-driver-id="{{ $driver ? $driver->id : '' }}" data-medic-ids="{{ $medics->pluck('id')->implode(',') }}" data-search-text="{{ $searchableText }}">
                                 <td>
                                     <div style="font-weight: 700; color: #0f172a;">{{ $driver ? $driver->name : 'Deleted Driver' }}</div>
                                     @if($driver && $driver->phone)
@@ -1267,8 +1285,14 @@ body .nav-links a.active {
                                     $ambulance = $firstPairing->ambulance;
                                     $allStatuses = $pairings->pluck('status')->unique();
                                     $isActive = $allStatuses->contains('active');
+                                    $driverNames = $groupDrivers->map(function($d) { return $d ? strtolower($d->name) : ''; })->filter()->implode(' ');
+                                    $ambulanceName = $ambulance ? strtolower($ambulance->name) : '';
+                                    $ambulancePlate = $ambulance && $ambulance->plate_number ? strtolower($ambulance->plate_number) : '';
+                                    $notes = strtolower($firstPairing->notes ?? '');
+                                    $searchableText = $driverNames . ' ' . $ambulanceName . ' ' . $ambulancePlate . ' ' . $notes;
+                                    $driverIds = $groupDrivers->map(function($d) { return $d ? $d->id : ''; })->filter()->implode(',');
                                 @endphp
-                                <tr>
+                                <tr data-driver-ids="{{ $driverIds }}" data-ambulance-id="{{ $ambulance ? $ambulance->id : '' }}" data-search-text="{{ $searchableText }}">
                                     <td>
                                         <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                                             @foreach($groupDrivers as $op)
@@ -1952,24 +1976,6 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-function toggleTableView(type) {
-    const driverMedicSection = document.getElementById('driverMedicSection');
-    const driverAmbulanceSection = document.getElementById('driverAmbulanceSection');
-    
-    if (type === 'driver_ambulance') {
-        driverMedicSection.style.display = 'none';
-        driverAmbulanceSection.style.display = 'block';
-    } else {
-        driverMedicSection.style.display = 'block';
-        driverAmbulanceSection.style.display = 'none';
-    }
-    
-    // Trigger search to update the visible table
-    const performSearch = window.performSearch;
-    if (performSearch && typeof performSearch === 'function') {
-        setTimeout(performSearch, 100);
-    }
-}
 
 // Pairing panel functions removed - using direct navigation instead
 
@@ -2027,311 +2033,336 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// Live search functionality with AJAX
+// Live search and filter functionality
 document.addEventListener('DOMContentLoaded', function(){
-    const searchInput = document.getElementById('liveSearchInput');
-    const driverSelect = document.getElementById('driverSelect');
-    const viewTypeSelect = document.getElementById('viewTypeSelect');
-    const searchIndicator = document.getElementById('searchIndicator');
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-    let searchTimeout;
-    let isSearching = false;
+    // Driver-Medic filters
+    const dmSearchInput = document.getElementById('dmSearchInput');
+    const dmDriverFilter = document.getElementById('dmDriverFilter');
+    const dmMedicFilter = document.getElementById('dmMedicFilter');
+    const dmSearchIndicator = document.getElementById('dmSearchIndicator');
+    const dmTableBody = document.querySelector('#driverMedicSection tbody');
     
-    window.performSearch = function performSearch() {
-        if (isSearching) return;
+    // Driver-Ambulance filters
+    const daSearchInput = document.getElementById('daSearchInput');
+    const daDriverFilter = document.getElementById('daDriverFilter');
+    const daAmbulanceFilter = document.getElementById('daAmbulanceFilter');
+    const daSearchIndicator = document.getElementById('daSearchIndicator');
+    const daTableBody = document.querySelector('#driverAmbulanceSection tbody');
+    
+    let dmSearchTimeout;
+    let daSearchTimeout;
+    
+    // Filter Driver-Medic table
+    function filterDriverMedicTable() {
+        if (!dmTableBody) return;
         
-        const search = searchInput?.value || '';
-        const driverId = driverSelect?.value || '';
-        const viewType = viewTypeSelect?.value || 'driver_medic';
+        const searchTerm = (dmSearchInput?.value || '').toLowerCase().trim();
+        const driverId = dmDriverFilter?.value || '';
+        const medicId = dmMedicFilter?.value || '';
         
         // Show loading indicator
-        if (searchIndicator) {
-            searchIndicator.style.display = 'block';
+        if (dmSearchIndicator) {
+            dmSearchIndicator.style.display = searchTerm || driverId || medicId ? 'block' : 'none';
         }
         
-        isSearching = true;
+        const rows = Array.from(dmTableBody.querySelectorAll('tr'));
+        let visibleCount = 0;
         
-        // Build query parameters
-        const params = new URLSearchParams();
-        if (search) params.append('search', search);
-        if (driverId) params.append('driver_id', driverId);
-        params.append('view_type', viewType);
-        
-        // Fetch data via AJAX
-        fetch(`{{ route('admin.pairing.index') }}?${params.toString()}`, {
-            method: 'GET',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json',
-            },
-            credentials: 'same-origin'
-        })
-        .then(response => response.json())
-        .then(data => {
-            updateTables(data, viewType);
-            if (searchIndicator) {
-                searchIndicator.style.display = 'none';
+        rows.forEach(row => {
+            if (row.classList.contains('empty-state-row')) {
+                row.style.display = 'none';
+                return;
             }
-            isSearching = false;
-        })
-        .catch(error => {
-            console.error('Search error:', error);
-            if (searchIndicator) {
-                searchIndicator.style.display = 'none';
+            
+            const searchText = (row.getAttribute('data-search-text') || '').toLowerCase();
+            const rowDriverId = row.getAttribute('data-driver-id') || '';
+            const rowMedicIds = (row.getAttribute('data-medic-ids') || '').split(',').filter(id => id);
+            
+            // Check search term
+            const matchesSearch = !searchTerm || searchText.includes(searchTerm);
+            
+            // Check driver filter
+            const matchesDriver = !driverId || rowDriverId === driverId;
+            
+            // Check medic filter
+            const matchesMedic = !medicId || rowMedicIds.includes(medicId);
+            
+            if (matchesSearch && matchesDriver && matchesMedic) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
             }
-            isSearching = false;
         });
-    }
-    
-    function updateTables(data, viewType) {
-        // Update Driver-Medic table
-        if (viewType === 'driver_medic' || !viewType) {
-            updateDriverMedicTable(data.driverMedicPairings || []);
+        
+        // Show empty state if no rows visible
+        let emptyRow = dmTableBody.querySelector('.empty-state-row');
+        if (visibleCount === 0 && rows.length > 0) {
+            if (!emptyRow) {
+                emptyRow = document.createElement('tr');
+                emptyRow.className = 'empty-state-row';
+                emptyRow.innerHTML = '<td colspan="6" class="empty-state">No pairings match your filters.</td>';
+                dmTableBody.appendChild(emptyRow);
+            }
+            emptyRow.style.display = '';
+        } else if (emptyRow) {
+            emptyRow.style.display = 'none';
         }
         
-        // Update Driver-Ambulance table
-        if (viewType === 'driver_ambulance') {
-            updateDriverAmbulanceTable(data.driverAmbulancePairings || []);
+        // Hide loading indicator
+        if (dmSearchIndicator) {
+            setTimeout(() => {
+                dmSearchIndicator.style.display = 'none';
+            }, 200);
         }
-    }
-    
-    function updateDriverMedicTable(pairings) {
-        const tbody = document.querySelector('#driverMedicSection tbody');
-        if (!tbody) return;
-        
-        if (pairings.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No driver-medic pairings found.</td></tr>';
-            return;
-        }
-        
-        tbody.innerHTML = pairings.map(pairing => {
-            const medicsHtml = pairing.medics.map(medic => 
-                `<span style="background: rgba(16, 185, 129, 0.1); color: #059669; padding: 0.25rem 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700;">
-                    ${medic.name}${medic.specialization ? ` <span style="opacity: 0.7;">(${medic.specialization})</span>` : ''}
-                </span>`
-            ).join('');
-            
-            const statusBadges = pairing.status.map(s => 
-                `<span class="status-badge ${s}">${s.charAt(0).toUpperCase() + s.slice(1)}</span>`
-            ).join('');
-            
-            const timeHtml = pairing.start_time && pairing.end_time 
-                ? `<div style="font-weight: 600;">${formatTime(pairing.start_time)} - ${formatTime(pairing.end_time)}</div>`
-                : '<span style="color: var(--muted);">N/A</span>';
-            
-            const actionsHtml = pairing.isActive 
-                ? `<div class="action-buttons">
-                    <button type="button" onclick="bulkActionGroup('driver_medic', '${pairing.groupKey}', 'complete')" class="action-btn complete" title="Mark Complete">
-                        <span class="btn-icon"><i class="fas fa-check"></i></span>
-                        <span>Mark Complete</span>
-                    </button>
-                    <button type="button" onclick="bulkActionGroup('driver_medic', '${pairing.groupKey}', 'cancel')" class="action-btn cancel" title="Cancel Pairing">
-                        <span class="btn-icon"><i class="fas fa-ban"></i></span>
-                        <span>Cancel Pairing</span>
-                    </button>
-                </div>`
-                : '<span style="color: var(--muted); font-size: 0.85rem;">No actions</span>';
-            
-            return `
-                <tr>
-                    <td>
-                        <div style="font-weight: 700; color: #0f172a;">${pairing.driver ? pairing.driver.name : 'Deleted Driver'}</div>
-                        ${pairing.driver && pairing.driver.phone ? `<div style="font-size: 0.85rem; color: var(--muted);">📞 ${pairing.driver.phone}</div>` : ''}
-                    </td>
-                    <td>
-                        <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">${medicsHtml}</div>
-                    </td>
-                    <td>
-                        <div style="font-weight: 700;">${pairing.pairing_date_formatted}</div>
-                        <div style="font-size: 0.85rem; color: var(--muted);">${pairing.pairing_date_day}</div>
-                    </td>
-                    <td>${timeHtml}</td>
-                    <td>
-                        ${pairing.status.length === 1 
-                            ? `<span class="status-badge ${pairing.status[0]}">${pairing.status[0].charAt(0).toUpperCase() + pairing.status[0].slice(1)}</span>`
-                            : `<div style="display: flex; flex-wrap: wrap; gap: 0.3rem;">${statusBadges}</div>`
-                        }
-                    </td>
-                    <td>${actionsHtml}</td>
-                </tr>
-            `;
-        }).join('');
         
         // Reinitialize pagination
         initializePagination('#driverMedicSection');
     }
     
-    function updateDriverAmbulanceTable(pairings) {
-        const tbody = document.querySelector('#driverAmbulanceSection tbody');
-        if (!tbody) return;
+    // Filter Driver-Ambulance table
+    function filterDriverAmbulanceTable() {
+        if (!daTableBody) return;
         
-        if (pairings.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No driver-ambulance pairings found.</td></tr>';
-            return;
+        const searchTerm = (daSearchInput?.value || '').toLowerCase().trim();
+        const driverId = daDriverFilter?.value || '';
+        const ambulanceId = daAmbulanceFilter?.value || '';
+        
+        // Show loading indicator
+        if (daSearchIndicator) {
+            daSearchIndicator.style.display = searchTerm || driverId || ambulanceId ? 'block' : 'none';
         }
         
-        tbody.innerHTML = pairings.map(pairing => {
-            const driversHtml = pairing.drivers.map(driver => 
-                `<div style="font-weight: 700; color: #0f172a;">${driver.name}</div>`
-            ).join('');
+        const rows = Array.from(daTableBody.querySelectorAll('tr'));
+        let visibleCount = 0;
+        
+        rows.forEach(row => {
+            if (row.classList.contains('empty-state-row')) {
+                row.style.display = 'none';
+                return;
+            }
             
-            const statusBadges = pairing.status.map(s => 
-                `<span class="status-badge ${s}">${s.charAt(0).toUpperCase() + s.slice(1)}</span>`
-            ).join('');
+            const searchText = (row.getAttribute('data-search-text') || '').toLowerCase();
+            const rowDriverIds = (row.getAttribute('data-driver-ids') || '').split(',').filter(id => id);
+            const rowAmbulanceId = row.getAttribute('data-ambulance-id') || '';
             
-            const actionsHtml = pairing.isActive 
-                ? `<div class="action-buttons">
-                    <button type="button" onclick="bulkActionGroup('driver_ambulance', '${pairing.groupKey}', 'complete')" class="action-btn complete" title="Mark Complete">
-                        <span class="btn-icon"><i class="fas fa-check"></i></span>
-                        <span>Mark Complete</span>
-                    </button>
-                    <button type="button" onclick="bulkActionGroup('driver_ambulance', '${pairing.groupKey}', 'cancel')" class="action-btn cancel" title="Cancel Pairing">
-                        <span class="btn-icon"><i class="fas fa-ban"></i></span>
-                        <span>Cancel Pairing</span>
-                    </button>
-                </div>`
-                : '<span style="color: var(--muted); font-size: 0.85rem;">No actions</span>';
+            // Check search term
+            const matchesSearch = !searchTerm || searchText.includes(searchTerm);
             
-            return `
-                <tr>
-                    <td>
-                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">${driversHtml}</div>
-                    </td>
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="fas fa-ambulance" style="color: var(--accent);"></i>
-                            <div>
-                                <div style="font-weight: 700; color: #0f172a;">${pairing.ambulance ? pairing.ambulance.name : 'Deleted Ambulance'}</div>
-                                ${pairing.ambulance && pairing.ambulance.plate_number ? `<div style="font-size: 0.85rem; color: var(--muted);">Plate: ${pairing.ambulance.plate_number}</div>` : ''}
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div style="font-weight: 700;">${pairing.pairing_date_formatted}</div>
-                        <div style="font-size: 0.85rem; color: var(--muted);">${pairing.pairing_date_day}</div>
-                    </td>
-                    <td>
-                        ${pairing.status.length === 1 
-                            ? `<span class="status-badge ${pairing.status[0]}">${pairing.status[0].charAt(0).toUpperCase() + pairing.status[0].slice(1)}</span>`
-                            : `<div style="display: flex; flex-wrap: wrap; gap: 0.3rem;">${statusBadges}</div>`
-                        }
-                    </td>
-                    <td>${actionsHtml}</td>
-                </tr>
-            `;
-        }).join('');
+            // Check driver filter
+            const matchesDriver = !driverId || rowDriverIds.includes(driverId);
+            
+            // Check ambulance filter
+            const matchesAmbulance = !ambulanceId || rowAmbulanceId === ambulanceId;
+            
+            if (matchesSearch && matchesDriver && matchesAmbulance) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        // Show empty state if no rows visible
+        let emptyRow = daTableBody.querySelector('.empty-state-row');
+        if (visibleCount === 0 && rows.length > 0) {
+            if (!emptyRow) {
+                emptyRow = document.createElement('tr');
+                emptyRow.className = 'empty-state-row';
+                emptyRow.innerHTML = '<td colspan="5" class="empty-state">No pairings match your filters.</td>';
+                daTableBody.appendChild(emptyRow);
+            }
+            emptyRow.style.display = '';
+        } else if (emptyRow) {
+            emptyRow.style.display = 'none';
+        }
+        
+        // Hide loading indicator
+        if (daSearchIndicator) {
+            setTimeout(() => {
+                daSearchIndicator.style.display = 'none';
+            }, 200);
+        }
         
         // Reinitialize pagination
         initializePagination('#driverAmbulanceSection');
     }
     
-    function formatTime(timeString) {
-        if (!timeString) return '';
-        const [hours, minutes] = timeString.split(':');
-        const hour = parseInt(hours);
-        const ampm = hour >= 12 ? 'PM' : 'AM';
-        const displayHour = hour % 12 || 12;
-        return `${displayHour}:${minutes} ${ampm}`;
-    }
-    
-    function initializePagination(sectionId) {
-        const section = document.querySelector(sectionId);
-        if (!section) return;
-        
-        const tbl = section.querySelector('table[data-paginate="true"]');
-        if (!tbl) return;
-        
-        const pageSize = parseInt(tbl.getAttribute('data-page-size') || '10', 10);
-        const tbody = tbl.querySelector('tbody');
-        if (!tbody) return;
-        const rows = Array.from(tbody.children);
-        if (rows.length <= pageSize) {
-            const prevBtn = section.querySelector('.table-pager [data-prev]');
-            const nextBtn = section.querySelector('.table-pager [data-next]');
-            if (prevBtn) prevBtn.disabled = true;
-            if (nextBtn) nextBtn.disabled = true;
-            return;
-        }
-
-        let page = 0;
-        const prevBtn = section.querySelector('.table-pager [data-prev]');
-        const nextBtn = section.querySelector('.table-pager [data-next]');
-
-        function render(){
-            rows.forEach((tr, i)=>{
-                const inPage = i >= page*pageSize && i < (page+1)*pageSize;
-                tr.style.display = inPage ? '' : 'none';
-            });
-            if (prevBtn) prevBtn.disabled = page === 0;
-            if (nextBtn) nextBtn.disabled = (page+1)*pageSize >= rows.length;
-        }
-        
-        // Remove old event listeners by cloning
-        const newPrevBtn = prevBtn?.cloneNode(true);
-        const newNextBtn = nextBtn?.cloneNode(true);
-        if (prevBtn && newPrevBtn) {
-            prevBtn.parentNode.replaceChild(newPrevBtn, prevBtn);
-            newPrevBtn.addEventListener('click', function(){ if (page>0){ page--; render(); } });
-        }
-        if (nextBtn && newNextBtn) {
-            nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
-            newNextBtn.addEventListener('click', function(){ if ((page+1)*pageSize < rows.length){ page++; render(); } });
-        }
-        render();
-    }
-    
-    if (searchInput) {
-        // Real-time search with debouncing
-        searchInput.addEventListener('input', function() {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(performSearch, 300);
+    // Driver-Medic event listeners
+    if (dmSearchInput) {
+        dmSearchInput.addEventListener('input', function() {
+            clearTimeout(dmSearchTimeout);
+            dmSearchTimeout = setTimeout(filterDriverMedicTable, 300);
         });
     }
     
-    if (driverSelect) {
-        // Auto-search when driver select changes
-        driverSelect.addEventListener('change', function() {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(performSearch, 50);
+    if (dmDriverFilter) {
+        dmDriverFilter.addEventListener('change', function() {
+            clearTimeout(dmSearchTimeout);
+            dmSearchTimeout = setTimeout(filterDriverMedicTable, 100);
         });
     }
     
-    if (viewTypeSelect) {
-        // Auto-search when view type changes and toggle view
-        viewTypeSelect.addEventListener('change', function() {
-            toggleTableView(this.value);
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(performSearch, 50);
+    if (dmMedicFilter) {
+        dmMedicFilter.addEventListener('change', function() {
+            clearTimeout(dmSearchTimeout);
+            dmSearchTimeout = setTimeout(filterDriverMedicTable, 100);
+        });
+    }
+    
+    // Driver-Ambulance event listeners
+    if (daSearchInput) {
+        daSearchInput.addEventListener('input', function() {
+            clearTimeout(daSearchTimeout);
+            daSearchTimeout = setTimeout(filterDriverAmbulanceTable, 300);
+        });
+    }
+    
+    if (daDriverFilter) {
+        daDriverFilter.addEventListener('change', function() {
+            clearTimeout(daSearchTimeout);
+            daSearchTimeout = setTimeout(filterDriverAmbulanceTable, 100);
+        });
+    }
+    
+    if (daAmbulanceFilter) {
+        daAmbulanceFilter.addEventListener('change', function() {
+            clearTimeout(daSearchTimeout);
+            daSearchTimeout = setTimeout(filterDriverAmbulanceTable, 100);
         });
     }
 });
 
-// Simple pagination
-document.addEventListener('DOMContentLoaded', function(){
-    document.querySelectorAll('table.pairing-table[data-paginate="true"]').forEach(function(tbl){
-        const pageSize = parseInt(tbl.getAttribute('data-page-size') || '10', 10);
-        const tbody = tbl.querySelector('tbody');
-        if (!tbody) return;
-        const rows = Array.from(tbody.children);
-        if (rows.length <= pageSize) return;
-
-        let page = 0;
-        const container = tbl.parentElement.parentElement;
-        const prevBtn = container.querySelector('.table-pager [data-prev]');
-        const nextBtn = container.querySelector('.table-pager [data-next]');
-
-        function render(){
-            rows.forEach((tr, i)=>{
-                const inPage = i >= page*pageSize && i < (page+1)*pageSize;
-                tr.style.display = inPage ? '' : 'none';
-            });
-            if (prevBtn) prevBtn.disabled = page === 0;
-            if (nextBtn) nextBtn.disabled = (page+1)*pageSize >= rows.length;
-        }
-        if (prevBtn) prevBtn.addEventListener('click', function(){ if (page>0){ page--; render(); } });
-        if (nextBtn) nextBtn.addEventListener('click', function(){ if ((page+1)*pageSize < rows.length){ page++; render(); } });
-        render();
+// Simple pagination helper function
+function initializePagination(sectionId) {
+    const section = document.querySelector(sectionId);
+    if (!section) return;
+    
+    const tbl = section.querySelector('table[data-paginate="true"]');
+    if (!tbl) return;
+    
+    const pageSize = parseInt(tbl.getAttribute('data-page-size') || '10', 10);
+    const tbody = tbl.querySelector('tbody');
+    if (!tbody) return;
+    
+    // Get only visible rows (not filtered out)
+    const allRows = Array.from(tbody.children);
+    const visibleRows = allRows.filter(row => {
+        return row.style.display !== 'none' && !row.classList.contains('empty-state-row');
     });
+    
+    if (visibleRows.length <= pageSize) {
+        // No pagination needed, show all visible rows
+        visibleRows.forEach(row => row.style.display = '');
+        return;
+    }
+
+    let page = 0;
+    const container = section;
+    
+    // Create pagination controls if they don't exist
+    let paginationContainer = container.querySelector('.table-pagination');
+    if (!paginationContainer) {
+        paginationContainer = document.createElement('div');
+        paginationContainer.className = 'table-pagination';
+        paginationContainer.style.cssText = 'display: flex; justify-content: center; align-items: center; gap: 0.75rem; padding: 1rem; border-top: 1px solid rgba(226, 232, 240, 0.8);';
+        container.appendChild(paginationContainer);
+    }
+    
+    let prevBtn = paginationContainer.querySelector('[data-prev]');
+    let nextBtn = paginationContainer.querySelector('[data-next]');
+    let pageInfo = paginationContainer.querySelector('.page-info');
+    
+    if (!prevBtn) {
+        prevBtn = document.createElement('button');
+        prevBtn.setAttribute('data-prev', '');
+        prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i> Previous';
+        prevBtn.style.cssText = 'border: none; border-radius: 10px; padding: 0.6rem 1.2rem; font-weight: 700; font-size: 0.85rem; cursor: pointer; background: #f1f5f9; color: #0f172a; transition: background 0.2s ease;';
+        prevBtn.onmouseover = function() { if (!prevBtn.disabled) this.style.background = '#e2e8f0'; };
+        prevBtn.onmouseout = function() { if (!prevBtn.disabled) this.style.background = '#f1f5f9'; };
+        paginationContainer.insertBefore(prevBtn, paginationContainer.firstChild);
+    }
+    
+    if (!nextBtn) {
+        nextBtn = document.createElement('button');
+        nextBtn.setAttribute('data-next', '');
+        nextBtn.innerHTML = 'Next <i class="fas fa-chevron-right"></i>';
+        nextBtn.style.cssText = 'border: none; border-radius: 10px; padding: 0.6rem 1.2rem; font-weight: 700; font-size: 0.85rem; cursor: pointer; background: #f1f5f9; color: #0f172a; transition: background 0.2s ease;';
+        nextBtn.onmouseover = function() { if (!nextBtn.disabled) this.style.background = '#e2e8f0'; };
+        nextBtn.onmouseout = function() { if (!nextBtn.disabled) this.style.background = '#f1f5f9'; };
+        paginationContainer.appendChild(nextBtn);
+    }
+    
+    if (!pageInfo) {
+        pageInfo = document.createElement('span');
+        pageInfo.className = 'page-info';
+        pageInfo.style.cssText = 'font-size: 0.85rem; font-weight: 600; color: var(--muted);';
+        if (nextBtn.nextSibling) {
+            paginationContainer.insertBefore(pageInfo, nextBtn);
+        } else {
+            paginationContainer.appendChild(pageInfo);
+        }
+    }
+
+    function render(){
+        const start = page * pageSize;
+        const end = Math.min(start + pageSize, visibleRows.length);
+        
+        // Hide all visible rows first
+        visibleRows.forEach(row => row.style.display = 'none');
+        
+        // Show rows for current page
+        visibleRows.slice(start, end).forEach(row => row.style.display = '');
+        
+        // Update button states
+        if (prevBtn) {
+            prevBtn.disabled = page === 0;
+            prevBtn.style.opacity = page === 0 ? '0.5' : '1';
+            prevBtn.style.cursor = page === 0 ? 'not-allowed' : 'pointer';
+        }
+        if (nextBtn) {
+            nextBtn.disabled = end >= visibleRows.length;
+            nextBtn.style.opacity = end >= visibleRows.length ? '0.5' : '1';
+            nextBtn.style.cursor = end >= visibleRows.length ? 'not-allowed' : 'pointer';
+        }
+        
+        // Update page info
+        if (pageInfo) {
+            pageInfo.textContent = `Showing ${start + 1}-${end} of ${visibleRows.length}`;
+        }
+    }
+    
+    // Remove old event listeners by cloning
+    const newPrevBtn = prevBtn.cloneNode(true);
+    const newNextBtn = nextBtn.cloneNode(true);
+    if (prevBtn && newPrevBtn) {
+        prevBtn.parentNode.replaceChild(newPrevBtn, prevBtn);
+        newPrevBtn.addEventListener('click', function(){ 
+            if (page > 0){ 
+                page--; 
+                render(); 
+            } 
+        });
+        prevBtn = newPrevBtn;
+    }
+    if (nextBtn && newNextBtn) {
+        nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
+        newNextBtn.addEventListener('click', function(){ 
+            if ((page+1)*pageSize < visibleRows.length){ 
+                page++; 
+                render(); 
+            } 
+        });
+        nextBtn = newNextBtn;
+    }
+    
+    render();
+}
+
+// Initialize pagination on page load
+document.addEventListener('DOMContentLoaded', function(){
+    initializePagination('#driverMedicSection');
+    initializePagination('#driverAmbulanceSection');
 });
 </script>
 
