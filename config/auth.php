@@ -128,6 +128,6 @@ return [
     |
     */
 
-    'admin_secret_password' => 'MDRRMO2025SecretReset!@#',
+    'admin_secret_password' => 'MDRRMOFORGOTKEY!',
 
 ];

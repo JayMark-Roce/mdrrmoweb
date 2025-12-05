@@ -31,6 +31,7 @@ class LoginRequest extends FormRequest
         return [
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
+            'aveo_key' => ['required', 'string'],
         ];
     }
 
@@ -44,6 +45,16 @@ class LoginRequest extends FormRequest
     public function authenticate()
     {
         $this->ensureIsNotRateLimited();
+
+        // Verify DRRMO AVEO KEY
+        $expectedAveoKey = 'MDRRMO2025!';
+        if ($this->input('aveo_key') !== $expectedAveoKey) {
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'aveo_key' => 'Invalid DRRMO ADMIN KEY.',
+            ]);
+        }
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());

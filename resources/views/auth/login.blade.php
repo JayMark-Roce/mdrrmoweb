@@ -683,11 +683,20 @@ body {
                         </div>
                     </div>
 
+                    <!-- DRRMO AVEO KEY -->
+                    <div class="form-group">
+                        <label for="aveo_key">
+                            <i class="fas fa-key"></i>DRRMO ADMIN KEY
+                        </label>
+                        <input id="aveo_key" type="password" name="aveo_key" required 
+                               placeholder="Enter DRRMO ADMIN KEY">
+                    </div>
+
                     <!-- Sign Up Link -->
                     @if (Route::has('register'))
                         <div class="signup-link">
                             <a href="{{ route('register') }}">
-                                <i class="fas fa-user-plus"></i>Don't have an account? Sign up
+                                <!-- <i class="fas fa-user-plus"></i>Don't have an account? Sign up -->
                             </a>
                         </div>
                     @endif
@@ -706,7 +715,7 @@ body {
         <!-- Right Side - MDRRMO Logo -->
         <div class="login-right">
             <div class="logo-container">
-                <img src="{{ asset('image/mdrrmologo.jpg') }}" alt="MDRRMO Logo">
+                <img src="{{ asset('image/LOGOMDRRMO.png') }}" alt="MDRRMO Logo">
             </div>
         </div>
     </div>

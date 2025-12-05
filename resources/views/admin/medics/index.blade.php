@@ -860,6 +860,10 @@ body .nav-links a.active {
                             <label for="password_confirmation"><i class="fas fa-lock"></i> Confirm Password</label>
                             <input id="password_confirmation" type="password" name="password_confirmation" required placeholder="Confirm password">
                         </div>
+                        <div class="form-field">
+                            <label for="aveo_key"><i class="fas fa-key"></i> DRRMO AVEO KEY</label>
+                            <input id="aveo_key" type="password" name="aveo_key" required placeholder="Enter DRRMO AVEO KEY">
+                        </div>
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">
