@@ -559,6 +559,19 @@
             box-shadow: 0 4px 12px rgba(239,68,68,0.4);
         }
 
+        .sidenav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 17.2%;
+            height: 100vh;
+            background: linear-gradient(180deg, #031273 0%, #1e3a8a 100%);
+            z-index: 900;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            box-shadow: 15px 0 35px rgba(15, 23, 42, 0.35);
+        }
+
         .nav-links {
             display: flex;
             flex-direction: column;
@@ -566,7 +579,8 @@
             padding: 1.25rem 1rem 2rem;
         }
 
-        .nav-links a {
+        .nav-links a,
+        .nav-links span {
             display: flex;
             align-items: center;
             gap: 0.75rem;
