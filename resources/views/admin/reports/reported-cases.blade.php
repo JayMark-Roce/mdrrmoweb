@@ -57,33 +57,50 @@
     height: 80px;
     object-fit: contain;
   }
-  .nav-links {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    padding: 1.25rem 1rem 2rem;
-  }
-  .nav-links a {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    text-decoration: none;
-    color: #e5e7eb;
-    font-size: 1rem;
-    font-weight: 600;
-    padding: 0.75rem 1rem;
-    border-radius: 12px;
-    transition: background 0.2s ease, color 0.2s ease;
-  }
-  .nav-links a:hover {
-    background: rgba(255, 255, 255, 0.12);
-    color: #ffffff;
-  }
-  .nav-links a.active {
-    background: rgba(255, 255, 255, 0.25);
-    color: #ffffff;
-    font-weight: 800;
-  }
+  .sidenav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 17.2%;
+            height: 100vh;
+            background: linear-gradient(180deg, #031273 0%, #1e3a8a 100%);
+            z-index: 900;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            box-shadow: 15px 0 35px rgba(15, 23, 42, 0.35);
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            padding: 1.25rem 1rem 2rem;
+        }
+
+        .nav-links a,
+        .nav-links span {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: #e5e7eb;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+        }
+
+        .nav-links a.active {
+            background: rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+            font-weight: 800;
+        }
   @media (max-width: 768px) {
     .toggle-btn { display: flex; }
     .sidenav { transform: translateX(-100%); }
@@ -148,15 +165,15 @@
     <div class="logo-container" style="display: flex; flex-direction: column; align-items: center;">
         <img src="{{ asset('image/LOGOMDRRMO.png') }}" alt="Logo" class="logo-img" style="display: block; margin: 0 auto;">
         <div style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 800; color: #ffffff; letter-spacing: .5px;">SILANG MDRRMO</div>
-        <div id="sidebarDateTime" style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 600; color: rgba(255, 255, 255, 0.85); font-size: 0.75rem; letter-spacing: 0.3px; padding: 0 12px;">
-            <div id="sidebarDate" style="margin-bottom: 4px;"></div>
-            <div id="sidebarTime" style="font-weight: 700; font-size: 0.8rem;"></div>
+        <div id="sidebarDateTime" style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 600; color: #ffffff; font-size: 0.9rem; letter-spacing: 0.3px; padding: 0 12px;">
+            <div id="sidebarDate" style="margin-bottom: 4px; font-weight: 600; font-size: 0.85rem;"></div>
+            <div id="sidebarTime" style="font-weight: 800; font-size: 1rem;"></div>
         </div>
     </div>
     <nav class="nav-links">
      <a href="{{ route('dashboard') }}" class="{{ request()->is('dashboard') ? 'active' : '' }}"><i class="fas fa-chart-pie"></i> Dashboard</a>
       <a href="{{ url('/admin/pairing') }}" class="{{ request()->is('admin/pairing') ? 'active' : '' }}"><i class="fas fa-link"></i> Pairing</a>
-      <a href="{{ url('/admin/drivers') }}" class="{{ request()->is('admin/drivers*') ? 'active' : '' }}"><i class="fas fa-car"></i> Drivers</a>
+      <a href="{{ url('/admin/drivers') }}" class="{{ request()->is('admin/drivers*') ? 'active' : '' }}"><i class="fas fa-car"></i> Personels</a>
       <a href="{{ url('/admin/medics') }}" class="{{ request()->is('admin/medics*') ? 'active' : '' }}"><i class="fas fa-plus"></i> Create</a>
       <a href="{{ url('/admin/gps') }}" class="{{ request()->is('admin/gps') ? 'active' : '' }}"><i class="fas fa-map-marker-alt mr-1"></i> GPS Tracker</a>
       <a href="{{ url('/admin/reports') }}" class="{{ request()->is('admin/reports*') ? 'active' : '' }}"><i class="fas fa-file-alt"></i> Reports</a>

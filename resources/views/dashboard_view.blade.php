@@ -1203,40 +1203,6 @@ body.ui-hidden .gm-ui-toggle {
         <h3>Overview</h3>
       </div>
       <div class="dashboard-panel-content">
-        <!-- Active Drivers Card -->
-        <div class="dashboard-metric-card">
-          <div class="dashboard-metric-header">
-            <div class="dashboard-metric-left">
-              <div class="dashboard-metric-title">
-                <i class="fas fa-user-check"></i>
-                Active Drivers
-              </div>
-              <div class="dashboard-metric-value" id="leftPanelActiveDrivers">0</div>
-              <div class="dashboard-metric-subtitle">With active cases</div>
-            </div>
-            <div class="dashboard-metric-icon drivers">
-              <i class="fas fa-user-check"></i>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Total Ambulances Card -->
-        <div class="dashboard-metric-card">
-          <div class="dashboard-metric-header">
-            <div class="dashboard-metric-left">
-              <div class="dashboard-metric-title">
-                <i class="fas fa-ambulance"></i>
-                Total Ambulances
-              </div>
-              <div class="dashboard-metric-value" id="leftPanelTotalAmbulances">0</div>
-              <div class="dashboard-metric-subtitle">All registered units</div>
-            </div>
-            <div class="dashboard-metric-icon ambulances">
-              <i class="fas fa-ambulance"></i>
-            </div>
-          </div>
-        </div>
-        
         <!-- Active Cases Card -->
         <div class="dashboard-metric-card">
           <div class="dashboard-metric-header">
@@ -1263,10 +1229,44 @@ body.ui-hidden .gm-ui-toggle {
                 Available Drivers
               </div>
               <div class="dashboard-metric-value" id="leftPanelAvailableDrivers">0</div>
-              <div class="dashboard-metric-subtitle">Online without cases</div>
+              <div class="dashboard-metric-subtitle">With no active cases</div>
             </div>
             <div class="dashboard-metric-icon available">
               <i class="fas fa-user-clock"></i>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Drivers with Active Case Card -->
+        <div class="dashboard-metric-card">
+          <div class="dashboard-metric-header">
+            <div class="dashboard-metric-left">
+              <div class="dashboard-metric-title">
+                <i class="fas fa-user-check"></i>
+                Drivers with Active Case
+              </div>
+              <div class="dashboard-metric-value" id="leftPanelActiveDrivers">0</div>
+              <div class="dashboard-metric-subtitle">Currently assigned</div>
+            </div>
+            <div class="dashboard-metric-icon drivers">
+              <i class="fas fa-user-check"></i>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Total Ambulances Card -->
+        <div class="dashboard-metric-card">
+          <div class="dashboard-metric-header">
+            <div class="dashboard-metric-left">
+              <div class="dashboard-metric-title">
+                <i class="fas fa-ambulance"></i>
+                Total Ambulances
+              </div>
+              <div class="dashboard-metric-value" id="leftPanelTotalAmbulances">0</div>
+              <div class="dashboard-metric-subtitle">All registered units</div>
+            </div>
+            <div class="dashboard-metric-icon ambulances">
+              <i class="fas fa-ambulance"></i>
             </div>
           </div>
         </div>
@@ -1291,7 +1291,7 @@ body.ui-hidden .gm-ui-toggle {
     </div>
     
     <div class="map-wrapper">
-      <div class="gm-status-bar">
+      <!-- <div class="gm-status-bar">
         <div class="gm-status-item">
           <div class="gm-status-icon gm-status-case-inactive">
             <i class="fas fa-map-marker-alt" style="font-size:16px; color:#9ca3af; text-shadow:0 1px 2px rgba(0,0,0,0.2);"></i>
@@ -1309,7 +1309,7 @@ body.ui-hidden .gm-ui-toggle {
           <span>Active Cases: <span id="activeCases">0</span></span>
         </div>
       </div>
-      
+       -->
       <!-- UI Hide/Show Toggle Button -->
       <button id="uiToggle" class="gm-ui-toggle" title="Hide/Show UI">
         <i class="fas fa-eye" id="uiToggleIcon"></i>
@@ -1845,24 +1845,7 @@ body.ui-hidden .gm-ui-toggle {
                 caseMarkers[cur.case_num] = m;
               }
               
-              // Driver -> destination trail if driver position exists AND driver is actively navigating
-              if (driverMarkers[ambId]) {
-                // Check if driver is actively navigating (has destination coordinates)
-                const ambData = ambulanceDataMap[ambId];
-                const isNavigating = ambData && ambData.destination_latitude && ambData.destination_longitude;
-                
-                // Only draw trail if driver is actively navigating to a pin
-                if (isNavigating) {
-                  const driverLatLng = driverMarkers[ambId].getLatLng();
-                  const destLat = parseFloat(ambData.destination_latitude);
-                  const destLng = parseFloat(ambData.destination_longitude);
-                  
-                  if (driverLatLng && !Number.isNaN(driverLatLng.lat) && !Number.isNaN(driverLatLng.lng) && !Number.isNaN(destLat) && !Number.isNaN(destLng)) {
-                    const routedTrail = await drawRoutedLine([driverLatLng.lat, driverLatLng.lng], [destLat, destLng], { color: '#ff8c42', weight: 6, opacity: 0.95 });
-                    driverToCaseTraces[cur.case_num] = routedTrail;
-                  }
-                }
-              }
+              // Trail drawing removed - no longer connecting drivers to cases
 
               ambIdToCaseNum[ambId] = cur.case_num;
             }
@@ -1884,30 +1867,7 @@ body.ui-hidden .gm-ui-toggle {
             Object.values(caseDestinationMarkers).forEach(m => map.removeLayer(m));
             caseDestinationMarkers = {};
             
-            // 5) Draw trails from drivers to base for completed cases
-            // Check for drivers who have completed cases and draw trail to base
-            for (const c of cases) {
-              if (c.status !== 'Completed') continue;
-              const ambIdForCase = c.ambulance_id || (c.ambulance && (c.ambulance.id || c.ambulance.ambulance_id));
-              if (!ambIdForCase) continue;
-              
-              // Respect ambulance filter
-              if (String(currentFilterAmbId) !== 'all' && String(ambIdForCase) !== String(currentFilterAmbId)) continue;
-              
-              // Check if driver marker exists and has GPS data
-              if (driverMarkers[ambIdForCase]) {
-                const driverLatLng = driverMarkers[ambIdForCase].getLatLng();
-                if (driverLatLng && !Number.isNaN(driverLatLng.lat) && !Number.isNaN(driverLatLng.lng)) {
-                  // Draw trail from driver to base (blue color to indicate return to base)
-                  const baseTrail = await drawRoutedLine(
-                    [driverLatLng.lat, driverLatLng.lng], 
-                    [baseLat, baseLng], 
-                    { color: '#2563eb', weight: 5, opacity: 0.8, dashArray: '10, 5' }
-                  );
-                  driverToBaseTraces[ambIdForCase] = baseTrail;
-                }
-              }
-            }
+            // Trail drawing removed - no longer connecting drivers to base
             
             // Auto-fit bounds to show all visible cases and ambulances
             setTimeout(() => autoFitMapBounds(), 500);
@@ -2502,8 +2462,7 @@ body.ui-hidden .gm-ui-toggle {
               
               L.marker([ambLat, ambLng], { icon: ambIcon }).addTo(miniMap);
 
-              // Road-following trail line using OSRM routing
-              drawRoutedLineForMinimap([caseLat, caseLng], [ambLat, ambLng], miniMap);
+              // Trail drawing removed - no longer connecting drivers to cases
 
               // Fit bounds to show both markers
               const group = new L.featureGroup([L.marker([caseLat, caseLng]), L.marker([ambLat, ambLng])]);

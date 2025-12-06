@@ -35,9 +35,9 @@
     <div class="logo-container" style="display: flex; flex-direction: column; align-items: center; padding: 1.5rem 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
         <img src="{{ asset('image/LOGOMDRRMO.png') }}" alt="Logo" class="logo-img" style="display: block; margin: 0 auto; width: 80px; height: 80px; object-fit: contain;">
         <div style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 800; color: #ffffff; letter-spacing: .5px;">SILANG MDRRMO</div>
-        <div id="sidebarDateTime" style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 600; color: rgba(255, 255, 255, 0.85); font-size: 0.75rem; letter-spacing: 0.3px; padding: 0 12px;">
-            <div id="sidebarDate" style="margin-bottom: 4px;"></div>
-            <div id="sidebarTime" style="font-weight: 700; font-size: 0.8rem;"></div>
+        <div id="sidebarDateTime" style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 600; color: #ffffff; font-size: 0.9rem; letter-spacing: 0.3px; padding: 0 12px;">
+            <div id="sidebarDate" style="margin-bottom: 4px; font-weight: 600; font-size: 0.85rem;"></div>
+            <div id="sidebarTime" style="font-weight: 800; font-size: 1rem;"></div>
         </div>
     </div>
     <nav class="nav-links" style="display: flex; flex-direction: column; gap: 0.35rem; padding: 1.25rem 1rem 2rem;">
