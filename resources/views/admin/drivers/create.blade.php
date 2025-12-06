@@ -193,7 +193,7 @@
                 @csrf
                 <button id="changeAccountBtn" type="submit" style="width: 100%; background: linear-gradient(135deg,#ef4444,#b91c1c); color: #ffffff; border: none; border-radius: 8px; padding: 6px 8px; font-weight: 700; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 12px rgba(239,68,68,0.28);">
                     <i class="fas fa-right-left" style="font-size: 12px;"></i>
-                    <span>Change account</span>
+                    <span>Log Out</span>
                 </button>
             </form>
         </div>

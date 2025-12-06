@@ -97,6 +97,22 @@
             overflow: hidden;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
         }
+
+        @media (max-width: 1024px) {
+            .analytics-containers {
+                width: 98%;
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .analytics-containers {
+                width: 100%;
+                padding: 20px;
+                border-radius: 16px;
+                margin-bottom: 20px;
+            }
+        }
         .analytics-containers::before {
             content: "";
             position: absolute;
@@ -154,10 +170,28 @@
             border-radius: 25px;
             padding: 12px 20px;
             width: 500px;
+            max-width: 100%;
             font-size: 14px;
             color: #333;
             outline: none;
             margin-top: -3px;
+        }
+
+        @media (max-width: 768px) {
+            .analytics-search input {
+                width: 100%;
+            }
+            .analytics-controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .analytics-filter-controls {
+                width: 100%;
+            }
+            .analytics-buttons {
+                flex-wrap: wrap;
+                width: 100%;
+            }
         }
 
         .analytics-search input::placeholder {
@@ -295,6 +329,24 @@
             .analytics-stats {
                 grid-template-columns: 1fr;
             }
+            .hero-metrics {
+                grid-template-columns: 1fr !important;
+            }
+            .hero-metric-card strong {
+                font-size: 1.2rem !important;
+            }
+            .directory-panel {
+                border-radius: 16px !important;
+            }
+            .directory-panel__header {
+                padding: 1rem 1.25rem 0.75rem !important;
+            }
+            .directory-panel__search {
+                padding: 0 1.25rem 0.75rem !important;
+            }
+            .directory-panel__body {
+                padding: 0 1.25rem 1.25rem !important;
+            }
         }
 
         /* Driver Directory Design */
@@ -311,6 +363,22 @@
             margin-right: auto;
             overflow: hidden;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+        }
+
+        @media (max-width: 1024px) {
+            .directory-container {
+                width: 98%;
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .directory-container {
+                width: 100%;
+                padding: 20px;
+                border-radius: 16px;
+                margin-bottom: 20px;
+            }
         }
         .directory-container::before {
             content: "";
@@ -546,6 +614,44 @@
             background: #555;
         }
 
+        @media (max-width: 768px) {
+            .directory-table-container {
+                border-radius: 12px;
+            }
+            .directory-table thead th,
+            .directory-table td {
+                padding: 10px 8px;
+                font-size: 12px;
+            }
+            .directory-table thead th:nth-child(1), .directory-table tbody td:nth-child(1) { width: 20%; }
+            .directory-table thead th:nth-child(2), .directory-table tbody td:nth-child(2) { width: 22%; }
+            .directory-table thead th:nth-child(3), .directory-table tbody td:nth-child(3) { width: 18%; }
+            .directory-table thead th:nth-child(4), .directory-table tbody td:nth-child(4) { width: 18%; }
+            .directory-table thead th:nth-child(5), .directory-table tbody td:nth-child(5) { width: 14%; }
+            .directory-table thead th:nth-child(6), .directory-table tbody td:nth-child(6) { width: 8%; }
+            .driver-profile {
+                gap: 4px;
+            }
+            .driver-avatar {
+                width: 45px;
+                height: 45px;
+            }
+            .driver-avatar i {
+                font-size: 20px;
+            }
+            .driver-name {
+                font-size: 12px;
+            }
+            .action-buttons {
+                gap: 4px;
+            }
+            .action-btn {
+                width: 30px;
+                height: 22px;
+                font-size: 10px;
+            }
+        }
+
         /* Modal Button Hover Effects */
         .modal-cancel-btn:hover {
             transform: scale(1.05);
@@ -563,13 +669,76 @@
             position: fixed;
             left: 0;
             top: 0;
-            width: 17.2%;
+            width: var(--sidebar-width, 17.2%);
+            min-width: 260px;
             height: 100vh;
             background: linear-gradient(180deg, #031273 0%, #1e3a8a 100%);
-            z-index: 900;
+            z-index: 1100;
             overflow-y: auto;
             transition: transform 0.3s ease;
             box-shadow: 15px 0 35px rgba(15, 23, 42, 0.35);
+        }
+
+        @media (max-width: 1024px) {
+            .sidenav {
+                width: 280px;
+                transform: translateX(-100%);
+            }
+            .sidenav.active {
+                transform: translateX(0);
+            }
+            .mdrrmo-header {
+                left: 0 !important;
+                width: 100% !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidenav {
+                width: 100%;
+                max-width: 320px;
+            }
+        }
+
+        .toggle-btn {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 1101;
+            background: linear-gradient(135deg, #031273 0%, #1e3a8a 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            width: 48px;
+            height: 48px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (max-width: 1024px) {
+            .toggle-btn {
+                display: flex;
+            }
+        }
+
+        .sidenav-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1099;
+            backdrop-filter: blur(2px);
+        }
+
+        @media (max-width: 1024px) {
+            .sidenav.active + .sidenav-overlay,
+            .sidenav-overlay.active {
+                display: block;
+            }
         }
 
         .nav-links {
@@ -603,6 +772,39 @@
             color: #ffffff;
             font-weight: 800;
         }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                padding: 1rem 0.75rem 1.5rem;
+            }
+            .nav-links a,
+            .nav-links span {
+                font-size: 0.9rem;
+                padding: 0.65rem 0.85rem;
+            }
+            .logo-container {
+                padding: 1rem 0.75rem !important;
+            }
+            .logo-container img {
+                max-width: 80px !important;
+            }
+            #sidebarDateTime {
+                font-size: 0.75rem !important;
+            }
+        }
+
+        /* Modal Responsiveness */
+        @media (max-width: 768px) {
+            #forceLogoutModal > div,
+            #archiveDriverModal > div,
+            #restoreDriverModal > div,
+            #editAmbulanceDashboardModal > div,
+            #editMedicDashboardModal > div,
+            #archiveMedicDashboardModal > div {
+                width: 95vw !important;
+                margin: 1rem !important;
+            }
+        }
     </style>
     <style>
 :root {
@@ -613,19 +815,43 @@
     --drivers-primary: #2563eb;
     --drivers-accent: #7c3aed;
     --drivers-danger: #dc2626;
+    --header-height: 70px;
+    --sidebar-width: 17.2%;
 }
 html, body {
     min-height: 100vh;
     font-family: 'Nunito', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--drivers-bg);
     color: #0f172a;
+    overflow-x: hidden;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+* {
+    box-sizing: border-box;
 }
 .maincontentt {
-    margin-left: 260px;
-    width: calc(100% - 260px);
+    margin-left: var(--sidebar-width, 17.2%);
+    width: calc(100% - var(--sidebar-width, 17.2%));
     padding: 2.5rem clamp(1.25rem, 3vw, 3rem) 3.5rem;
-    padding-top: calc(var(--header-height) + 2.5rem);
+    padding-top: calc(var(--header-height, 70px) + 2.5rem);
     box-sizing: border-box;
+    transition: margin-left 0.3s ease, width 0.3s ease;
+    min-width: 0;
+    overflow-x: hidden;
+}
+
+@media (max-width: 1024px) {
+    .maincontentt {
+        margin-left: 0;
+        width: 100%;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        padding-top: calc(var(--header-height, 70px) + 1.5rem);
+    }
 }
 .drivers-page-container {
     max-width: 1400px;
@@ -633,6 +859,9 @@ html, body {
     display: flex;
     flex-direction: column;
     gap: 1.75rem;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0;
 }
 .hero-card {
     background: var(--drivers-card);
@@ -643,6 +872,9 @@ html, body {
     grid-template-columns: 1.4fr 1fr;
     gap: clamp(1rem, 3vw, 2.5rem);
     box-shadow: 0 30px 60px rgba(15,23,42,0.12);
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 .hero-badge {
     display: inline-flex;
@@ -731,6 +963,8 @@ html, body {
     padding: 1.75rem;
     border: 1px solid var(--drivers-border);
     box-shadow: 0 20px 50px rgba(15,23,42,0.08);
+    width: 100%;
+    box-sizing: border-box;
 }
 .filters-header {
     display: flex;
@@ -788,6 +1022,9 @@ html, body {
     border-radius: 26px;
     border: 1px solid var(--drivers-border);
     box-shadow: 0 25px 60px rgba(15,23,42,0.12);
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 .table-card-header {
     padding: 1.5rem 1.75rem;
@@ -830,6 +1067,22 @@ html, body {
 }
 .drivers-table-wrapper {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+    .drivers-table-wrapper {
+        margin: 0 -1rem;
+        padding: 0 1rem;
+    }
+    .drivers-table {
+        min-width: 600px;
+    }
+    .drivers-table th,
+    .drivers-table td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.85rem;
+    }
 }
 .drivers-table {
     width: 100%;
@@ -953,6 +1206,8 @@ html, body {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
     gap: 1.5rem;
+    width: 100%;
+    box-sizing: border-box;
 }
 .directory-panel {
     background: var(--drivers-card);
@@ -964,6 +1219,8 @@ html, body {
     min-height: 420px;
     position: relative;
     overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
 }
 .directory-panel::before {
     content: "";
@@ -1146,16 +1403,70 @@ html, body {
 @media (max-width: 1100px) {
     .hero-card { grid-template-columns: 1fr; }
 }
+
 @media (max-width: 768px) {
-    .maincontentt {
-        margin-left: 0;
-        width: 100%;
-        padding: 1.25rem;
-        padding-top: calc(var(--header-height) + 1.25rem);
+    .hero-card {
+        padding: 1.5rem !important;
+        border-radius: 20px !important;
     }
-    .table-card-header { flex-direction: column; }
-    .hero-actions { flex-direction: column; }
+    .hero-metrics {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.6rem !important;
+    }
+    .hero-metric-card {
+        padding: 0.75rem !important;
+    }
+    .hero-metric-card strong {
+        font-size: 1.4rem !important;
+    }
+    .filters-card {
+        padding: 1.25rem !important;
+        border-radius: 20px !important;
+    }
+    .filters-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .table-card {
+        border-radius: 20px !important;
+    }
+    .operations-grid {
+        grid-template-columns: 1fr !important;
+    }
 }
+        @media (max-width: 1024px) {
+            #userMenu {
+                right: 70px !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .maincontentt {
+                margin-left: 0;
+                width: 100%;
+                padding: 1.25rem;
+                padding-top: calc(var(--header-height) + 1.25rem);
+            }
+            .table-card-header { flex-direction: column; }
+            .hero-actions { flex-direction: column; }
+            #userMenu {
+                right: 12px !important;
+                padding: 4px 8px !important;
+                font-size: 0.85rem !important;
+            }
+            #userMenu span:not(.fa) {
+                display: none;
+            }
+            .mdrrmo-header {
+                padding: 0.75rem 1rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #userMenu {
+                right: 8px !important;
+                top: 12px !important;
+            }
+        }
     </style>
 </head>
 @php
@@ -1167,6 +1478,9 @@ html, body {
 <button class="toggle-btn" onclick="toggleSidebar()">
     <i class="fas fa-bars"></i>
 </button>
+
+<!-- Sidenav Overlay -->
+<div class="sidenav-overlay" id="sidenavOverlay" onclick="closeSidebar()"></div>
 
 <!-- Sidenav -->
 <aside class="sidenav" id="sidenav">
@@ -1190,10 +1504,10 @@ html, body {
 </aside>
 
 <!-- Fixed Top Header -->
-<div class="mdrrmo-header" style="background:#F7F7F7; box-shadow: 0 2px 8px rgba(0,0,0,0.12); border: none; min-height: var(--header-height); padding: 1rem 2rem; display: flex; align-items: center; justify-content: center;">
+<div class="mdrrmo-header" style="position: fixed; top: 0; right: 0; width: 100%; background:#F7F7F7; box-shadow: 0 2px 8px rgba(0,0,0,0.12); border: none; min-height: var(--header-height, 70px); padding: 1rem 2rem; display: flex; align-items: center; justify-content: center; z-index: 1000; box-sizing: border-box;">
     <h2 class="header-title" style="display:none;"></h2>
     @php $firstName = explode(' ', auth()->user()->name ?? 'Admin')[0]; @endphp
-    <div id="userMenu" style="position: fixed; right: 16px; top: 16px; display: inline-flex; align-items: center; gap: 10px; cursor: pointer; color: #e5e7eb; z-index: 1000; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 6px 10px; border-radius: 9999px; box-shadow: 0 6px 18px rgba(0,0,0,0.18); backdrop-filter: saturate(140%);">
+    <div id="userMenu" style="position: fixed; right: 16px; top: 16px; display: inline-flex; align-items: center; gap: 10px; cursor: pointer; color: #e5e7eb; z-index: 1000; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 6px 10px; border-radius: 9999px; box-shadow: 0 6px 18px rgba(0,0,0,0.18); backdrop-filter: saturate(140%); transition: right 0.3s ease;">
         <div style="width: 28px; height: 28px; border-radius: 9999px; background: linear-gradient(135deg,#4CC9F0,#031273); display: inline-flex; align-items: center; justify-content: center; position: relative;">
             <i class="fas fa-user-shield" style="font-size: 14px; color: #ffffff;"></i>
             <span style="position: absolute; right: -1px; bottom: -1px; width: 8px; height: 8px; border-radius: 9999px; background: #22c55e; box-shadow: 0 0 0 2px #0c2d5a;"></span>
@@ -1206,7 +1520,7 @@ html, body {
                 @csrf
                 <button id="changeAccountBtn" type="submit" style="width: 100%; background: linear-gradient(135deg,#ef4444,#b91c1c); color: #ffffff; border: none; border-radius: 8px; padding: 6px 8px; font-weight: 700; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 12px rgba(239,68,68,0.28);">
                     <i class="fas fa-right-left" style="font-size: 12px;"></i>
-                    <span>Change account</span>
+                    <span>Log Out</span>
                 </button>
             </form>
         </div>
@@ -2177,8 +2491,25 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 function toggleSidebar() {
     const sidenav = document.getElementById('sidenav');
+    const overlay = document.getElementById('sidenavOverlay');
     if (!sidenav) return;
     sidenav.classList.toggle('active');
+    if (overlay) {
+        overlay.classList.toggle('active');
+    }
+    document.body.style.overflow = sidenav.classList.contains('active') ? 'hidden' : '';
+}
+
+function closeSidebar() {
+    const sidenav = document.getElementById('sidenav');
+    const overlay = document.getElementById('sidenavOverlay');
+    if (sidenav) {
+        sidenav.classList.remove('active');
+    }
+    if (overlay) {
+        overlay.classList.remove('active');
+    }
+    document.body.style.overflow = '';
 }
 
 // Update sidebar date and time
@@ -2204,6 +2535,19 @@ function updateSidebarDateTime() {
 document.addEventListener('DOMContentLoaded', function() {
     updateSidebarDateTime();
     setInterval(updateSidebarDateTime, 1000);
+
+    // Close sidebar when clicking outside on mobile
+    const overlay = document.getElementById('sidenavOverlay');
+    if (overlay) {
+        overlay.addEventListener('click', closeSidebar);
+    }
+
+    // Close sidebar on window resize if it's larger than 1024px
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 1024) {
+            closeSidebar();
+        }
+    });
 });
 
 // User menu toggle + AJAX logout redirect to login
