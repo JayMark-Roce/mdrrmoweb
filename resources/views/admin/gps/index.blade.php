@@ -3352,7 +3352,7 @@ body.fullscreen-mode::before {
 <aside class="sidenav" id="sidenav">
     <div class="logo-container" style="display: flex; flex-direction: column; align-items: center;">
         <img src="{{ asset('image/LOGOMDRRMO.png') }}" alt="Logo" class="logo-img" style="display: block; margin: 0 auto;">
-        <div style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 800; color: #ffffff; letter-spacing: .5px;">SILANG MDRRMO</div>
+        <div style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 800; color: #ffffff; letter-spacing: .5px;">SILANG DRRMO</div>
         <div id="sidebarDateTime" style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 600; color: #ffffff; font-size: 0.9rem; letter-spacing: 0.3px; padding: 0 12px;">
             <div id="sidebarDate" style="margin-bottom: 4px; font-weight: 600; font-size: 0.85rem;"></div>
             <div id="sidebarTime" style="font-weight: 800; font-size: 1rem;"></div>
@@ -3361,10 +3361,10 @@ body.fullscreen-mode::before {
     <nav class="nav-links">
      <a href="{{ route('dashboard') }}" class="{{ request()->is('dashboard') ? 'active' : '' }}"><i class="fas fa-chart-pie"></i> Dashboard</a>
       <a href="{{ url('/admin/pairing') }}" class="{{ request()->is('admin/pairing') ? 'active' : '' }}"><i class="fas fa-link"></i> Pairing</a>
-      <a href="{{ url('/admin/drivers') }}" class="{{ request()->is('admin/drivers*') ? 'active' : '' }}"><i class="fas fa-car"></i> Personels</a>
+      <a href="{{ url('/admin/drivers') }}" class="{{ request()->is('admin/drivers*') ? 'active' : '' }}"><i class="fas fa-car"></i> Personnels</a>
       <a href="{{ url('/admin/medics') }}" class="{{ request()->is('admin/medics*') ? 'active' : '' }}"><i class="fas fa-plus"></i> Create</a>
       <a href="{{ url('/admin/gps') }}" class="{{ request()->is('admin/gps') ? 'active' : '' }}"><i class="fas fa-map-marker-alt mr-1"></i> GPS Tracker</a>
-      <a href="{{ url('/admin/reports') }}" class="{{ request()->is('admin/reports*') ? 'active' : '' }}"><i class="fas fa-file-alt"></i> Reports</a>
+      <a href="{{ url('/admin/reports') }}" class="{{ request()->is('admin/reports*') ? 'active' : '' }}"><i class="fas fa-file-alt"></i> Case Logs</a>
       <a href="{{ route('reported-cases') }}" class="{{ request()->routeIs('reported-cases') ? 'active' : '' }}"><i class="fas fa-file-alt"></i> Reported Cases</a>
     </nav>
 </aside>
@@ -3624,29 +3624,27 @@ body.fullscreen-mode::before {
 
 <!-- Case Details Modal -->
 <div id="case-details-modal" class="modal-overlay" style="display:none;">
-    <div class="modal-content map-modal map-modal-sm" style="max-width: 560px; width: 96vw; padding: 0; border-radius: 20px; overflow: hidden; background-color: #020617;">
-        <div style="background: background: radial-gradient(circle at top, #0f172a, #020617); padding: 0.8rem 1.05rem 0.8rem; color:#ecfdf5; display:flex; align-items:center; justify-content:space-between; gap:0.75rem;">
-            <div style="display:flex; align-items:flex-start; gap:0.7rem;">
-                <div style="width:32px; height:32px; border-radius:999px; background:rgba(15,23,42,0.18); display:flex; align-items:center; justify-content:center; font-size:1rem;">
-                    <i class="fas fa-file-medical"></i>
-                </div>
+    <div class="modal-content map-modal map-modal-sm">
+        <button type="button" id="close-case-details-modal" class="modal-close" style="position: absolute; top: 10px; right: 12px; background: var(--brand-navy); color: #ffffff; border: 0; width: 36px; height: 36px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="case-modal-shell">
+            <div class="case-modal-header case-modal-header--subtle">
                 <div>
-                    <p style="margin:0; font-size:0.72rem; letter-spacing:0.18em; text-transform:uppercase; opacity:0.9; font-weight:700;">MDRRMO Case</p>
-                    <h3 style="margin:0.14rem 0 0; font-size:1.02rem; font-weight:800;">Case Details</h3>
+                    <p class="case-modal-eyebrow">Case Snapshot</p>
+                    <h3>
+                        <i class="fas fa-file-medical" style="color:#4ade80;"></i>
+                        Case Details
+                    </h3>
+                </div>
+                <div class="case-modal-header-meta">
+                    <span class="case-pill case-pill--ghost">
+                        <i class="fas fa-sparkles"></i>
+                        Live sync
+                    </span>
                 </div>
             </div>
-            <div style="display:flex; align-items:center; gap:0.4rem;">
-                <span style="display:inline-flex; align-items:center; gap:0.3rem; font-size:0.72rem; padding:0.25rem 0.55rem; border-radius:999px; background:rgba(15,23,42,0.25); border:1px solid rgba(148,163,184,0.5);">
-                    <i class="fas fa-sparkles" style="font-size:0.75rem;"></i>
-                    <span>Live sync</span>
-                </span>
-                <button type="button" id="close-case-details-modal" class="modal-close" style="border:none; background:rgba(15,23,42,0.65); color:#e5e7eb; width:30px; height:30px; border-radius:999px; cursor:pointer; display:flex; align-items:center; justify-content:center;">
-                    <i class="fas fa-times" style="font-size:0.9rem;"></i>
-                </button>
-            </div>
-        </div>
-        <div class="case-details-wrapper" title="Case Details" style="padding:0.85rem 1.1rem 1rem; background:#0f172a;">
-            <div id="case-details-content" class="case-details-content" style="background: radial-gradient(circle at top, #0f172a, #020617); border-radius:16px; padding:0.9rem 1rem 0.85rem; border:1px solid rgba(51,65,85,0.85); box-shadow:0 18px 45px rgba(15,23,42,0.8);">
+            <div id="case-details-content" class="case-details-content">
                 <!-- Case details will be injected here -->
             </div>
         </div>
@@ -3702,26 +3700,35 @@ body.fullscreen-mode::before {
 <!-- Geofence Notification Modal -->
 <div id="geofence-notification-modal" class="modal-overlay" style="display:none;">
     <div class="modal-content map-modal map-modal-sm">
-        <div class="modal-header" style="background: linear-gradient(135deg, var(--brand-navy) 0%, #1e3a8a 65%); color: #ffffff; border-radius: 12px 12px 0 0; width:100%; display:flex; align-items:center; justify-content:space-between; padding: .6rem .75rem; box-sizing:border-box;">
-            <h3 class="modal-title" id="geofence-modal-title" style="color: #ffffff; display: flex; align-items: center; gap: 0.5rem; font-size: .95rem; margin:0;">
-                <i class="fas fa-map-marker-alt" style="font-size: 1.1rem; color:#4ade80;"></i>
-                Driver Reached Location
-            </h3>
-            <button type="button" onclick="closeGeofenceModal()" class="modal-close" style="position: static; top:auto; right:auto; background: rgba(255,255,255,0.18); color: #ffffff; width: 28px; height: 28px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="modal-body" id="geofence-notification-content" style="padding: .75rem;">
-            <!-- Notification content will be inserted here -->
-        </div>
-        <div style="padding: .6rem .75rem; border-top: 1px solid #e5e7eb; display: flex; gap: .5rem; justify-content: flex-end; background: #f8fafc;">
-            <button onclick="closeGeofenceModal()" style="background: #6b7280; color: #ffffff; border: none; padding: .45rem .85rem; border-radius: 8px; font-weight: 800; cursor: pointer;">
-                Dismiss
-            </button>
-            <button id="geofence-complete-btn" onclick="completeCaseFromGeofence()" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; border: none; padding: .5rem .9rem; border-radius: 8px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: .45rem;">
-                <i class="fas fa-check-circle"></i>
-                Mark as Complete
-            </button>
+        <button type="button" onclick="closeGeofenceModal()" class="modal-close" style="position: absolute; top: 10px; right: 12px; background: var(--brand-navy); color: #ffffff; border: 0; width: 36px; height: 36px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="case-modal-shell">
+            <div class="case-modal-header">
+                <div>
+                    <p class="case-modal-eyebrow">Location Alert</p>
+                    <h3 id="geofence-modal-title">
+                        <i class="fas fa-map-marker-alt" style="color:#4ade80;"></i>
+                        Driver Reached Location
+                    </h3>
+                </div>
+                <div class="case-modal-header-meta">
+                    <span class="case-pill case-pill--ghost">
+                        <i class="fas fa-bell"></i>
+                        Real-time
+                    </span>
+                </div>
+            </div>
+            <div class="case-modal-body" id="geofence-notification-content">
+                <!-- Notification content will be inserted here -->
+            </div>
+            <div style="padding: 1rem 1.5rem; border-top: 1px solid rgba(148, 163, 184, 0.2); display: flex; gap: 0.75rem; justify-content: flex-end; background: #ffffff;">
+                <button onclick="closeGeofenceModal()" style="padding: 0.65rem 1.25rem; background: #f1f5f9; color: #475569; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.85rem; transition: all 0.2s ease;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">Dismiss</button>
+                <button id="geofence-complete-btn" onclick="completeCaseFromGeofence()" style="padding: 0.65rem 1.25rem; background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.85rem; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.5rem; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 10px 25px rgba(16, 185, 129, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(16, 185, 129, 0.3)'">
+                    <i class="fas fa-check-circle"></i>
+                    Mark as Complete
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -9783,24 +9790,39 @@ function positionQuickResults(){
 <!-- Re-deployment Modal -->
 <div id="redeployment-modal" class="modal-overlay" style="display:none;">
     <div class="modal-content map-modal map-modal-sm">
-        <div style="background: #1e40af; padding: 12px 18px; display: flex; align-items: center; gap: 10px;">
-            <i class="fas fa-ambulance" style="color: #fef2f2; font-size: 18px;"></i>
-            <span style="color: white; font-size: 13px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; flex: 1;">Case Re-deployment Required</span>
-            <span onclick="closeRedeploymentModal()" style="color: rgba(255,255,255,0.85); font-size: 20px; cursor: pointer; line-height: 1; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; border-radius: 4px;" onmouseover="this.style.background='rgba(255,255,255,0.15)'; this.style.color='white'" onmouseout="this.style.background='transparent'; this.style.color='rgba(255,255,255,0.85)'">&times;</span>
-        </div>
-        <div style="padding: 20px; overflow-y: auto; flex: 1;">
-            <div id="redeployment-case-info"></div>
-            <div style="margin-top: 20px;">
-                <div style="font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 12px; letter-spacing: 0.3px;">Select Ambulances for Re-deployment:</div>
-                <div id="redeployment-ambulance-list"></div>
+        <button type="button" onclick="closeRedeploymentModal()" class="modal-close" style="position: absolute; top: 10px; right: 12px; background: var(--brand-navy); color: #ffffff; border: 0; width: 36px; height: 36px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="case-modal-shell">
+            <div class="case-modal-header">
+                <div>
+                    <p class="case-modal-eyebrow">Emergency Action</p>
+                    <h3>
+                        <i class="fas fa-ambulance" style="color:#fef2f2;"></i>
+                        Case Re-deployment Required
+                    </h3>
+                </div>
+                <div class="case-modal-header-meta">
+                    <span class="case-pill case-pill--warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Action Required
+                    </span>
+                </div>
             </div>
-        </div>
-        <div style="padding: 16px 20px; border-top: 1px solid #f1f5f9; display: flex; gap: 10px; justify-content: flex-end;">
-            <button onclick="closeRedeploymentModal()" style="padding: 9px 18px; background: #f3f4f6; color: #374151; border: none; border-radius: 6px; font-weight: 500; cursor: pointer; font-size: 12px; transition: all 0.15s;" onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">Cancel</button>
-            <button onclick="executeRedeployment()" style="padding: 9px 18px; background: #3b82f6; color: white; border: none; border-radius: 6px; font-weight: 500; cursor: pointer; font-size: 12px; transition: all 0.15s; display: flex; align-items: center; gap: 6px;" onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#3b82f6'">
-                <i class="fas fa-paper-plane" style="font-size: 11px;"></i>
-                Re-deploy Case
-            </button>
+            <div class="case-modal-body">
+                <div id="redeployment-case-info"></div>
+                <div style="margin-top: 1.5rem;">
+                    <div style="font-size: 0.85rem; font-weight: 800; color: #0f172a; margin-bottom: 0.75rem; letter-spacing: 0.02em; text-transform: uppercase;">Select Ambulances for Re-deployment:</div>
+                    <div id="redeployment-ambulance-list"></div>
+                </div>
+            </div>
+            <div style="padding: 1rem 1.5rem; border-top: 1px solid rgba(148, 163, 184, 0.2); display: flex; gap: 0.75rem; justify-content: flex-end; background: #ffffff;">
+                <button onclick="closeRedeploymentModal()" style="padding: 0.65rem 1.25rem; background: #f1f5f9; color: #475569; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.85rem; transition: all 0.2s ease;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">Cancel</button>
+                <button onclick="executeRedeployment()" style="padding: 0.65rem 1.25rem; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.85rem; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 10px 25px rgba(59, 130, 246, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(59, 130, 246, 0.3)'">
+                    <i class="fas fa-paper-plane" style="font-size: 0.75rem;"></i>
+                    Re-deploy Case
+                </button>
+            </div>
         </div>
     </div>
 </div>

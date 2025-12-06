@@ -19,7 +19,7 @@
 <aside class="sidenav" id="sidenav" style="position: fixed; left: 0; top: 0; width: 260px; height: 100vh; background: linear-gradient(180deg, #031273 0%, #1e3a8a 100%); z-index: 1000; overflow-y: auto; transition: transform 0.3s ease; box-shadow: 15px 0 35px rgba(15, 23, 42, 0.35);">
     <div class="logo-container" style="display: flex; flex-direction: column; align-items: center; padding: 1.5rem 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
         <img src="{{ asset('image/LOGOMDRRMO.png') }}" alt="Logo" class="logo-img" style="display: block; margin: 0 auto; width: 80px; height: 80px; object-fit: contain;">
-        <div style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 800; color: #ffffff; letter-spacing: .5px;">SILANG MDRRMO</div>
+        <div style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 800; color: #ffffff; letter-spacing: .5px;">SILANG DRRMO</div>
         <div id="sidebarDateTime" style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 600; color: #ffffff; font-size: 0.9rem; letter-spacing: 0.3px; padding: 0 12px;">
             <div id="sidebarDate" style="margin-bottom: 4px; font-weight: 600; font-size: 0.85rem;"></div>
             <div id="sidebarTime" style="font-weight: 800; font-size: 1rem;"></div>

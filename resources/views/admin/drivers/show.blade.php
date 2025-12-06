@@ -9,40 +9,50 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
+        .sidenav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--nav-width);
+            height: 100vh;
+            background: linear-gradient(180deg, #031273 0%, #1e3a8a 100%);
+            z-index: 900;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            box-shadow: 15px 0 35px rgba(15, 23, 42, 0.35);
+        }
+
         .nav-links {
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 1rem !important;
-            width: 100% !important;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            padding: 1.25rem 1rem 2rem;
         }
 
-        .nav-links a {
-            text-decoration: none !important;
-            color: white !important;
-            font-size: 1rem !important;
-            font-weight: 600 !important;
-            padding: 0.75rem 1rem !important;
-            border-radius: 8px !important;
-            transition: background-color 0.2s !important;
-            display: block !important;
-            width: 100% !important;
-            box-sizing: border-box !important;
-        }
-
-        .nav-links i {
-            margin-right: 0.5rem !important;
+        .nav-links a,
+        .nav-links span {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: #e5e7eb;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            transition: background 0.2s ease, color 0.2s ease;
         }
 
         .nav-links a:hover {
-            background-color: #f28c28 !important;
-            color: #0c2d5a !important;
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
         }
 
         .nav-links a.active {
-            background-color: #f28c28 !important;
-            color: #0c2d5a !important;
+            background: rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+            font-weight: 800;
         }
-
         :root {
             --bg-gradient: radial-gradient(circle at top, #fdf2ff 0%, #eef2ff 45%, #f5f7fb 100%);
             --card-bg: #ffffff;
@@ -56,6 +66,7 @@
             --danger: #ef4444;
             --shadow-lg: 0 30px 60px rgba(15, 23, 42, 0.12);
             --rounded-xl: 28px;
+            --nav-width: 260px;
         }
 
         html, body {
@@ -312,9 +323,36 @@
             justify-content: center;
         }
 
+        .toggle-btn {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1100;
+            background: #031273;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            padding: 0.65rem 0.85rem;
+            cursor: pointer;
+            box-shadow: 0 12px 35px rgba(3, 18, 115, 0.35);
+        }
+
         @media (max-width: 980px) {
             .hero-card {
                 grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .toggle-btn {
+                display: inline-flex;
+            }
+            .sidenav {
+                transform: translateX(-100%);
+            }
+            .sidenav.active {
+                transform: translateX(0);
             }
         }
     </style>
@@ -329,7 +367,7 @@
 <aside class="sidenav" id="sidenav">
     <div class="logo-container" style="display: flex; flex-direction: column; align-items: center;">
         <img src="{{ asset('image/LOGOMDRRMO.png') }}" alt="Logo" class="logo-img" style="display: block; margin: 0 auto;">
-        <div style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 800; color: #ffffff; letter-spacing: .5px;">SILANG MDRRMO</div>
+        <div style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 800; color: #ffffff; letter-spacing: .5px;">SILANG DRRMO</div>
         <div id="sidebarDateTime" style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 600; color: #ffffff; font-size: 0.9rem; letter-spacing: 0.3px; padding: 0 12px;">
             <div id="sidebarDate" style="margin-bottom: 4px; font-weight: 600; font-size: 0.85rem;"></div>
             <div id="sidebarTime" style="font-weight: 800; font-size: 1rem;"></div>
@@ -338,17 +376,37 @@
     <nav class="nav-links">
      <a href="{{ route('dashboard') }}" class="{{ request()->is('dashboard') ? 'active' : '' }}"><i class="fas fa-chart-pie"></i> Dashboard</a>
       <a href="{{ url('/admin/pairing') }}" class="{{ request()->is('admin/pairing') ? 'active' : '' }}"><i class="fas fa-link"></i> Pairing</a>
-      <a href="{{ url('/admin/drivers') }}" class="{{ request()->is('admin/drivers*') ? 'active' : '' }}"><i class="fas fa-car"></i> Personels</a>
+      <a href="{{ url('/admin/drivers') }}" class="{{ request()->is('admin/drivers*') ? 'active' : '' }}"><i class="fas fa-car"></i> Personnels</a>
       <a href="{{ url('/admin/medics') }}" class="{{ request()->is('admin/medics*') ? 'active' : '' }}"><i class="fas fa-plus"></i> Create</a>
       <a href="{{ url('/admin/gps') }}" class="{{ request()->is('admin/gps') ? 'active' : '' }}"><i class="fas fa-map-marker-alt mr-1"></i> GPS Tracker</a>
-      <a href="{{ url('/admin/reports') }}" class="{{ request()->is('admin/reports*') ? 'active' : '' }}"><i class="fas fa-file-alt"></i> Reports</a>
+      <a href="{{ url('/admin/reports') }}" class="{{ request()->is('admin/reports*') ? 'active' : '' }}"><i class="fas fa-file-alt"></i> Case Logs</a>
       <a href="{{ route('reported-cases') }}" class="{{ request()->routeIs('reported-cases') ? 'active' : '' }}"><i class="fas fa-file-alt"></i> Reported Cases</a>
     </nav>
 </aside>
 
 <!-- Fixed Top Header -->
-<div class="mdrrmo-header" style="border: 2px solid #031273;">
-    <h2 class="header-title">SILANG MDRRMO</h2>
+<!-- Fixed Top Header with user menu -->
+<div class="mdrrmo-header" style="background:#F7F7F7; box-shadow: 0 2px 8px rgba(0,0,0,0.12); border: none; min-height: var(--header-height); padding: 1rem 2rem; display: flex; align-items: center; justify-content: center; position: fixed; top: 0; margin-left: 260px; width: calc(100% - 260px); z-index: 1200;">
+    <h2 class="header-title" style="display:none;"></h2>
+    @php $firstName = explode(' ', auth()->user()->name ?? 'Admin')[0]; @endphp
+    <div id="userMenu" style="position: fixed; right: 16px; top: 16px; display: inline-flex; align-items: center; gap: 10px; cursor: pointer; color: #e5e7eb; z-index: 1300; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 6px 10px; border-radius: 9999px; box-shadow: 0 6px 18px rgba(0,0,0,0.18); backdrop-filter: saturate(140%);">
+        <div style="width: 28px; height: 28px; border-radius: 9999px; background: linear-gradient(135deg,#4CC9F0,#031273); display: inline-flex; align-items: center; justify-content: center; position: relative;">
+            <i class="fas fa-user-shield" style="font-size: 14px; color: #ffffff;"></i>
+            <span style="position: absolute; right: -1px; bottom: -1px; width: 8px; height: 8px; border-radius: 9999px; background: #22c55e; box-shadow: 0 0 0 2px #0c2d5a;"></span>
+        </div>
+        <span style="font-weight: 800; color: #000000; letter-spacing: .2px;">{{ $firstName }}</span>
+        <i class="fas fa-chevron-down" style="font-size: 10px; color: rgba(255,255,255,0.85);"></i>
+        <div id="userDropdown" style="display: none; position: absolute; right: 0; top: calc(100% + 12px); background: #ffffff; color: #0f172a; border-radius: 10px; box-shadow: 0 10px 24px rgba(0,0,0,0.2); padding: 8px; min-width: 160px; z-index: 1301;">
+            <div style="position: absolute; right: 12px; top: -8px; width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 8px solid #ffffff;"></div>
+            <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                @csrf
+                <button id="changeAccountBtn" type="submit" style="width: 100%; background: linear-gradient(135deg,#ef4444,#b91c1c); color: #ffffff; border: none; border-radius: 8px; padding: 6px 8px; font-weight: 700; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 12px rgba(239,68,68,0.28);">
+                    <i class="fas fa-right-left" style="font-size: 12px;"></i>
+                    <span>Log Out</span>
+                </button>
+            </form>
+        </div>
+    </div>
 </div>
 
 <main class="main-content pt-8">

@@ -9,6 +9,50 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
+        .sidenav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--nav-width);
+            height: 100vh;
+            background: linear-gradient(180deg, #031273 0%, #1e3a8a 100%);
+            z-index: 900;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            box-shadow: 15px 0 35px rgba(15, 23, 42, 0.35);
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            padding: 1.25rem 1rem 2rem;
+        }
+
+        .nav-links a,
+        .nav-links span {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: #e5e7eb;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+        }
+
+        .nav-links a.active {
+            background: rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+            font-weight: 800;
+        }
         :root {
             --bg-gradient: radial-gradient(circle at top, #fdf2ff 0%, #eef2ff 45%, #f5f7fb 100%);
             --card-bg: #ffffff;
@@ -22,6 +66,8 @@
             --danger: #ef4444;
             --shadow-lg: 0 30px 60px rgba(15, 23, 42, 0.12);
             --rounded-xl: 28px;
+            --nav-width: 260px;
+            --header-height: 72px;
         }
 
         html, body {
@@ -35,21 +81,21 @@
         .driver-layout {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2.5rem clamp(1rem, 4vw, 3rem);
+            padding: 1.5rem clamp(1rem, 3vw, 2rem);
             display: flex;
             flex-direction: column;
-            gap: 2rem;
+            gap: 1.25rem;
         }
 
         .hero-card {
             background: var(--card-bg);
             border-radius: var(--rounded-xl);
-            padding: clamp(1.75rem, 4vw, 3rem);
+            padding: clamp(1.25rem, 3vw, 2rem);
             box-shadow: var(--shadow-lg);
             border: 1px solid rgba(99, 102, 241, 0.12);
             display: grid;
             grid-template-columns: 1.15fr 0.85fr;
-            gap: clamp(1.25rem, 3vw, 2.5rem);
+            gap: clamp(1rem, 2.5vw, 1.75rem);
             align-items: center;
             position: relative;
             overflow: hidden;
@@ -78,24 +124,39 @@
             letter-spacing: 0.08em;
         }
 
+        .hero-card h3 {
+            margin: 0.4rem 0 0.2rem;
+            font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+            font-weight: 900;
+        }
+
+        .hero-card p {
+            margin: 0.35rem 0 0;
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
         .hero-actions {
-            margin-top: 1.25rem;
+            margin-top: 0.85rem;
             display: flex;
             flex-wrap: wrap;
-            gap: 0.75rem;
+            gap: 0.65rem;
         }
 
         .hero-actions .primary,
         .hero-actions .secondary {
             border: none;
-            border-radius: 14px;
-            padding: 0.85rem 1.35rem;
+            border-radius: 12px;
+            padding: 0.7rem 1.15rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 0.55rem;
+            gap: 0.45rem;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+            font-size: 0.9rem;
+            text-decoration: none;
         }
 
         .hero-actions .primary {
@@ -113,10 +174,10 @@
         .hero-profile {
             display: flex;
             flex-direction: column;
-            gap: 0.65rem;
+            gap: 0.5rem;
             align-items: flex-start;
-            padding: 1.25rem;
-            border-radius: 20px;
+            padding: 1rem;
+            border-radius: 18px;
             background: rgba(37,99,235,0.05);
             border: 1px solid rgba(37,99,235,0.15);
         }
@@ -133,19 +194,19 @@
 
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.15rem;
         }
 
         .form-card {
             background: var(--card-bg);
-            border-radius: 24px;
-            padding: 1.75rem;
+            border-radius: 20px;
+            padding: 1.35rem;
             border: 1px solid rgba(15, 23, 42, 0.08);
             box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.85rem;
         }
 
         .form-card.full-span {
@@ -153,15 +214,15 @@
         }
 
         .form-card h5 {
-            margin: 0;
-            font-size: 1.05rem;
+            margin: 0 0 0.25rem 0;
+            font-size: 0.98rem;
             font-weight: 800;
             color: var(--heading);
         }
 
         .form-fields {
             display: grid;
-            gap: 1rem;
+            gap: 0.75rem;
         }
 
         .form-fields.two-col {
@@ -171,7 +232,7 @@
         .form-field {
             display: flex;
             flex-direction: column;
-            gap: 0.35rem;
+            gap: 0.3rem;
         }
 
         .form-field label {
@@ -185,10 +246,10 @@
         .form-field input,
         .form-field select,
         .form-field textarea {
-            border-radius: 12px;
+            border-radius: 10px;
             border: 1.5px solid rgba(148, 163, 184, 0.5);
-            padding: 0.7rem 0.85rem;
-            font-size: 0.95rem;
+            padding: 0.6rem 0.75rem;
+            font-size: 0.92rem;
             font-weight: 600;
             color: var(--heading);
             background: #f8fafc;
@@ -212,21 +273,23 @@
         .actions-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.75rem;
+            gap: 0.65rem;
             justify-content: flex-end;
+            margin-top: 0.5rem;
         }
 
         .actions-row button,
         .actions-row a {
             border: none;
-            border-radius: 14px;
-            padding: 0.85rem 1.4rem;
+            border-radius: 12px;
+            padding: 0.7rem 1.2rem;
             font-weight: 800;
             letter-spacing: 0.04em;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 0.45rem;
+            gap: 0.4rem;
+            font-size: 0.9rem;
         }
 
         .actions-row .primary {
@@ -247,9 +310,39 @@
             box-shadow: 0 12px 28px rgba(239, 68, 68, 0.35);
         }
 
+        .toggle-btn {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1100;
+            background: #031273;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            padding: 0.65rem 0.85rem;
+            cursor: pointer;
+            box-shadow: 0 12px 35px rgba(3, 18, 115, 0.35);
+        }
+
         @media (max-width: 980px) {
             .hero-card {
                 grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .toggle-btn {
+                display: inline-flex;
+            }
+            .sidenav {
+                transform: translateX(-100%);
+            }
+            .sidenav.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0 !important;
             }
         }
     </style>
@@ -263,8 +356,8 @@
 <!-- Sidenav -->
 <aside class="sidenav" id="sidenav">
     <div class="logo-container" style="display: flex; flex-direction: column; align-items: center;">
-        <img src="{{ asset('image/LOGOMDRRMO.png') }}" alt="Logo" class="logo-img" style="display:block; margin:0 auto;">
-        <div style="margin-top: 8px; display:block; width:100%; text-align:center; font-weight:800; color:#ffffff; letter-spacing:.5px;">SILANG MDRRMO</div>
+        <img src="{{ asset('image/LOGOMDRRMO.png') }}" alt="Logo" class="logo-img" style="display: block; margin: 0 auto;">
+        <div style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 800; color: #ffffff; letter-spacing: .5px;">SILANG DRRMO</div>
         <div id="sidebarDateTime" style="margin-top: 8px; display: block; width: 100%; text-align: center; font-weight: 600; color: #ffffff; font-size: 0.9rem; letter-spacing: 0.3px; padding: 0 12px;">
             <div id="sidebarDate" style="margin-bottom: 4px; font-weight: 600; font-size: 0.85rem;"></div>
             <div id="sidebarTime" style="font-weight: 800; font-size: 1rem;"></div>
@@ -273,10 +366,10 @@
     <nav class="nav-links">
      <a href="{{ route('dashboard') }}" class="{{ request()->is('dashboard') ? 'active' : '' }}"><i class="fas fa-chart-pie"></i> Dashboard</a>
       <a href="{{ url('/admin/pairing') }}" class="{{ request()->is('admin/pairing') ? 'active' : '' }}"><i class="fas fa-link"></i> Pairing</a>
-      <a href="{{ url('/admin/drivers') }}" class="{{ request()->is('admin/drivers*') ? 'active' : '' }}"><i class="fas fa-car"></i> Personels</a>
+      <a href="{{ url('/admin/drivers') }}" class="{{ request()->is('admin/drivers*') ? 'active' : '' }}"><i class="fas fa-car"></i> Personnels</a>
       <a href="{{ url('/admin/medics') }}" class="{{ request()->is('admin/medics*') ? 'active' : '' }}"><i class="fas fa-plus"></i> Create</a>
       <a href="{{ url('/admin/gps') }}" class="{{ request()->is('admin/gps') ? 'active' : '' }}"><i class="fas fa-map-marker-alt mr-1"></i> GPS Tracker</a>
-      <a href="{{ url('/admin/reports') }}" class="{{ request()->is('admin/reports*') ? 'active' : '' }}"><i class="fas fa-file-alt"></i> Reports</a>
+      <a href="{{ url('/admin/reports') }}" class="{{ request()->is('admin/reports*') ? 'active' : '' }}"><i class="fas fa-file-alt"></i> Case Logs</a>
       <a href="{{ route('reported-cases') }}" class="{{ request()->routeIs('reported-cases') ? 'active' : '' }}"><i class="fas fa-file-alt"></i> Reported Cases</a>
     </nav>
 </aside>
@@ -305,7 +398,7 @@
     </div>
 </div>
 
-<main class="main-content pt-8" style="padding-top: calc(var(--header-height) + 8px);">
+<main class="main-content pt-8" style="padding-top: calc(var(--header-height) + 1rem); margin-left: var(--nav-width);">
     <div class="driver-layout">
         @if($errors->any())
             <div style="background:#fee2e2;border:1px solid #fecaca;color:#991b1b;padding:1rem 1.25rem;border-radius:16px;">
@@ -321,8 +414,8 @@
         <section class="hero-card">
             <div>
                 <span class="hero-badge"><i class="fas fa-user-edit"></i> Edit driver</span>
-                <h3>Refine {{ $driver->name }}’s profile.</h3>
-                <p>Update contact details, assignments, and emergency contacts to keep driver records spotless.</p>
+                <h3>Refine {{ $driver->name }}'s profile</h3>
+                <p>Update contact details, assignments, and emergency contacts.</p>
                 <div class="hero-actions">
                     <a href="{{ route('admin.drivers.show', $driver) }}" class="secondary"><i class="fas fa-arrow-left"></i> Back to profile</a>
                     <a href="{{ route('admin.drivers.index') }}" class="secondary"><i class="fas fa-list"></i> Driver list</a>
@@ -394,7 +487,7 @@
                     </div>
                     <div class="form-field full-span">
                         <label>Address</label>
-                        <textarea name="address" rows="2">{{ old('address', $driver->address) }}</textarea>
+                        <textarea name="address" rows="2" style="min-height: 60px;">{{ old('address', $driver->address) }}</textarea>
                     </div>
                     <div class="form-field">
                         <label>New password</label>
@@ -449,18 +542,18 @@
                 <div class="form-fields two-col">
                     <div class="form-field">
                         <label>Certifications (one per line)</label>
-                        <textarea name="certifications_text" rows="4" placeholder="e.g., First Aid Certification&#10;CPR Certification&#10;Emergency Response Training">{{ old('certifications_text', $driver->certifications && is_array($driver->certifications) ? implode("\n", $driver->certifications) : '') }}</textarea>
+                        <textarea name="certifications_text" rows="3" style="min-height: 80px;" placeholder="e.g., First Aid Certification&#10;CPR Certification&#10;Emergency Response Training">{{ old('certifications_text', $driver->certifications && is_array($driver->certifications) ? implode("\n", $driver->certifications) : '') }}</textarea>
                     </div>
                     <div class="form-field">
                         <label>Skills (one per line)</label>
-                        <textarea name="skills_text" rows="4" placeholder="e.g., Defensive Driving&#10;Emergency Response&#10;Vehicle Maintenance">{{ old('skills_text', $driver->skills && is_array($driver->skills) ? implode("\n", $driver->skills) : '') }}</textarea>
+                        <textarea name="skills_text" rows="3" style="min-height: 80px;" placeholder="e.g., Defensive Driving&#10;Emergency Response&#10;Vehicle Maintenance">{{ old('skills_text', $driver->skills && is_array($driver->skills) ? implode("\n", $driver->skills) : '') }}</textarea>
                     </div>
                     <div class="form-field full-span">
                         <label>Notes</label>
-                        <textarea name="notes" rows="3" placeholder="Additional notes about the driver...">{{ old('notes', $driver->notes) }}</textarea>
+                        <textarea name="notes" rows="2" style="min-height: 60px;" placeholder="Additional notes about the driver...">{{ old('notes', $driver->notes) }}</textarea>
                     </div>
                 </div>
-                <div class="actions-row" style="margin-top:0.5rem;">
+                <div class="actions-row">
                     <a href="{{ route('admin.drivers.show', $driver) }}" class="secondary"><i class="fas fa-times"></i> Cancel</a>
                     <button type="submit" class="primary"><i class="fas fa-save"></i> Update driver</button>
                 </div>
