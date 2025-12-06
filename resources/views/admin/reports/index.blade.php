@@ -891,7 +891,7 @@ body .nav-links a.active {
                 </p>
                 <div class="hero-actions">
                     <button type="button" class="primary" id="refreshHeroBtn"><i class="fas fa-rotate"></i> Refresh data</button>
-                    <button type="button" class="secondary" onclick="window.print()"><i class="fas fa-print"></i> Quick print</button>
+                    <!-- <button type="button" class="secondary" onclick="window.print()"><i class="fas fa-print"></i> Quick print</button> -->
                     @if($isArchivedView)
                         <button type="button" class="secondary" onclick="window.location.href='{{ route('admin.reports') }}'"><i class="fas fa-arrow-left"></i> Back to completed</button>
                     @else
