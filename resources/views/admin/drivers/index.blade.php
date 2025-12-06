@@ -329,9 +329,6 @@
             .analytics-stats {
                 grid-template-columns: 1fr;
             }
-            .hero-metrics {
-                grid-template-columns: 1fr !important;
-            }
             .hero-metric-card strong {
                 font-size: 1.2rem !important;
             }
@@ -669,19 +666,30 @@
             position: fixed;
             left: 0;
             top: 0;
-            width: var(--sidebar-width, 17.2%);
-            min-width: 260px;
+            width: var(--sidebar-width, 260px);
             height: 100vh;
             background: linear-gradient(180deg, #031273 0%, #1e3a8a 100%);
             z-index: 1100;
             overflow-y: auto;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, width 0.3s ease;
             box-shadow: 15px 0 35px rgba(15, 23, 42, 0.35);
+        }
+
+        @media (max-width: 1400px) {
+            .sidenav {
+                width: 240px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .sidenav {
+                width: 220px;
+            }
         }
 
         @media (max-width: 1024px) {
             .sidenav {
-                width: 280px;
+                width: 200px;
                 transform: translateX(-100%);
             }
             .sidenav.active {
@@ -696,7 +704,7 @@
         @media (max-width: 768px) {
             .sidenav {
                 width: 100%;
-                max-width: 320px;
+                max-width: 280px;
             }
         }
 
@@ -816,7 +824,7 @@
     --drivers-accent: #7c3aed;
     --drivers-danger: #dc2626;
     --header-height: 70px;
-    --sidebar-width: 17.2%;
+    --sidebar-width: 260px;
 }
 html, body {
     min-height: 100vh;
@@ -834,14 +842,28 @@ html, body {
     box-sizing: border-box;
 }
 .maincontentt {
-    margin-left: var(--sidebar-width, 17.2%);
-    width: calc(100% - var(--sidebar-width, 17.2%));
+    margin-left: var(--sidebar-width, 260px);
+    width: calc(100% - var(--sidebar-width, 260px));
     padding: 2.5rem clamp(1.25rem, 3vw, 3rem) 3.5rem;
     padding-top: calc(var(--header-height, 70px) + 2.5rem);
     box-sizing: border-box;
     transition: margin-left 0.3s ease, width 0.3s ease;
     min-width: 0;
     overflow-x: hidden;
+}
+
+@media (max-width: 1400px) {
+    .maincontentt {
+        margin-left: 240px;
+        width: calc(100% - 240px);
+    }
+}
+
+@media (max-width: 1200px) {
+    .maincontentt {
+        margin-left: 220px;
+        width: calc(100% - 220px);
+    }
 }
 
 @media (max-width: 1024px) {
@@ -863,6 +885,42 @@ html, body {
     box-sizing: border-box;
     padding: 0;
 }
+
+@media (max-width: 1500px) {
+    .drivers-page-container {
+        max-width: 100%;
+        padding: 0 1.25rem;
+    }
+}
+
+@media (max-width: 1400px) {
+    .drivers-page-container {
+        max-width: 100%;
+        padding: 0 1rem;
+    }
+}
+
+@media (max-width: 1350px) {
+    .drivers-page-container {
+        padding: 0 0.9rem;
+        gap: 1.6rem;
+    }
+}
+
+@media (max-width: 1024px) {
+    .drivers-page-container {
+        padding: 0 0.75rem;
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .drivers-page-container {
+        padding: 0 0.5rem;
+        gap: 1.25rem;
+    }
+}
+
 .hero-card {
     background: var(--drivers-card);
     border-radius: 28px;
@@ -875,6 +933,7 @@ html, body {
     width: 100%;
     box-sizing: border-box;
     overflow: hidden;
+    transition: padding 0.3s ease, border-radius 0.3s ease;
 }
 .hero-badge {
     display: inline-flex;
@@ -904,7 +963,21 @@ html, body {
     flex-wrap: wrap;
     gap: 0.7rem;
     margin-top: 1rem;
+    transition: gap 0.3s ease;
 }
+
+@media (max-width: 1350px) {
+    .hero-actions {
+        gap: 0.65rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .hero-actions {
+        gap: 0.6rem;
+    }
+}
+
 .hero-actions a,
 .hero-actions button {
     border: none;
@@ -916,8 +989,24 @@ html, body {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, padding 0.3s ease, font-size 0.3s ease;
     text-decoration: none;
+}
+
+@media (max-width: 1350px) {
+    .hero-actions a,
+    .hero-actions button {
+        padding: 0.75rem 1.2rem;
+        font-size: 0.88rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .hero-actions a,
+    .hero-actions button {
+        padding: 0.7rem 1.1rem;
+        font-size: 0.85rem;
+    }
 }
 .hero-actions .primary {
     background: linear-gradient(135deg, var(--drivers-primary), var(--drivers-accent));
@@ -936,12 +1025,75 @@ html, body {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 0.8rem;
+    transition: grid-template-columns 0.3s ease, gap 0.3s ease;
 }
+
+@media (max-width: 1500px) {
+    .hero-metrics {
+        grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+        gap: 0.78rem;
+    }
+}
+
+@media (max-width: 1400px) {
+    .hero-metrics {
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 0.75rem;
+    }
+}
+
+@media (max-width: 1350px) {
+    .hero-metrics {
+        grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+        gap: 0.72rem;
+    }
+    .hero-card {
+        padding: clamp(1.6rem, 2.8vw, 2.5rem);
+        gap: clamp(0.95rem, 2.8vw, 2.25rem);
+    }
+}
+
+@media (max-width: 1200px) {
+    .hero-metrics {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 0.7rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .hero-metrics {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.65rem;
+    }
+}
+
 .hero-metric-card {
     background: rgba(124, 58, 237, 0.08);
     border-radius: 18px;
     padding: 1rem;
     border: 1px solid rgba(124, 58, 237, 0.2);
+    transition: padding 0.3s ease, border-radius 0.3s ease;
+}
+
+@media (max-width: 1350px) {
+    .hero-metric-card {
+        padding: 0.95rem;
+        border-radius: 16px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .hero-metric-card {
+        padding: 0.9rem;
+        border-radius: 16px;
+    }
+}
+
+@media (max-width: 992px) {
+    .hero-metric-card {
+        padding: 0.85rem;
+        border-radius: 14px;
+    }
 }
 .hero-metric-card span {
     font-size: 0.75rem;
@@ -949,13 +1101,79 @@ html, body {
     letter-spacing: 0.08em;
     font-weight: 700;
     color: #4338ca;
+    transition: font-size 0.3s ease;
 }
+
+@media (max-width: 1350px) {
+    .hero-metric-card span {
+        font-size: 0.72rem;
+    }
+}
+
+@media (max-width: 1200px) {
+    .hero-metric-card span {
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-metric-card span {
+        font-size: 0.65rem;
+    }
+}
+
 .hero-metric-card strong {
     display: block;
     margin-top: 0.3rem;
     font-size: 1.7rem;
     font-weight: 900;
     color: #1e1b4b;
+    transition: font-size 0.3s ease;
+}
+
+@media (max-width: 1500px) {
+    .hero-metric-card strong {
+        font-size: 1.65rem;
+    }
+}
+
+@media (max-width: 1400px) {
+    .hero-metric-card strong {
+        font-size: 1.6rem;
+    }
+}
+
+@media (max-width: 1350px) {
+    .hero-metric-card strong {
+        font-size: 1.55rem;
+    }
+    .hero-metric-card {
+        padding: 0.95rem;
+    }
+}
+
+@media (max-width: 1200px) {
+    .hero-metric-card strong {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .hero-metric-card strong {
+        font-size: 1.45rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-metric-card strong {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-metric-card strong {
+        font-size: 1.3rem;
+    }
 }
 .filters-card {
     background: var(--drivers-card);
@@ -1400,24 +1618,112 @@ html, body {
     text-align: center;
     font-weight: 600;
 }
+@media (max-width: 1500px) {
+    .hero-card {
+        padding: clamp(1.65rem, 2.6vw, 2.5rem);
+        gap: clamp(0.95rem, 2.6vw, 2.1rem);
+    }
+}
+
+@media (max-width: 1400px) {
+    .hero-card {
+        padding: clamp(1.5rem, 2.5vw, 2.25rem);
+        gap: clamp(0.9rem, 2.5vw, 2rem);
+    }
+}
+
+@media (max-width: 1350px) {
+    .hero-card {
+        padding: clamp(1.6rem, 2.8vw, 2.5rem);
+        gap: clamp(0.95rem, 2.8vw, 2.25rem);
+    }
+}
+
+@media (max-width: 1200px) {
+    .hero-card {
+        padding: clamp(1.4rem, 2vw, 2rem);
+        gap: clamp(0.85rem, 2vw, 1.75rem);
+        border-radius: 24px;
+    }
+}
+
 @media (max-width: 1100px) {
-    .hero-card { grid-template-columns: 1fr; }
+    .hero-card {
+        grid-template-columns: 1fr;
+        padding: clamp(1.5rem, 2vw, 1.75rem);
+    }
+}
+
+@media (max-width: 1350px) {
+    .hero-card h3 {
+        font-size: clamp(1.5rem, 3.5vw, 2.1rem);
+    }
+    .hero-card p {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .hero-card {
+        padding: 1.5rem;
+        border-radius: 22px;
+        gap: 1.25rem;
+    }
+    .hero-card h3 {
+        font-size: clamp(1.4rem, 3vw, 1.8rem);
+    }
 }
 
 @media (max-width: 768px) {
     .hero-card {
-        padding: 1.5rem !important;
-        border-radius: 20px !important;
+        padding: 1.25rem;
+        border-radius: 20px;
+        gap: 1rem;
     }
     .hero-metrics {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 0.6rem !important;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.6rem;
     }
     .hero-metric-card {
-        padding: 0.75rem !important;
+        padding: 0.75rem;
+        border-radius: 12px;
     }
     .hero-metric-card strong {
-        font-size: 1.4rem !important;
+        font-size: 1.4rem;
+    }
+    .hero-card h3 {
+        font-size: 1.5rem;
+    }
+    .hero-card p {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-card {
+        padding: 1rem;
+        border-radius: 18px;
+    }
+    .hero-metrics {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+    .hero-metric-card {
+        padding: 0.7rem;
+    }
+    .hero-metric-card strong {
+        font-size: 1.3rem;
+    }
+    .hero-card h3 {
+        font-size: 1.3rem;
+    }
+    .hero-actions {
+        flex-direction: column;
+    }
+    .hero-actions a,
+    .hero-actions button {
+        width: 100%;
+        justify-content: center;
     }
     .filters-card {
         padding: 1.25rem !important;
@@ -1892,12 +2198,6 @@ html, body {
                                     <div class="directory-body">
                                         <div class="directory-title">{{ $amb->name }}</div>
                                         <div class="directory-meta">Status updated {{ optional($amb->updated_at)->diffForHumans() ?? 'recently' }}</div>
-                                    </div>
-                                    <div class="directory-status badge-pill
-                                        {{ $aStatus === 'available' ? 'amb-available' : '' }}
-                                        {{ $aStatus === 'out' ? 'amb-out' : '' }}
-                                        {{ $aStatus === 'unavailable' ? 'amb-unavailable' : '' }}">
-                                        {{ $amb->status }}
                                     </div>
                                     <div class="action-chip-group" style="margin-left:0.5rem;">
                                         <button type="button"

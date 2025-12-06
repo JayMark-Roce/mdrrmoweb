@@ -646,7 +646,7 @@ body.fullscreen-mode::before {
 .fullscreen-mode .main-content > *:not(#map-container):not(.gps-control-panel):not(.gps-panel-toggle):not(.fullscreen-toggle):not(.fullscreen-close),
 .fullscreen-mode header,
 .fullscreen-mode nav,
-.fullscreen-mode aside,
+.fullscreen-mode aside:not(.case-modal-sidebar),
 .fullscreen-mode body > *:not(#map-container):not(.gps-control-panel):not(.gps-panel-toggle):not(.fullscreen-toggle):not(.fullscreen-close):not(.modal-overlay) {
     display: none !important;
     visibility: hidden !important;
