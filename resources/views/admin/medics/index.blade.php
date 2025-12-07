@@ -785,6 +785,20 @@ html, body {
     }
 }
 
+/* Error Variant Styles */
+.compact-modal__card--error {
+    border-left-color: #ef4444;
+}
+
+.compact-modal__icon--error {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.compact-modal__title--error {
+    color: #dc2626;
+}
+
 body .nav-links {
     display: flex;
     flex-direction: column;
@@ -1364,29 +1378,19 @@ body .nav-links a.active {
     </div>
 </div>
 
-<!-- Error Modal -->
-<div id="errorModal" class="modal">
-    <div class="modal-card modal-card--danger">
-        <div class="modal-card__header">
-            <div class="modal-card__title">
-                <span class="modal-card__icon"><i class="fas fa-exclamation-triangle"></i></span>
-                <div>
-                    <h3>Something went wrong</h3>
-                    <p>Review the message below.</p>
-                </div>
-            </div>
-            <button class="modal-card__close" type="button" onclick="closeErrorModal()">
-                <i class="fas fa-times"></i>
-            </button>
+<!-- Compact Error Confirmation -->
+<div id="errorModal" class="compact-modal">
+    <div class="compact-modal__card compact-modal__card--error">
+        <div class="compact-modal__icon compact-modal__icon--error">
+            <i class="fas fa-exclamation-circle"></i>
         </div>
-        <div class="modal-card__body">
-            <p id="errorMessage"></p>
+        <div class="compact-modal__content">
+            <div class="compact-modal__title compact-modal__title--error">Error!</div>
+            <div class="compact-modal__message" id="errorMessage"></div>
         </div>
-        <div class="modal-actions">
-            <button onclick="closeErrorModal()" class="btn btn-secondary" type="button">
-                <i class="fas fa-check"></i> Got it
-            </button>
-        </div>
+        <button class="compact-modal__close" type="button" onclick="closeErrorModal()">
+            <i class="fas fa-times"></i>
+        </button>
     </div>
 </div>
 
@@ -1529,15 +1533,35 @@ function closeSuccessModal() {
     }
 }
 
+let errorModalTimeout = null;
+
 function showErrorModal(message) {
-    document.getElementById('errorMessage').textContent = message;
-    document.getElementById('errorModal').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
+    const modal = document.getElementById('errorModal');
+    const messageEl = document.getElementById('errorMessage');
+    
+    if (messageEl) messageEl.textContent = message || 'An error occurred. Please try again.';
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        
+        // Auto-close after 4 seconds (longer than success for errors)
+        if (errorModalTimeout) clearTimeout(errorModalTimeout);
+        errorModalTimeout = setTimeout(() => {
+            closeErrorModal();
+        }, 4000);
+    }
 }
 
 function closeErrorModal() {
-    document.getElementById('errorModal').style.display = 'none';
-    document.body.style.overflow = 'auto';
+    const modal = document.getElementById('errorModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+    if (errorModalTimeout) {
+        clearTimeout(errorModalTimeout);
+        errorModalTimeout = null;
+    }
 }
 
 window.onclick = function(event) {
@@ -1693,6 +1717,14 @@ document.addEventListener('DOMContentLoaded', function(){
 
     @if(session('success'))
         showSuccessModal('{{ session('success') }}');
+    @endif
+
+    @if(session('error'))
+        showErrorModal('{{ session('error') }}');
+    @endif
+
+    @if($errors->any())
+        showErrorModal('{{ $errors->first() }}');
     @endif
 });
 </script>
