@@ -689,6 +689,102 @@ html, body {
     }
 }
 
+/* Compact Success Modal */
+.compact-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 12000;
+    padding: 1rem;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+}
+
+.compact-modal__card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    max-width: 420px;
+    width: 100%;
+    position: relative;
+    animation: compactModalPop 0.25s ease;
+    border-left: 4px solid #10b981;
+}
+
+.compact-modal__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.compact-modal__content {
+    flex: 1;
+    min-width: 0;
+}
+
+.compact-modal__title {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #059669;
+    margin-bottom: 0.2rem;
+    letter-spacing: 0.02em;
+}
+
+.compact-modal__message {
+    font-size: 0.85rem;
+    color: #374151;
+    line-height: 1.4;
+    font-weight: 600;
+}
+
+.compact-modal__close {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+    padding: 0;
+}
+
+.compact-modal__close:hover {
+    background: rgba(148, 163, 184, 0.15);
+    color: #64748b;
+}
+
+@keyframes compactModalPop {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
 body .nav-links {
     display: flex;
     flex-direction: column;
@@ -1252,29 +1348,19 @@ body .nav-links a.active {
     </div>
 </div>
 
-<!-- Success Modal -->
-<div id="successModal" class="modal">
-    <div class="modal-card modal-card--success">
-        <div class="modal-card__header">
-            <div class="modal-card__title">
-                <span class="modal-card__icon"><i class="fas fa-check-circle"></i></span>
-                <div>
-                    <h3>Success</h3>
-                    <p>Everything worked as expected.</p>
-                </div>
-            </div>
-            <button class="modal-card__close" type="button" onclick="closeSuccessModal()">
-                <i class="fas fa-times"></i>
-            </button>
+<!-- Compact Success Confirmation -->
+<div id="successModal" class="compact-modal">
+    <div class="compact-modal__card">
+        <div class="compact-modal__icon">
+            <i class="fas fa-check-circle"></i>
         </div>
-        <div class="modal-card__body">
-            <p id="successMessage">{{ session('success') }}</p>
+        <div class="compact-modal__content">
+            <div class="compact-modal__title">Success!</div>
+            <div class="compact-modal__message" id="successMessage">{{ session('success') }}</div>
         </div>
-        <div class="modal-actions">
-            <button onclick="closeSuccessModal()" class="btn btn-success" type="button">
-                <i class="fas fa-check"></i> Continue
-            </button>
-        </div>
+        <button class="compact-modal__close" type="button" onclick="closeSuccessModal()">
+            <i class="fas fa-times"></i>
+        </button>
     </div>
 </div>
 
@@ -1412,15 +1498,35 @@ function closeArchiveMedicModal() {
     document.body.style.overflow = 'auto';
 }
 
+let successModalTimeout = null;
+
 function showSuccessModal(message) {
-    document.getElementById('successMessage').textContent = message;
-    document.getElementById('successModal').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
+    const modal = document.getElementById('successModal');
+    const messageEl = document.getElementById('successMessage');
+    
+    if (messageEl) messageEl.textContent = message || 'Operation completed successfully!';
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        
+        // Auto-close after 3 seconds
+        if (successModalTimeout) clearTimeout(successModalTimeout);
+        successModalTimeout = setTimeout(() => {
+            closeSuccessModal();
+        }, 3000);
+    }
 }
 
 function closeSuccessModal() {
-    document.getElementById('successModal').style.display = 'none';
-    document.body.style.overflow = 'auto';
+    const modal = document.getElementById('successModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+    if (successModalTimeout) {
+        clearTimeout(successModalTimeout);
+        successModalTimeout = null;
+    }
 }
 
 function showErrorModal(message) {
