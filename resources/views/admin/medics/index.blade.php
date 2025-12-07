@@ -985,9 +985,6 @@ body .nav-links a.active {
             <div class="content-card">
                 <div class="card-header">
                     <h4><i class="fas fa-user-md"></i> Medics Management</h4>
-                    <a href="{{ route('admin.medics.archived') }}" class="btn btn-secondary">
-                        <i class="fas fa-box-archive"></i> View Archived
-                    </a>
                 </div>
 
                 <div style="margin-bottom: 2rem;">
