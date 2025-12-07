@@ -2674,12 +2674,12 @@ body.fullscreen-mode::before {
     }
 
     .neo-driver-icon {
-        width: 56px;
-        height: 56px;
-        border-radius: 18px;
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
         background: linear-gradient(135deg, #312e81, #1d4ed8);
-        border: 3px solid #fff;
-        box-shadow: 0 12px 32px rgba(31, 41, 55, 0.5), 0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        border: 2.5px solid #fff;
+        box-shadow: 0 8px 24px rgba(31, 41, 55, 0.5), 0 3px 10px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);
         position: relative;
         display: flex;
         align-items: center;
@@ -2695,7 +2695,7 @@ body.fullscreen-mode::before {
         content: '';
         position: absolute;
         inset: -2px;
-        border-radius: 20px;
+        border-radius: 16px;
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), transparent);
         opacity: 0;
         transition: opacity 0.3s;
@@ -2703,7 +2703,7 @@ body.fullscreen-mode::before {
 
     .neo-driver-icon:hover {
         transform: scale(1.08) translateY(-2px);
-        box-shadow: 0 16px 40px rgba(31, 41, 55, 0.6), 0 6px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        box-shadow: 0 12px 32px rgba(31, 41, 55, 0.6), 0 5px 14px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4);
     }
 
     .neo-driver-icon:hover::before {
@@ -2722,11 +2722,11 @@ body.fullscreen-mode::before {
         inset: -2px;
         background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 60%);
         pointer-events: none;
-        border-radius: 20px;
+        border-radius: 16px;
     }
 
     .neo-driver-icon .neo-driver-initials {
-        font-size: 1rem;
+        font-size: 0.8rem;
         z-index: 1;
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         font-weight: 900;
@@ -2736,7 +2736,7 @@ body.fullscreen-mode::before {
         position: absolute;
         width: 90%;
         height: 90%;
-        border-radius: 18px;
+        border-radius: 14px;
         border: 2px solid rgba(255,255,255,0.5);
         animation: neoPulse 2.4s infinite;
     }
@@ -2749,9 +2749,9 @@ body.fullscreen-mode::before {
 
     .neo-case-pin {
         position: relative;
-        width: 60px;
-        height: 60px;
-        border-radius: 18px;
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -2764,8 +2764,8 @@ body.fullscreen-mode::before {
         --case-solid: #64748b;
         --case-glow: rgba(100, 116, 139, 0.5);
         background: linear-gradient(145deg, #94a3b8, #64748b);
-        border: 3px solid #ffffff;
-        box-shadow: 0 12px 32px var(--case-glow), 0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        border: 2.5px solid #ffffff;
+        box-shadow: 0 8px 24px var(--case-glow), 0 3px 10px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: visible;
@@ -2775,7 +2775,7 @@ body.fullscreen-mode::before {
         content: '';
         position: absolute;
         inset: -2px;
-        border-radius: 20px;
+        border-radius: 16px;
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), transparent);
         opacity: 0;
         transition: opacity 0.3s;
@@ -2793,31 +2793,31 @@ body.fullscreen-mode::before {
     .neo-case-pin::after {
         content: '';
         position: absolute;
-        bottom: -16px;
+        bottom: -12px;
         left: 50%;
         transform: translateX(-50%);
-        width: 18px;
-        height: 18px;
+        width: 14px;
+        height: 14px;
         background: var(--case-solid);
         clip-path: polygon(50% 100%, 0% 0, 100% 0);
         opacity: 0.95;
-        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+        filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.3));
         z-index: -1;
     }
 
     .neo-case-pin span {
         position: absolute;
-        top: -32px;
+        top: -26px;
         left: 50%;
         transform: translateX(-50%);
         background: rgba(255, 255, 255, 0.98);
         backdrop-filter: blur(10px);
         color: #0f172a;
-        font-size: 9px;
+        font-size: 8px;
         font-weight: 800;
-        padding: 4px 12px;
+        padding: 3px 10px;
         border-radius: 999px;
-        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25), 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 3px 10px rgba(15, 23, 42, 0.25), 0 2px 4px rgba(0, 0, 0, 0.1);
         white-space: nowrap;
         border: 1px solid rgba(226, 232, 240, 0.6);
     }
@@ -2838,15 +2838,15 @@ body.fullscreen-mode::before {
 
     @keyframes casePulse {
         0%, 100% { 
-            box-shadow: 0 12px 32px var(--case-glow), 0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 24px var(--case-glow), 0 3px 10px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);
         }
         50% { 
-            box-shadow: 0 16px 40px var(--case-glow), 0 6px 16px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            box-shadow: 0 12px 32px var(--case-glow), 0 5px 14px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4);
         }
     }
 
     .neo-case-core {
-        font-size: 1.15rem;
+        font-size: 0.9rem;
         line-height: 1;
     }
 
@@ -2861,26 +2861,26 @@ body.fullscreen-mode::before {
 
     .neo-drop-pin::after {
         content: '';
-        width: 20px;
-        height: 20px;
+        width: 14px;
+        height: 14px;
         background: var(--pin-color, #2563eb);
         clip-path: polygon(50% 100%, 0% 0, 100% 0);
         opacity: 0.85;
         position: absolute;
-        bottom: -16px;
+        bottom: -12px;
     }
 
     .neo-drop-pin i {
-        width: 52px;
-        height: 52px;
-        border-radius: 18px;
+        width: 38px;
+        height: 38px;
+        border-radius: 14px;
         background: var(--pin-color, #2563eb);
         color: #fff;
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 3px solid #ffffff;
-        font-size: 0.95rem;
+        border: 2.5px solid #ffffff;
+        font-size: 0.75rem;
     }
 
     .neo-drop-pin.pickup { --pin-color: linear-gradient(135deg, #2563eb, #1d4ed8); }
@@ -2896,13 +2896,13 @@ body.fullscreen-mode::before {
     }
 
     .neo-drop-pin.centered-pin i {
-        width: 58px;
-        height: 58px;
+        width: 42px;
+        height: 42px;
         border-radius: 50%;
         box-shadow:
-            inset 0 0 0 3px rgba(255, 255, 255, 0.35),
-            0 12px 22px rgba(15, 23, 42, 0.25),
-            0 0 0 4px rgba(217, 70, 239, 0.2); /* Purple glow for better visibility */
+            inset 0 0 0 2.5px rgba(255, 255, 255, 0.35),
+            0 8px 16px rgba(15, 23, 42, 0.25),
+            0 0 0 3px rgba(217, 70, 239, 0.2); /* Purple glow for better visibility */
     }
     
     /* Enhanced visibility for destination markers */
@@ -3886,6 +3886,17 @@ body.fullscreen-mode::before {
                                             <i class="fas fa-flag-checkered"></i>
                                             Destination (optional)
                                         </label>
+                                        <div id="nearest-hospital-suggestion" style="display: none; background: linear-gradient(135deg, #fef3c7, #fde68a); border: 1px solid #f59e0b; border-radius: 8px; padding: 12px; margin-bottom: 12px; font-size: 0.875rem;">
+                                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                                <i class="fas fa-hospital" style="color: #d97706;"></i>
+                                                <span style="font-weight: 600; color: #92400e;">Nearest Hospital:</span>
+                                                <span id="nearest-hospital-name" style="color: #78350f; font-weight: 700;"></span>
+                                                <span id="nearest-hospital-distance" style="color: #d97706; margin-left: auto;"></span>
+                                            </div>
+                                            <button type="button" id="use-nearest-hospital-btn" style="width: 100%; background: #f59e0b; color: white; border: none; border-radius: 6px; padding: 8px 12px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#d97706'" onmouseout="this.style.background='#f59e0b'">
+                                                <i class="fas fa-check-circle"></i> Use This Hospital as Destination
+                                            </button>
+                                        </div>
                                         <textarea id="case-destination" class="form-textarea compact" placeholder="Enter destination address (you can set this later)" rows="2"></textarea>
                                     </div>
                                 </div>
@@ -4218,6 +4229,164 @@ function updateSelectedCount() {
     const countSpan = document.getElementById('selected-count');
     if (countSpan) {
         countSpan.textContent = `(${count} selected)`;
+    }
+}
+
+/**
+ * Suggests the nearest hospital to the pickup pin location
+ * This function finds the hospital marker closest to the blue pickup pin
+ * and suggests it in the destination field
+ */
+function suggestNearestHospital() {
+    // Get pickup pin coordinates
+    const pickupLat = window.clickedLatitude;
+    const pickupLng = window.clickedLongitude;
+    
+    // Check if pickup pin exists
+    if (!pickupLat || !pickupLng) {
+        // Hide suggestion if no pickup pin
+        const suggestionEl = document.getElementById('nearest-hospital-suggestion');
+        if (suggestionEl) {
+            suggestionEl.style.display = 'none';
+        }
+        return;
+    }
+    
+    // Check if hospital markers exist
+    if (!hospitalMarkers || Object.keys(hospitalMarkers).length === 0) {
+        // Hide suggestion if no hospitals available
+        const suggestionEl = document.getElementById('nearest-hospital-suggestion');
+        if (suggestionEl) {
+            suggestionEl.style.display = 'none';
+        }
+        return;
+    }
+    
+    let nearestHospital = null;
+    let nearestDistance = Infinity;
+    let nearestMarkerId = null;
+    
+    // Iterate through all hospital markers to find the nearest one
+    Object.keys(hospitalMarkers).forEach(markerId => {
+        const hospitalMarker = hospitalMarkers[markerId];
+        const hospitalData = hospitalDataMap[markerId];
+        
+        // Skip if marker is not on the map or data is missing
+        if (!map.hasLayer(hospitalMarker) || !hospitalData) {
+            return;
+        }
+        
+        try {
+            const hospitalLat = hospitalData.lat;
+            const hospitalLng = hospitalData.lng;
+            const distance = calculateDistance(pickupLat, pickupLng, hospitalLat, hospitalLng);
+            
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestMarkerId = markerId;
+                nearestHospital = {
+                    markerId: markerId,
+                    name: hospitalData.name,
+                    lat: hospitalLat,
+                    lng: hospitalLng,
+                    address: hospitalData.address || '',
+                    distance: distance
+                };
+            }
+        } catch (e) {
+            console.warn(`Error calculating distance for hospital ${markerId}:`, e);
+        }
+    });
+    
+    // Store nearest hospital globally for button click handler
+    window.nearestHospitalData = nearestHospital;
+    
+    // Display suggestion if nearest hospital found
+    const suggestionEl = document.getElementById('nearest-hospital-suggestion');
+    const hospitalNameEl = document.getElementById('nearest-hospital-name');
+    const distanceEl = document.getElementById('nearest-hospital-distance');
+    const useBtn = document.getElementById('use-nearest-hospital-btn');
+    
+    if (nearestHospital && suggestionEl && hospitalNameEl && distanceEl) {
+        // Format distance (convert meters to kilometers if > 1000m)
+        let distanceText;
+        if (nearestDistance < 1000) {
+            distanceText = `${Math.round(nearestDistance)}m away`;
+        } else {
+            distanceText = `${(nearestDistance / 1000).toFixed(2)}km away`;
+        }
+        
+        hospitalNameEl.textContent = nearestHospital.name;
+        distanceEl.textContent = distanceText;
+        suggestionEl.style.display = 'block';
+        
+        // Store nearest hospital data for the use button
+        if (useBtn) {
+            useBtn.onclick = function() {
+                const nearestHospital = window.nearestHospitalData;
+                const destinationField = document.getElementById('case-destination');
+                if (destinationField && nearestHospital) {
+                    // Use hospital name and address if available, otherwise use coordinates
+                    let destinationText = nearestHospital.name;
+                    if (nearestHospital.address) {
+                        destinationText += `, ${nearestHospital.address}`;
+                    }
+                    destinationField.value = destinationText;
+                    
+                    // Place purple destination pin on the hospital coordinates
+                    // Remove existing destination pin if any
+                    if (currentDestinationMarker) {
+                        map.removeLayer(currentDestinationMarker);
+                    }
+                    
+                    // Set globals for destination
+                    window.destinationLatitude = nearestHospital.lat;
+                    window.destinationLongitude = nearestHospital.lng;
+                    
+                    // Add destination marker with improved visibility (purple pin)
+                    currentDestinationMarker = L.marker([nearestHospital.lat, nearestHospital.lng], { 
+                        icon: destinationIcon, 
+                        draggable: true,
+                        zIndexOffset: 1000  // Ensure destination markers appear above other markers
+                    }).addTo(map);
+                    
+                    // Label destination for the currently edited case if available
+                    if (typeof window.currentCaseNumber !== 'undefined' && window.currentCaseNumber !== null) {
+                        currentDestinationMarker.bindTooltip(`Case ${window.currentCaseNumber} Destination`, {
+                            permanent: true,
+                            direction: 'bottom',
+                            offset: [0, 18],
+                            className: 'case-label'
+                        });
+                    }
+                    
+                    // When dragging destination pin
+                    currentDestinationMarker.on('dragend', function(e) {
+                        const newPos = e.target.getLatLng();
+                        window.destinationLatitude = newPos.lat;
+                        window.destinationLongitude = newPos.lng;
+                        setTimeout(() => setAddressFromLatLng(window.destinationLatitude, window.destinationLongitude, 'destination'), 0);
+                        updateConnectionLine();
+                    });
+                    
+                    // Update the connection line between pickup and destination
+                    updateConnectionLine();
+                    
+                    // Fit map to show both pins if both exist
+                    if (currentPinMarker && currentDestinationMarker) {
+                        const group = new L.featureGroup([currentPinMarker, currentDestinationMarker]);
+                        map.fitBounds(group.getBounds().pad(0.1));
+                    } else if (currentDestinationMarker) {
+                        // If only destination exists, center on it
+                        map.setView([nearestHospital.lat, nearestHospital.lng], 15);
+                    }
+                }
+            };
+        }
+    } else if (suggestionEl) {
+        suggestionEl.style.display = 'none';
+        // Clear stored hospital data when no hospital found
+        window.nearestHospitalData = null;
     }
 }
 
@@ -5804,6 +5973,7 @@ const GEOFENCE_RADIUS = 100; // 100 meters radius
 let currentPinMarker = null; // Current pin being placed
 let isMovingPin = false; // Flag for pin movement mode
 let hospitalMarkers = {}; // Store hospital markers
+let hospitalDataMap = {}; // Store hospital data (name, lat, lng) mapped by marker ID
 // ===== TIMING CONSTANTS (standardized across system) =====
 const GPS_TIMING = {
     STALE_THRESHOLD_SEC: 120,        // 2 minutes = marker shows as "stale" (grayed)
@@ -5975,6 +6145,7 @@ async function loadHospitals() {
     }
   });
   hospitalMarkers = {};
+  hospitalDataMap = {}; // Clear hospital data map
   
     // Process results
     if (data.elements && Array.isArray(data.elements)) {
@@ -6009,6 +6180,12 @@ async function loadHospitals() {
         // Store marker
         const markerId = `hospital_${element.id}`;
         hospitalMarkers[markerId] = marker;
+        // Store hospital data
+        hospitalDataMap[markerId] = {
+          name: name,
+          lat: lat,
+          lng: lng
+        };
       });
       
       console.log(`Loaded ${Object.keys(hospitalMarkers).length} hospitals from OpenStreetMap`);
@@ -6038,6 +6215,23 @@ function loadKnownHospitals() {
     { name: 'Emilio Aguinaldo College Medical Center', lat: 14.348808786719188, lng: 120.93977642432321, address: 'Cavite' },
     { name: 'Pagamutan ng Dasmarinas', lat: 14.323283224537036, lng: 120.96182690258594, address: 'Dasmarinas, Cavite' },
     { name: 'Tagaytay Medical Center', lat: 14.11576594265624, lng: 120.9610150666475, address: 'Tagaytay City, Cavite' },
+    { name: 'Silang Specialist Medical Center', lat: 14.236098600922304, lng: 120.97477617620216, address: 'Silang, Cavite' },
+    { name: 'Estrella Hospital', lat: 14.226863780662343, lng: 120.9686821973767, address: 'Cavite' },
+    { name: 'Medcor Dasmariñas Hospital and Medical Center', lat: 14.274032276979053, lng: 120.96825304413193, address: 'Dasmariñas, Cavite' },
+    { name: 'Asia Medic Family Hospital & Medical Center', lat: 14.29967132493199, lng: 120.9579277038828, address: 'Cavite' },
+    { name: 'St. Paul Hospital Cavite', lat: 14.324309503648763, lng: 120.96339940998344, address: 'Cavite' },
+    { name: 'CarSiGMA District Hospital', lat: 14.297862339643821, lng: 121.00640058495863, address: 'Cavite' },
+    { name: 'South Imus Specialist Hospital', lat: 14.378233757270788, lng: 120.93471050253243, address: 'Imus, Cavite' },
+    { name: 'Westlake Medical Center', lat: 14.352347708549178, lng: 121.06957584443838, address: 'Cavite' },
+    { name: 'Unihealth Southwoods Hospital and Medical Center', lat: 14.304557592873056, lng: 121.00097207495244, address: 'Cavite' },
+    { name: 'Carmona Hospital & Medical Center', lat: 14.31919496539915, lng: 121.06139687908114, address: 'Carmona, Cavite' },
+    { name: 'First Cabuyao Hospital and Medical Center', lat: 14.276278150967284, lng: 121.12834481547374, address: 'Cabuyao, Laguna' },
+    { name: 'South City Hospital and Medical Center', lat: 14.38272339327247, lng: 121.01092843459665, address: 'Cavite' },
+    { name: 'Dasmariñas City Medical Center', lat: 14.355784219074271, lng: 120.98002938678634, address: 'Dasmariñas, Cavite' },
+    { name: 'Gentri Medical Center And Hospital Inc.', lat: 14.291582760527364, lng: 120.90724496247559, address: 'General Trias, Cavite' },
+    { name: 'M. V. Santiago Medical Center', lat: 14.29776957367176, lng: 120.8654621512088, address: 'Cavite' },
+    { name: 'Calamba Medical Center', lat: 14.206562840646924, lng: 121.15163127688834, address: 'Calamba, Laguna' },
+    { name: 'Healthway Cancer Care Hospital', lat: 14.502979303679858, lng: 121.04796721717067, address: 'Cavite' },
   ];
   
   // Clear existing markers
@@ -6047,6 +6241,7 @@ function loadKnownHospitals() {
     }
   });
   hospitalMarkers = {};
+  hospitalDataMap = {}; // Clear hospital data map
   
   knownHospitals.forEach((hospital, index) => {
     const marker = L.marker([hospital.lat, hospital.lng], {
@@ -6055,7 +6250,15 @@ function loadKnownHospitals() {
       interactive: true
     }).addTo(map);
     
-    hospitalMarkers[`known_${index}`] = marker;
+    const markerId = `known_${index}`;
+    hospitalMarkers[markerId] = marker;
+    // Store hospital data
+    hospitalDataMap[markerId] = {
+      name: hospital.name,
+      lat: hospital.lat,
+      lng: hospital.lng,
+      address: hospital.address
+    };
   });
   
   console.log(`Loaded ${knownHospitals.length} known hospitals in Cavite`);
@@ -6294,9 +6497,9 @@ function createDropPin(variant, iconClass, options = {}) {
     // Use realistic dimensions so Leaflet can anchor the visual pin correctly,
     // which keeps the tip of the pin aligned to the coordinates at all zoom levels.
     // For pickup (non-centered) we align the visual tip exactly in the middle of the geofence.
-    const iconSize = options.centered ? [60, 60] : [52, 74];      // 52x52 icon + drop tail
-    const iconAnchor = options.centered ? [30, 30] : [26, 70];    // nudge so tail tip sits inside geofence center
-    const popupAnchor = [0, options.centered ? -30 : -46];
+    const iconSize = options.centered ? [42, 42] : [38, 54];      // 38x38 icon + drop tail (14px tail)
+    const iconAnchor = options.centered ? [21, 21] : [19, 52];    // nudge so tail tip sits inside geofence center
+    const popupAnchor = [0, options.centered ? -21 : -38];
 
     return L.divIcon({
         className: '',
@@ -6317,12 +6520,12 @@ function createCaseIcon(caseNum, isActive = false) {
     const statusLabel = isActive ? 'Active' : 'Pending';
     const html = `
         <div class="neo-case-pin ${isActive ? 'is-active' : 'is-idle'}" style="cursor: pointer;">
-            <div class="neo-case-core" style="font-size: 1.1rem; line-height: 1; font-weight: 900;">${display}</div>
-            <span style="font-size: 8px; margin-top: 2px; opacity: 0.95;">${statusLabel}</span>
+            <div class="neo-case-core" style="font-size: 0.85rem; line-height: 1; font-weight: 900;">${display}</div>
+            <span style="font-size: 7px; margin-top: 2px; opacity: 0.95;">${statusLabel}</span>
         </div>
     `;
     // Anchor closer to the visual center so the orange pin appears centered inside its geofence circle
-    return L.divIcon({ className: '', html, iconSize: [56, 72], iconAnchor: [28, 56] });
+    return L.divIcon({ className: '', html, iconSize: [44, 56], iconAnchor: [22, 44] });
 }
 
 
@@ -6488,17 +6691,17 @@ function createDriverIcon(label, photoUrl, ageSec = 0, ambId = null) {
         <div style="position:relative;">
             <div class="neo-driver-icon ${isStale ? 'is-stale' : ''}" style="transition: all 0.3s ease;">
                 <span class="neo-driver-pulse"></span>
-                <div class="neo-driver-initials" style="font-size: 0.9rem;">${initials}</div>
+                <div class="neo-driver-initials" style="font-size: 0.75rem;">${initials}</div>
             </div>
             ${healthBadge}
         </div>
-        <div style="background:linear-gradient(135deg, #0f172a, #1e293b); color:#fff; padding:4px 12px; border-radius:999px; font-size:11px; font-weight:800; letter-spacing:0.04em; box-shadow:0 8px 20px rgba(15,23,42,0.4), 0 2px 6px rgba(0,0,0,0.2); white-space:nowrap; border: 1px solid rgba(255,255,255,0.1);">${safeLabel}</div>
+        <div style="background:linear-gradient(135deg, #0f172a, #1e293b); color:#fff; padding:3px 10px; border-radius:999px; font-size:10px; font-weight:800; letter-spacing:0.04em; box-shadow:0 6px 16px rgba(15,23,42,0.4), 0 2px 5px rgba(0,0,0,0.2); white-space:nowrap; border: 1px solid rgba(255,255,255,0.1);">${safeLabel}</div>
         ${lastSeenHtml}
       </div>
     `;
     // Match visual dimensions of the driver badge + label so the marker
     // is anchored by its visual bottom on the map.
-    return L.divIcon({ className: '', html, iconSize: [60, 82], iconAnchor: [30, 82] });
+    return L.divIcon({ className: '', html, iconSize: [48, 66], iconAnchor: [24, 66] });
 }
 
 // Routing helper using OSRM to follow roads
@@ -6712,8 +6915,9 @@ async function geocodeAndPinFromAddress(address, type = 'pickup') {
                 if (coordEl) coordEl.textContent = `${newPos.lat.toFixed(6)}, ${newPos.lng.toFixed(6)}`;
                 setTimeout(() => setAddressFromLatLng(window.clickedLatitude, window.clickedLongitude, 'pickup'), 0);
                 updateConnectionLine();
-                // Suggest nearest driver when pin is moved
+                // Suggest nearest driver and hospital when pin is moved
                 suggestNearestDriver();
+                suggestNearestHospital();
             });
 
             // Open case creation and fill pickup address
@@ -6721,8 +6925,11 @@ async function geocodeAndPinFromAddress(address, type = 'pickup') {
             const addrField = document.getElementById('case-address');
             if (addrField) addrField.value = best.display_name || address;
             
-            // Suggest nearest driver when modal opens
-            setTimeout(() => suggestNearestDriver(), 500);
+            // Suggest nearest driver and hospital when modal opens
+            setTimeout(() => {
+                suggestNearestDriver();
+                suggestNearestHospital();
+            }, 500);
             
         } else if (type === 'destination') {
             // Remove existing destination pin if any
@@ -7173,8 +7380,9 @@ map.on('click', async function (e) {
         // Auto-fill address after drag
         setTimeout(() => setAddressFromLatLng(window.clickedLatitude, window.clickedLongitude, 'pickup'), 0);
         updateConnectionLine();
-        // Suggest nearest driver when pin is moved
+        // Suggest nearest driver and hospital when pin is moved
         suggestNearestDriver();
+        suggestNearestHospital();
     });
     
     // Open the case creation modal
@@ -7184,8 +7392,11 @@ map.on('click', async function (e) {
     updateConnectionLine();
     document.body.classList.remove('pinning-mode');
     
-    // Suggest nearest driver when modal opens
-    setTimeout(() => suggestNearestDriver(), 500);
+    // Suggest nearest driver and hospital when modal opens
+    setTimeout(() => {
+        suggestNearestDriver();
+        suggestNearestHospital();
+    }, 500);
 });
 
 async function resolveDriverId(ambulanceId) {
@@ -10625,12 +10836,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 setAddressFromLatLng(window.clickedLatitude, window.clickedLongitude, 'pickup');
                 updateConnectionLine();
-                // Suggest nearest driver when pin is moved
+                // Suggest nearest driver and hospital when pin is moved
                 suggestNearestDriver();
+                suggestNearestHospital();
             });
             
-            // Suggest nearest driver when modal opens via URL
-            setTimeout(() => suggestNearestDriver(), 500);
+            // Suggest nearest driver and hospital when modal opens via URL
+            setTimeout(() => {
+                suggestNearestDriver();
+                suggestNearestHospital();
+            }, 500);
             
             const pinCoords = document.getElementById('pin-coordinates');
             if (pinCoords) pinCoords.textContent = coordString;
