@@ -67,15 +67,7 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'aveo_key' => ['required', 'string'],
         ]);
-
-        // Verify DRRMO AVEO KEY
-        $expectedAveoKey = 'MDRRMO2025!';
-        if ($request->aveo_key !== $expectedAveoKey) {
-            return back()->withInput($request->only('name', 'email'))
-                        ->withErrors(['aveo_key' => 'Invalid DRRMO AVEO KEY.']);
-        }
 
         $user = User::create([
             'name' => $request->name,

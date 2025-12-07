@@ -553,7 +553,7 @@
                         <i class="fas fa-rotate"></i> Refresh data
                     </button>
                     <a href="{{ route('dashboard.view') }}" class="btn btn-tonal">
-                        <i class="fas fa-display"></i> Dashboard view
+                        <i class="fas fa-display"></i> Dashboard Map View
                     </a>
                 </div>
                 <div class="hero-note">

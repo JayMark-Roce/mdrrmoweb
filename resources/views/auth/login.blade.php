@@ -692,14 +692,6 @@ body {
                                placeholder="Enter DRRMO ADMIN KEY">
                     </div>
 
-                    <!-- Sign Up Link -->
-                    @if (Route::has('register'))
-                        <div class="signup-link">
-                            <a href="{{ route('register') }}">
-                                <!-- <i class="fas fa-user-plus"></i>Don't have an account? Sign up -->
-                            </a>
-                        </div>
-                    @endif
 
                     <!-- Login Button -->
                     <button type="submit" class="login-button">
