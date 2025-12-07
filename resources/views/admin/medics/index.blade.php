@@ -254,6 +254,17 @@ html, body {
     background: #ffffff;
 }
 
+/* Phone number input styling */
+.form-field input[type="text"][maxlength="10"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    background: #ffffff;
+}
+
+.form-field input[type="text"][maxlength="10"]:focus ~ small {
+    color: var(--accent);
+}
+
 .form-field textarea {
     resize: vertical;
     min-height: 100px;
@@ -1012,7 +1023,12 @@ body .nav-links a.active {
                             </div>
                             <div class="form-field">
                                 <label><i class="fas fa-phone"></i> Phone</label>
-                                <input type="text" name="phone" value="{{ old('phone') }}" placeholder="Enter phone number">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="background: #f8fafc; border: 1.5px solid rgba(148, 163, 184, 0.5); border-radius: 14px 0 0 14px; padding: 0.7rem 0.85rem; font-size: 0.95rem; font-weight: 600; color: var(--heading); border-right: none;">+63</span>
+                                    <input type="text" name="phone_digits" id="medic_phone" value="{{ old('phone') ? preg_replace('/^\+63/', '', old('phone')) : '' }}" placeholder="9123456789" maxlength="10" pattern="[0-9]{10}" style="border-radius: 0 14px 14px 0; border-left: none; flex: 1;" oninput="this.value = this.value.replace(/[^0-9]/g, ''); validatePhoneLength(this);">
+                                </div>
+                                <input type="hidden" name="phone" id="medic_phone_full">
+                                <small style="color: var(--muted); font-size: 0.75rem; margin-top: 0.25rem; display: block;">Enter 10 digits (e.g., 9123456789)</small>
                             </div>
                             <div class="form-field">
                                 <label><i class="fas fa-stethoscope"></i> Specialization</label>
@@ -1113,7 +1129,12 @@ body .nav-links a.active {
                             </div>
                             <div class="form-field">
                                 <label>Phone Number</label>
-                                <input type="text" name="phone" value="{{ old('phone') }}" placeholder="Enter phone number">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="background: #f8fafc; border: 1.5px solid rgba(148, 163, 184, 0.5); border-radius: 14px 0 0 14px; padding: 0.7rem 0.85rem; font-size: 0.95rem; font-weight: 600; color: var(--heading); border-right: none;">+63</span>
+                                    <input type="text" name="phone_digits" id="driver_phone" value="{{ old('phone') ? preg_replace('/^\+63/', '', old('phone')) : '' }}" placeholder="9123456789" maxlength="10" pattern="[0-9]{10}" style="border-radius: 0 14px 14px 0; border-left: none; flex: 1;" oninput="this.value = this.value.replace(/[^0-9]/g, ''); validatePhoneLength(this);">
+                                </div>
+                                <input type="hidden" name="phone" id="driver_phone_full">
+                                <small style="color: var(--muted); font-size: 0.75rem; margin-top: 0.25rem; display: block;">Enter 10 digits (e.g., 9123456789)</small>
                             </div>
                             <div class="form-field">
                                 <label>Email *</label>
@@ -1180,7 +1201,12 @@ body .nav-links a.active {
                             </div>
                             <div class="form-field">
                                 <label>Emergency Contact Phone</label>
-                                <input type="text" name="emergency_contact_phone" value="{{ old('emergency_contact_phone') }}" placeholder="Enter emergency contact phone">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="background: #f8fafc; border: 1.5px solid rgba(148, 163, 184, 0.5); border-radius: 14px 0 0 14px; padding: 0.7rem 0.85rem; font-size: 0.95rem; font-weight: 600; color: var(--heading); border-right: none;">+63</span>
+                                    <input type="text" name="emergency_contact_phone_digits" id="emergency_phone" value="{{ old('emergency_contact_phone') ? preg_replace('/^\+63/', '', old('emergency_contact_phone')) : '' }}" placeholder="9123456789" maxlength="10" pattern="[0-9]{10}" style="border-radius: 0 14px 14px 0; border-left: none; flex: 1;" oninput="this.value = this.value.replace(/[^0-9]/g, ''); validatePhoneLength(this);">
+                                </div>
+                                <input type="hidden" name="emergency_contact_phone" id="emergency_phone_full">
+                                <small style="color: var(--muted); font-size: 0.75rem; margin-top: 0.25rem; display: block;">Enter 10 digits (e.g., 9123456789)</small>
                             </div>
                         </div>
                         <div class="form-actions">
@@ -1253,7 +1279,12 @@ body .nav-links a.active {
                     </div>
                     <div class="form-field">
                         <label for="edit_phone"><i class="fas fa-phone"></i> Phone</label>
-                        <input id="edit_phone" type="text" name="phone" placeholder="Enter phone number">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="background: #f8fafc; border: 1.5px solid rgba(148, 163, 184, 0.5); border-radius: 14px 0 0 14px; padding: 0.7rem 0.85rem; font-size: 0.95rem; font-weight: 600; color: var(--heading); border-right: none;">+63</span>
+                            <input id="edit_phone" type="text" name="phone_digits" placeholder="9123456789" maxlength="10" pattern="[0-9]{10}" style="border-radius: 0 14px 14px 0; border-left: none; flex: 1;" oninput="this.value = this.value.replace(/[^0-9]/g, ''); validatePhoneLength(this);">
+                        </div>
+                        <input type="hidden" name="phone" id="edit_phone_full">
+                        <small style="color: var(--muted); font-size: 0.75rem; margin-top: 0.25rem; display: block;">Enter 10 digits (e.g., 9123456789)</small>
                     </div>
                     <div class="form-field">
                         <label for="edit_specialization"><i class="fas fa-stethoscope"></i> Specialization</label>
@@ -1457,7 +1488,9 @@ function showPanel(panelName) {
 function openEditModal(id, name, phone, specialization, status) {
     document.getElementById('editMedicForm').action = `/admin/medics/${id}`;
     document.getElementById('edit_name').value = name;
-    document.getElementById('edit_phone').value = phone || '';
+    // Remove +63 prefix if present, keep only 10 digits
+    const phoneDigits = phone ? phone.replace(/^\+63/, '') : '';
+    document.getElementById('edit_phone').value = phoneDigits;
     document.getElementById('edit_specialization').value = specialization || '';
     const statusValue = status || 'active';
     document.getElementById('edit_status').value = statusValue;
@@ -1706,11 +1739,124 @@ function handlePostCreateRedirect() {
     }
 })();
 
+// Phone number validation and formatting
+function validatePhoneLength(input) {
+    if (input.value.length > 10) {
+        input.value = input.value.slice(0, 10);
+    }
+}
+
+// Handle phone input focus states
+function setupPhoneInputFocusStates() {
+    const phoneInputs = document.querySelectorAll('input[type="text"][maxlength="10"]');
+    phoneInputs.forEach(input => {
+        const prefixSpan = input.previousElementSibling;
+        if (prefixSpan && prefixSpan.tagName === 'SPAN') {
+            input.addEventListener('focus', function() {
+                prefixSpan.style.borderColor = 'var(--accent)';
+                prefixSpan.style.background = '#ffffff';
+            });
+            input.addEventListener('blur', function() {
+                prefixSpan.style.borderColor = 'rgba(148, 163, 184, 0.5)';
+                prefixSpan.style.background = '#f8fafc';
+            });
+        }
+    });
+}
+
+// Combine +63 with phone digits before form submission
+function setupPhoneNumberHandlers() {
+    // Medic create form
+    const medicForm = document.getElementById('medicCreateForm');
+    if (medicForm) {
+        medicForm.addEventListener('submit', function(e) {
+            const phoneInput = document.getElementById('medic_phone');
+            const phoneHidden = document.getElementById('medic_phone_full');
+            if (phoneInput && phoneHidden) {
+                const phoneDigits = phoneInput.value.trim();
+                if (phoneDigits.length === 0) {
+                    // Empty phone is allowed (optional field)
+                    phoneHidden.value = '';
+                } else if (phoneDigits.length === 10) {
+                    phoneHidden.value = '+63' + phoneDigits;
+                } else {
+                    e.preventDefault();
+                    alert('Phone number must be exactly 10 digits');
+                    phoneInput.focus();
+                    return false;
+                }
+            }
+        });
+    }
+
+    // Driver form
+    const driverForm = document.querySelector('form[action*="drivers.store"]');
+    if (driverForm) {
+        driverForm.addEventListener('submit', function(e) {
+            const phoneInput = document.getElementById('driver_phone');
+            const phoneHidden = document.getElementById('driver_phone_full');
+            if (phoneInput && phoneHidden) {
+                const phoneDigits = phoneInput.value.trim();
+                if (phoneDigits.length === 0) {
+                    phoneHidden.value = '';
+                } else if (phoneDigits.length === 10) {
+                    phoneHidden.value = '+63' + phoneDigits;
+                } else {
+                    e.preventDefault();
+                    alert('Phone number must be exactly 10 digits');
+                    phoneInput.focus();
+                    return false;
+                }
+            }
+            
+            const emergencyInput = document.getElementById('emergency_phone');
+            const emergencyHidden = document.getElementById('emergency_phone_full');
+            if (emergencyInput && emergencyHidden) {
+                const emergencyDigits = emergencyInput.value.trim();
+                if (emergencyDigits.length === 0) {
+                    emergencyHidden.value = '';
+                } else if (emergencyDigits.length === 10) {
+                    emergencyHidden.value = '+63' + emergencyDigits;
+                } else {
+                    e.preventDefault();
+                    alert('Emergency contact phone number must be exactly 10 digits');
+                    emergencyInput.focus();
+                    return false;
+                }
+            }
+        });
+    }
+
+    // Edit medic form
+    const editMedicForm = document.getElementById('editMedicForm');
+    if (editMedicForm) {
+        editMedicForm.addEventListener('submit', function(e) {
+            const phoneInput = document.getElementById('edit_phone');
+            const phoneHidden = document.getElementById('edit_phone_full');
+            if (phoneInput && phoneHidden) {
+                const phoneDigits = phoneInput.value.trim();
+                if (phoneDigits.length === 0) {
+                    phoneHidden.value = '';
+                } else if (phoneDigits.length === 10) {
+                    phoneHidden.value = '+63' + phoneDigits;
+                } else {
+                    e.preventDefault();
+                    alert('Phone number must be exactly 10 digits');
+                    phoneInput.focus();
+                    return false;
+                }
+            }
+        });
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function(){
     showDriverSection(1);
     setupDriverFormSubmission();
     attachRedirectListeners();
     handlePostCreateRedirect();
+    setupPhoneNumberHandlers();
+    setupPhoneInputFocusStates();
 
     @if(session('success'))
         showSuccessModal('{{ session('success') }}');
