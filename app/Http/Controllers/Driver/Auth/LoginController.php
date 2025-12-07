@@ -23,9 +23,34 @@ class LoginController extends Controller
             $driver = Auth::guard('driver')->user();
             if ($driver) {
                 $driver->setAvailabilityStatus('online');
+                
+                // Log successful login
+                \App\Models\LoginLog::create([
+                    'user_type' => 'driver',
+                    'user_id' => $driver->id,
+                    'email' => $driver->email,
+                    'name' => $driver->name,
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                    'login_at' => now(),
+                    'success' => true,
+                ]);
             }
             return redirect()->intended('/driver/send-location');
         }
+
+        // Log failed login attempt
+        \App\Models\LoginLog::create([
+            'user_type' => 'driver',
+            'user_id' => null,
+            'email' => $request->input('email'),
+            'name' => null,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'login_at' => now(),
+            'success' => false,
+            'failure_reason' => 'Invalid credentials',
+        ]);
 
         return back()->withErrors(['email' => 'Invalid credentials']);
     }

@@ -1867,6 +1867,8 @@ html, body {
                 </p>
                 <div class="hero-actions">
                     <button type="button" class="ghost" id="refreshDriversBtn"><i class="fas fa-sync"></i> Refresh data</button>
+                    <button type="button" class="ghost" id="viewAdminBtn"><i class="fas fa-user-shield"></i> View Admin</button>
+                    <a href="{{ route('admin.drivers.logs') }}" class="ghost" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;"><i class="fas fa-list-alt"></i> View Logs</a>
                     @if($isArchivedView)
                         <button type="button" class="ghost" onclick="window.location.href='{{ route('admin.drivers.index') }}'"><i class="fas fa-arrow-left"></i> Back to active</button>
                     @else
@@ -2424,6 +2426,33 @@ const archiveMedicModalHtml = `
     </div>
   </div>`;
 
+// AVEO KEY Verification Modal
+const aveoKeyModalHtml = `
+  <div id="aveoKeyModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); z-index:2000; align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:24px; border:1px solid #e5e7eb; box-shadow:0 10px 25px rgba(0,0,0,0.12); width:min(440px, 92vw); position:relative; overflow:hidden;">
+      <div style="position:absolute; top:0; left:0; width:100%; height:4px; background:linear-gradient(90deg, #2563eb 0%, #7c3aed 100%); border-radius:24px 24px 0 0;"></div>
+      <div style="padding:18px 20px; border-bottom:1px solid #f3f4f6; display:flex; align-items:center; justify-content:space-between; margin-top:4px;">
+        <div style="font-weight:700; color:#111827; display:flex; align-items:center; gap:8px;">
+          <span style="width:28px; height:28px; border-radius:999px; background:rgba(37,99,235,0.1); display:inline-flex; align-items:center; justify-content:center; color:#2563eb;">
+            <i class="fas fa-key"></i>
+          </span>
+          Admin Access
+        </div>
+        <button onclick="closeAveoKeyModal()" style="border:none; background:transparent; font-size:18px; cursor:pointer; color:#6b7280; transition:color 0.2s ease;">✕</button>
+      </div>
+      <div style="padding:18px 20px; color:#374151;">
+        <p style="margin:0 0 12px 0; font-size:14px;">Please enter the AVEO KEY to access the Users page.</p>
+        <label style="display:block; margin-bottom:8px; font-size:13px; font-weight:600; color:#374151;">AVEO KEY:</label>
+        <input type="password" id="aveoKeyInput" placeholder="Enter AVEO KEY" style="width:100%; padding:10px 12px; border:1.5px solid #d1d5db; border-radius:8px; font-size:14px; font-family:inherit; outline:none; transition:border 0.2s ease;" onfocus="this.style.borderColor='#2563eb';" onblur="this.style.borderColor='#d1d5db';" onkeypress="if(event.key==='Enter') verifyAveoKey();">
+        <p id="aveoKeyError" style="margin:8px 0 0 0; color:#ef4444; font-size:12px; display:none;">Invalid key. Please try again.</p>
+      </div>
+      <div style="padding:16px 20px; border-top:1px solid #f3f4f6; display:flex; gap:10px; justify-content:flex-end;">
+        <button onclick="closeAveoKeyModal()" class="modal-cancel-btn" style="padding:10px 16px; border-radius:10px; border:1px solid #e5e7eb; background:#000000; color:#ffffff; font-weight:600; cursor:pointer; transition:all 0.2s ease;">Cancel</button>
+        <button id="aveoKeyConfirm" class="modal-logout-btn" style="padding:10px 16px; border-radius:10px; border:none; background:linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); color:#fff; font-weight:600; cursor:pointer; transition:all 0.2s ease;">Verify</button>
+      </div>
+    </div>
+  </div>`;
+
 document.addEventListener('DOMContentLoaded', function(){
   if (!document.getElementById('forceLogoutModal')) {
     const wrap = document.createElement('div');
@@ -2453,6 +2482,11 @@ document.addEventListener('DOMContentLoaded', function(){
   if (!document.getElementById('archiveMedicDashboardModal')) {
     const wrap = document.createElement('div');
     wrap.innerHTML = archiveMedicModalHtml;
+    document.body.appendChild(wrap.firstElementChild);
+  }
+  if (!document.getElementById('aveoKeyModal')) {
+    const wrap = document.createElement('div');
+    wrap.innerHTML = aveoKeyModalHtml;
     document.body.appendChild(wrap.firstElementChild);
   }
 });
@@ -3017,6 +3051,101 @@ function toggleAvailability(driverId) {
         });
     }
 }
+
+// AVEO KEY Modal Functions
+function openAveoKeyModal() {
+    const modal = document.getElementById('aveoKeyModal');
+    const input = document.getElementById('aveoKeyInput');
+    const error = document.getElementById('aveoKeyError');
+    if (modal) modal.style.display = 'flex';
+    if (input) {
+        input.value = '';
+        input.focus();
+    }
+    if (error) error.style.display = 'none';
+}
+
+function closeAveoKeyModal() {
+    const modal = document.getElementById('aveoKeyModal');
+    const input = document.getElementById('aveoKeyInput');
+    const error = document.getElementById('aveoKeyError');
+    if (modal) modal.style.display = 'none';
+    if (input) input.value = '';
+    if (error) error.style.display = 'none';
+}
+
+function verifyAveoKey() {
+    const input = document.getElementById('aveoKeyInput');
+    const error = document.getElementById('aveoKeyError');
+    const confirmBtn = document.getElementById('aveoKeyConfirm');
+    const correctKey = 'MDRRMO2025!';
+    
+    if (!input) return;
+    
+    const enteredKey = input.value.trim();
+    
+    if (enteredKey === correctKey) {
+        // Redirect to users page
+        window.location.href = '{{ url("/admin/drivers/users") }}';
+    } else {
+        if (error) {
+            error.style.display = 'block';
+            error.textContent = 'Invalid key. Please try again.';
+        }
+        if (input) {
+            input.value = '';
+            input.focus();
+        }
+        if (confirmBtn) {
+            confirmBtn.disabled = true;
+            setTimeout(() => {
+                confirmBtn.disabled = false;
+            }, 500);
+        }
+    }
+}
+
+// Event listeners for AVEO KEY modal
+document.addEventListener('DOMContentLoaded', function() {
+    const viewAdminBtn = document.getElementById('viewAdminBtn');
+    if (viewAdminBtn) {
+        viewAdminBtn.addEventListener('click', openAveoKeyModal);
+    }
+    
+    const aveoKeyConfirm = document.getElementById('aveoKeyConfirm');
+    if (aveoKeyConfirm) {
+        aveoKeyConfirm.addEventListener('click', verifyAveoKey);
+    }
+    
+    const aveoKeyInput = document.getElementById('aveoKeyInput');
+    if (aveoKeyInput) {
+        aveoKeyInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verifyAveoKey();
+            }
+        });
+    }
+    
+    // Close modal when clicking outside
+    const aveoKeyModal = document.getElementById('aveoKeyModal');
+    if (aveoKeyModal) {
+        aveoKeyModal.addEventListener('click', function(e) {
+            if (e.target === aveoKeyModal) {
+                closeAveoKeyModal();
+            }
+        });
+    }
+    
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('aveoKeyModal');
+            if (modal && modal.style.display === 'flex') {
+                closeAveoKeyModal();
+            }
+        }
+    });
+});
 </script>
 </body>
 </html>

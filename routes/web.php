@@ -29,6 +29,7 @@ use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\CaseController;
 use App\Http\Controllers\Admin\PairingController;
 use App\Http\Controllers\Admin\MedicController;
+use App\Http\Controllers\Admin\LogsController;
 
 // ===============================
 // 🔧 Testing, Dev Tools
@@ -519,6 +520,8 @@ Route::prefix('driver')->group(function () {
 Route::prefix('admin/drivers')->middleware(['auth'])->group(function () {
     Route::get('/', [DriverController::class, 'index'])->name('admin.drivers.index');
     Route::get('/archived', [DriverController::class, 'archived'])->name('admin.drivers.archived');
+    Route::get('/users', [DriverController::class, 'users'])->name('admin.drivers.users');
+    Route::get('/logs', [LogsController::class, 'index'])->name('admin.drivers.logs');
     Route::get('/create', [DriverController::class, 'create'])->name('admin.drivers.create');
     Route::post('/', [DriverController::class, 'store'])->name('admin.drivers.store');
     Route::get('/{driver}', [DriverController::class, 'show'])->name('admin.drivers.show');
@@ -550,6 +553,130 @@ Route::prefix('admin/medics')->middleware(['auth'])->group(function () {
 // Admin user registration (for authenticated admins)
 Route::middleware(['auth'])->group(function () {
     Route::post('/admin/users/register', [\App\Http\Controllers\Auth\RegisteredUserController::class, 'storeAdmin'])->name('admin.users.register');
+    Route::get('/admin/users', function() {
+        $users = \App\Models\User::whereNull('archived_at')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function($user) {
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role ?? 'user',
+                    'status' => $user->status ?? 'active',
+                    'created_at' => $user->created_at ? $user->created_at->toIso8601String() : null,
+                    'last_login' => $user->last_login_at ? $user->last_login_at->toIso8601String() : null,
+                    'last_login_at' => $user->last_login_at ? $user->last_login_at->toIso8601String() : null,
+                ];
+            });
+        return response()->json($users);
+    })->name('admin.users.index');
+    
+    Route::get('/admin/users/archived', function() {
+        if (request()->wantsJson() || request()->ajax()) {
+            $users = \App\Models\User::whereNotNull('archived_at')
+                ->orderBy('archived_at', 'desc')
+                ->get()
+                ->map(function($user) {
+                    return [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'role' => $user->role ?? 'user',
+                        'status' => $user->status ?? 'active',
+                        'created_at' => $user->created_at ? $user->created_at->toIso8601String() : null,
+                        'archived_at' => $user->archived_at ? $user->archived_at->toIso8601String() : null,
+                        'last_login' => $user->last_login_at ? $user->last_login_at->toIso8601String() : null,
+                        'last_login_at' => $user->last_login_at ? $user->last_login_at->toIso8601String() : null,
+                    ];
+                });
+            return response()->json($users);
+        }
+        return view('admin.drivers.users-archived');
+    })->name('admin.users.archived');
+    
+    Route::get('/admin/users/{id}', function($id) {
+        $user = \App\Models\User::findOrFail($id);
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role ?? 'user',
+            'status' => $user->status ?? 'active',
+        ]);
+    })->name('admin.users.show');
+    
+    Route::put('/admin/users/{id}', function(\Illuminate\Http\Request $request, $id) {
+        $user = \App\Models\User::findOrFail($id);
+        
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'role' => 'required|in:admin,user',
+            'status' => 'required|in:active,inactive',
+        ]);
+        
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'role' => $request->role,
+            'status' => $request->status,
+        ]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'User updated successfully',
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+                'status' => $user->status,
+            ]
+        ]);
+    })->name('admin.users.update');
+    
+    Route::post('/admin/users/{id}/archive', function($id) {
+        $user = \App\Models\User::findOrFail($id);
+        
+        if ($user->archived_at) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User is already archived'
+            ], 422);
+        }
+        
+        $user->update([
+            'archived_at' => now(),
+            'status' => 'inactive',
+        ]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'User archived successfully'
+        ]);
+    })->name('admin.users.archive');
+    
+    Route::post('/admin/users/{id}/restore', function($id) {
+        $user = \App\Models\User::findOrFail($id);
+        
+        if (!$user->archived_at) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User is not archived'
+            ], 422);
+        }
+        
+        $user->update([
+            'archived_at' => null,
+            'status' => 'active',
+        ]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'User restored successfully'
+        ]);
+    })->name('admin.users.restore');
 });
 
 // ===============================

@@ -1857,6 +1857,17 @@ body::before {
     let sessionExpiredModal = null; // Modal for session expired
     let consecutiveSessionFailures = 0; // Track consecutive session failures before showing modal
     const MAX_SESSION_FAILURES = 3; // Show modal after 3 consecutive failures
+    
+    // ===== GPS ACCURACY ENHANCEMENT SYSTEM =====
+    let gpsHistory = []; // Buffer of recent GPS readings for smoothing
+    const GPS_HISTORY_SIZE = 5; // Keep last 5 readings for averaging
+    const MAX_ACCURACY_METERS = 50; // Reject readings with accuracy worse than 50m
+    const MAX_JUMP_DISTANCE_METERS = 500; // Reject jumps larger than 500m (impossible for ambulance)
+    const MAX_SPEED_KMH = 120; // Maximum reasonable speed (km/h) for ambulance
+    const GPS_SMOOTHING_ENABLED = true; // Enable coordinate smoothing
+    let lastValidCoords = null; // Last validated coordinates
+    let rejectedReadingsCount = 0; // Track rejected readings for debugging
+    let lastReadingTime = null; // Track time of last reading for speed calculation
 
     // ===== PWA bootstrap (register SW and ensure manifest) =====
     (function initPWA(){
@@ -1962,21 +1973,39 @@ body::before {
             btn.setAttribute('disabled','true');
             btn.textContent = 'Syncing...';
             try {
-                if (lastCoords) {
-                    await postLocation(lastCoords.lat, lastCoords.lng, 1);
+                if (lastValidCoords || lastCoords) {
+                    const coords = lastValidCoords || lastCoords;
+                    await postLocation(coords.lat, coords.lng, 1);
                     setStatus(`✅ Manual sync at ${new Date().toLocaleTimeString()}`, '#00ffe7');
                     showRetryModal(false);
                 } else {
+                    const gpsOptions = {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 2000
+                    };
                     navigator.geolocation.getCurrentPosition(pos => {
-                        postLocation(pos.coords.latitude, pos.coords.longitude, 1).then(() => {
-                            setStatus(`✅ Manual sync at ${new Date().toLocaleTimeString()}`, '#00ffe7');
-                            showRetryModal(false);
-                        });
-                    });
+                        const validatedCoords = processGPSReading(pos);
+                        if (validatedCoords) {
+                            postLocation(validatedCoords.lat, validatedCoords.lng, 1).then(() => {
+                                setStatus(`✅ Manual sync at ${new Date().toLocaleTimeString()}`, '#00ffe7');
+                                showRetryModal(false);
+                            });
+                        } else {
+                            setStatus('⚠️ GPS reading rejected. Please try again.', '#ff7e5f');
+                            btn.removeAttribute('disabled');
+                            btn.textContent = 'Retry now';
+                        }
+                    }, err => {
+                        setStatus('❌ GPS Error: ' + err.message, '#ff7e5f');
+                        btn.removeAttribute('disabled');
+                        btn.textContent = 'Retry now';
+                    }, gpsOptions);
                 }
             } finally {
-                btn.removeAttribute('disabled');
-                btn.textContent = 'Retry now';
+                if (!btn.hasAttribute('disabled')) {
+                    btn.textContent = 'Retry now';
+                }
             }
         };
         return retryModal;
@@ -2034,15 +2063,24 @@ body::before {
                 if (newToken) {
                     // Success - hide modal and try to send location
                     showSessionExpiredModal(false);
-                    if (lastCoords) {
-                        await postLocation(lastCoords.lat, lastCoords.lng, 1);
+                    if (lastValidCoords || lastCoords) {
+                        const coords = lastValidCoords || lastCoords;
+                        await postLocation(coords.lat, coords.lng, 1);
                         setStatus(`✅ Session restored at ${new Date().toLocaleTimeString()}`, '#00ffe7');
                     } else {
+                        const gpsOptions = {
+                            enableHighAccuracy: true,
+                            timeout: 10000,
+                            maximumAge: 2000
+                        };
                         navigator.geolocation.getCurrentPosition(pos => {
-                            postLocation(pos.coords.latitude, pos.coords.longitude, 1).then(() => {
-                                setStatus(`✅ Session restored at ${new Date().toLocaleTimeString()}`, '#00ffe7');
-                            });
-                        });
+                            const validatedCoords = processGPSReading(pos);
+                            if (validatedCoords) {
+                                postLocation(validatedCoords.lat, validatedCoords.lng, 1).then(() => {
+                                    setStatus(`✅ Session restored at ${new Date().toLocaleTimeString()}`, '#00ffe7');
+                                });
+                            }
+                        }, null, gpsOptions);
                     }
                 } else {
                     // Still failed - keep modal open
@@ -2344,6 +2382,206 @@ body::before {
         }
     }
 
+    // ===== GPS VALIDATION AND FILTERING FUNCTIONS =====
+    
+    /**
+     * Calculate distance between two coordinates using Haversine formula
+     * Returns distance in meters
+     */
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371000; // Earth's radius in meters
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                  Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+    
+    /**
+     * Validate coordinates are within reasonable bounds
+     * Philippines bounds: approximately 4.2°N to 21.1°N, 116.9°E to 127.0°E
+     */
+    function validateCoordinates(lat, lng) {
+        // Check if coordinates are valid numbers
+        if (isNaN(lat) || isNaN(lng)) {
+            console.warn('⚠️ Invalid coordinates: NaN values');
+            return false;
+        }
+        
+        // Check if coordinates are within reasonable bounds (Philippines + buffer)
+        if (lat < 0 || lat > 30 || lng < 110 || lng > 130) {
+            console.warn(`⚠️ Coordinates out of bounds: [${lat}, ${lng}]`);
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Check if GPS reading accuracy is acceptable
+     */
+    function validateAccuracy(accuracy) {
+        if (!accuracy || accuracy > MAX_ACCURACY_METERS) {
+            console.warn(`⚠️ GPS accuracy too low: ${accuracy}m (max: ${MAX_ACCURACY_METERS}m)`);
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * Check if movement is physically possible (speed-based validation)
+     */
+    function validateSpeed(lat, lng, timestamp) {
+        if (!lastValidCoords || !lastReadingTime) {
+            return true; // First reading, no speed check
+        }
+        
+        const distance = calculateDistance(
+            lastValidCoords.lat, 
+            lastValidCoords.lng, 
+            lat, 
+            lng
+        );
+        
+        const timeDiff = (timestamp - lastReadingTime) / 1000; // Convert to seconds
+        if (timeDiff <= 0) return true; // Invalid time difference
+        
+        const speedMs = distance / timeDiff; // Speed in m/s
+        const speedKmh = speedMs * 3.6; // Convert to km/h
+        
+        if (speedKmh > MAX_SPEED_KMH) {
+            console.warn(`⚠️ Impossible speed detected: ${speedKmh.toFixed(1)} km/h (max: ${MAX_SPEED_KMH} km/h), distance: ${distance.toFixed(0)}m`);
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Check if coordinate jump is too large (impossible movement)
+     */
+    function validateJump(lat, lng) {
+        if (!lastValidCoords) {
+            return true; // First reading, no jump check
+        }
+        
+        const distance = calculateDistance(
+            lastValidCoords.lat, 
+            lastValidCoords.lng, 
+            lat, 
+            lng
+        );
+        
+        if (distance > MAX_JUMP_DISTANCE_METERS) {
+            console.warn(`⚠️ Impossible jump detected: ${distance.toFixed(0)}m (max: ${MAX_JUMP_DISTANCE_METERS}m)`);
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Smooth coordinates using weighted average of recent readings
+     * More recent readings have higher weight
+     */
+    function smoothCoordinates(lat, lng) {
+        if (!GPS_SMOOTHING_ENABLED || gpsHistory.length === 0) {
+            return { lat, lng };
+        }
+        
+        // Add current reading to history
+        gpsHistory.push({ lat, lng, timestamp: Date.now() });
+        
+        // Keep only recent readings
+        if (gpsHistory.length > GPS_HISTORY_SIZE) {
+            gpsHistory.shift();
+        }
+        
+        // Calculate weighted average (more recent = higher weight)
+        let totalWeight = 0;
+        let weightedLat = 0;
+        let weightedLng = 0;
+        
+        gpsHistory.forEach((reading, index) => {
+            const weight = index + 1; // More recent = higher weight
+            totalWeight += weight;
+            weightedLat += reading.lat * weight;
+            weightedLng += reading.lng * weight;
+        });
+        
+        return {
+            lat: weightedLat / totalWeight,
+            lng: weightedLng / totalWeight
+        };
+    }
+    
+    /**
+     * Process and validate GPS reading before sending
+     * Returns validated coordinates or null if rejected
+     */
+    function processGPSReading(position) {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        const accuracy = position.coords.accuracy; // Accuracy in meters
+        const timestamp = position.timestamp || Date.now();
+        
+        // Step 1: Validate coordinates are valid numbers and within bounds
+        if (!validateCoordinates(lat, lng)) {
+            rejectedReadingsCount++;
+            return null;
+        }
+        
+        // Step 2: Validate GPS accuracy
+        if (!validateAccuracy(accuracy)) {
+            rejectedReadingsCount++;
+            return null;
+        }
+        
+        // Step 3: Validate jump distance (impossible movement)
+        if (!validateJump(lat, lng)) {
+            rejectedReadingsCount++;
+            // If jump is too large, but we have last valid coords, use those instead
+            if (lastValidCoords) {
+                console.log('📍 Using last valid coordinates due to impossible jump');
+                return lastValidCoords;
+            }
+            return null;
+        }
+        
+        // Step 4: Validate speed (physically possible movement)
+        if (!validateSpeed(lat, lng, timestamp)) {
+            rejectedReadingsCount++;
+            // If speed is impossible, use last valid coords
+            if (lastValidCoords) {
+                console.log('📍 Using last valid coordinates due to impossible speed');
+                return lastValidCoords;
+            }
+            return null;
+        }
+        
+        // Step 5: Apply smoothing if enabled
+        let finalCoords = { lat, lng };
+        if (GPS_SMOOTHING_ENABLED) {
+            finalCoords = smoothCoordinates(lat, lng);
+        }
+        
+        // Update last valid coordinates and timestamp
+        lastValidCoords = { lat: finalCoords.lat, lng: finalCoords.lng };
+        lastReadingTime = timestamp;
+        
+        // Reset rejected count on successful validation
+        if (rejectedReadingsCount > 0) {
+            console.log(`✅ GPS reading validated (${rejectedReadingsCount} previous readings rejected)`);
+            rejectedReadingsCount = 0;
+        }
+        
+        return finalCoords;
+    }
+    
+    // ===== END GPS VALIDATION SYSTEM =====
+    
     // Expose postLocation globally so manual button can call it
     function postLocation(lat, lng, attempt = 1){
         // Only use abort controller for first attempt, not retries (retries might need more time for token refresh)
@@ -2570,13 +2808,48 @@ body::before {
             } 
         })();
 
-        // Periodic sender
+        // Enhanced GPS options for better accuracy
+        const gpsOptions = {
+            enableHighAccuracy: true, // Use GPS instead of network location
+            timeout: 8000, // Maximum time to wait for GPS reading (8 seconds)
+            maximumAge: 2000 // Accept cached position if less than 2 seconds old
+        };
+        
+        // Periodic sender with enhanced GPS validation
         sendIntervalId = setInterval(() => {
             navigator.geolocation.getCurrentPosition(position => {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
+                // Process and validate GPS reading
+                const validatedCoords = processGPSReading(position);
+                
+                if (!validatedCoords) {
+                    // GPS reading was rejected - use last valid coordinates if available
+                    if (lastValidCoords) {
+                        console.log('📍 Using last valid coordinates (current reading rejected)');
+                        const lat = lastValidCoords.lat;
+                        const lng = lastValidCoords.lng;
+                        lastCoords = { lat, lng };
+                        
+                        // Still update backend with last valid position
+                        postLocation(lat, lng)
+                        .then(() => {
+                            // Update map marker with last valid position
+                            if (currentMarker) {
+                                currentMarker.setLatLng([lat, lng]);
+                            }
+                        });
+                    } else {
+                        console.warn('⚠️ No valid GPS reading available');
+                        setStatus('⚠️ Waiting for valid GPS signal...', '#ffb020');
+                    }
+                    return;
+                }
+                
+                // Use validated and smoothed coordinates
+                const lat = validatedCoords.lat;
+                const lng = validatedCoords.lng;
                 lastCoords = { lat, lng };
-                // Update backend with current position
+                
+                // Update backend with validated position
                 postLocation(lat, lng)
                 .then(() => {
                     // Show current position on map
@@ -2610,7 +2883,12 @@ body::before {
                 });
             }, error => {
                 setStatus("❌ GPS Error: " + error.message, '#ff7e5f');
-            });
+                // If we have last valid coordinates, use them
+                if (lastValidCoords) {
+                    console.log('📍 GPS error, using last valid coordinates');
+                    postLocation(lastValidCoords.lat, lastValidCoords.lng);
+                }
+            }, gpsOptions);
         }, 5000);
 
         // React to connectivity changes
@@ -2621,8 +2899,9 @@ body::before {
         window.addEventListener('online', () => {
             setStatus('✅ Back online. Syncing...', '#00ffe7');
             showRetryModal(false);
-            if (lastCoords) {
-                postLocation(lastCoords.lat, lastCoords.lng, 1);
+            if (lastValidCoords || lastCoords) {
+                const coords = lastValidCoords || lastCoords;
+                postLocation(coords.lat, coords.lng, 1);
             }
         });
 
@@ -2929,22 +3208,35 @@ function updateTrackingIndicator(isOn){
             btn.textContent = 'Sending...';
             
             try {
-                if (lastCoords) {
-                    await postLocation(lastCoords.lat, lastCoords.lng, 1);
+                if (lastValidCoords || lastCoords) {
+                    const coords = lastValidCoords || lastCoords;
+                    await postLocation(coords.lat, coords.lng, 1);
                     setStatus(`✅ Location resent at ${new Date().toLocaleTimeString()}`, '#00ffe7');
                     showResendRequestModal(false);
                 } else {
+                    const gpsOptions = {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 2000
+                    };
                     navigator.geolocation.getCurrentPosition(pos => {
-                        postLocation(pos.coords.latitude, pos.coords.longitude, 1).then(() => {
-                            setStatus(`✅ Location resent at ${new Date().toLocaleTimeString()}`, '#00ffe7');
-                            showResendRequestModal(false);
-                        });
+                        const validatedCoords = processGPSReading(pos);
+                        if (validatedCoords) {
+                            postLocation(validatedCoords.lat, validatedCoords.lng, 1).then(() => {
+                                setStatus(`✅ Location resent at ${new Date().toLocaleTimeString()}`, '#00ffe7');
+                                showResendRequestModal(false);
+                            });
+                        } else {
+                            setStatus('⚠️ GPS reading rejected. Please try again.', '#ff7e5f');
+                            btn.removeAttribute('disabled');
+                            btn.textContent = 'Resend Location Now';
+                        }
                     }, err => {
                         console.error('GPS error:', err);
                         setStatus('❌ Failed to get GPS location', '#ff7e5f');
                         btn.removeAttribute('disabled');
                         btn.textContent = 'Resend Location Now';
-                    });
+                    }, gpsOptions);
                 }
             } catch (e) {
                 console.error('Failed to resend location:', e);
@@ -2973,6 +3265,12 @@ function updateTrackingIndicator(isOn){
     function startResendAutoRetry() {
         if (resendAutoRetryInterval) return; // Already running
         
+        const gpsOptions = {
+            enableHighAccuracy: true,
+            timeout: 8000,
+            maximumAge: 2000
+        };
+        
         resendAutoRetryInterval = setInterval(async () => {
             if (!pendingResendRequest) {
                 stopResendAutoRetry();
@@ -2980,17 +3278,23 @@ function updateTrackingIndicator(isOn){
             }
             
             try {
-                if (lastCoords) {
-                    await postLocation(lastCoords.lat, lastCoords.lng, 1);
+                if (lastValidCoords || lastCoords) {
+                    const coords = lastValidCoords || lastCoords;
+                    await postLocation(coords.lat, coords.lng, 1);
                     console.log('✅ Auto-retry: Location sent successfully');
                 } else {
                     navigator.geolocation.getCurrentPosition(pos => {
-                        postLocation(pos.coords.latitude, pos.coords.longitude, 1).catch(err => {
-                            console.warn('Auto-retry failed:', err);
-                        });
+                        const validatedCoords = processGPSReading(pos);
+                        if (validatedCoords) {
+                            postLocation(validatedCoords.lat, validatedCoords.lng, 1).catch(err => {
+                                console.warn('Auto-retry failed:', err);
+                            });
+                        } else {
+                            console.warn('Auto-retry: GPS reading rejected');
+                        }
                     }, err => {
                         console.warn('Auto-retry GPS error:', err);
-                    });
+                    }, gpsOptions);
                 }
             } catch (e) {
                 console.warn('Auto-retry error:', e);

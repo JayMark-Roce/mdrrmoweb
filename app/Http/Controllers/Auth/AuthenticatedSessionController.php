@@ -28,11 +28,42 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request)
     {
-        $request->authenticate();
+        try {
+            $request->authenticate();
+            
+            $user = Auth::user();
+            
+            // Log successful login
+            \App\Models\LoginLog::create([
+                'user_type' => 'admin',
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'name' => $user->name,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'login_at' => now(),
+                'success' => true,
+            ]);
 
-        $request->session()->regenerate();
+            $request->session()->regenerate();
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+            return redirect()->intended(RouteServiceProvider::HOME);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Log failed login attempt
+            \App\Models\LoginLog::create([
+                'user_type' => 'admin',
+                'user_id' => null,
+                'email' => $request->input('email'),
+                'name' => null,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'login_at' => now(),
+                'success' => false,
+                'failure_reason' => $e->getMessage(),
+            ]);
+            
+            throw $e;
+        }
     }
 
     /**

@@ -372,4 +372,9 @@ class DriverController extends Controller
             'cache_set' => $cacheSet
         ]);
     }
+
+    public function users()
+    {
+        return view('admin.drivers.users');
+    }
 }
