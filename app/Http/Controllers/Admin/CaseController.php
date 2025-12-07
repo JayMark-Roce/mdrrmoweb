@@ -184,9 +184,11 @@ class CaseController extends Controller
         $case->load('ambulance');
         
         // Get pairing information for the case date
+        // Try multiple dates: timestamp, completed_at, created_at
         $caseDate = $case->timestamp ? \Carbon\Carbon::parse($case->timestamp)->format('Y-m-d') : 
                    ($case->completed_at ? \Carbon\Carbon::parse($case->completed_at)->format('Y-m-d') : 
-                   date('Y-m-d'));
+                   ($case->created_at ? \Carbon\Carbon::parse($case->created_at)->format('Y-m-d') : 
+                   date('Y-m-d')));
         
         $driverPairing = null;
         $medicPairing = null;
@@ -194,11 +196,29 @@ class CaseController extends Controller
         
         if ($case->ambulance_id) {
             // Get driver-ambulance pairing for this ambulance on the case date
+            // Check for both 'active' and 'completed' statuses since completed cases may have completed pairings
             $driverAmbulancePairing = DriverAmbulancePairing::where('ambulance_id', $case->ambulance_id)
                 ->where('pairing_date', $caseDate)
-                ->where('status', 'active')
+                ->whereIn('status', ['active', 'completed'])
                 ->with('driver')
+                ->orderBy('status', 'asc') // Prefer 'active' over 'completed'
                 ->first();
+            
+            // If no pairing found on primary date, try created_at date as fallback
+            if (!$driverAmbulancePairing && $case->created_at) {
+                $createdDate = \Carbon\Carbon::parse($case->created_at)->format('Y-m-d');
+                if ($createdDate !== $caseDate) {
+                    $driverAmbulancePairing = DriverAmbulancePairing::where('ambulance_id', $case->ambulance_id)
+                        ->where('pairing_date', $createdDate)
+                        ->whereIn('status', ['active', 'completed'])
+                        ->with('driver')
+                        ->orderBy('status', 'asc')
+                        ->first();
+                    if ($driverAmbulancePairing) {
+                        $caseDate = $createdDate; // Update caseDate for medic pairing lookup
+                    }
+                }
+            }
             
             if ($driverAmbulancePairing && $driverAmbulancePairing->driver) {
                 $driverPairing = [
@@ -208,9 +228,10 @@ class CaseController extends Controller
                 ];
                 
                 // Get all medic-driver pairings for this driver on the same date (driver can have multiple medics)
+                // Check for both 'active' and 'completed' statuses
                 $driverMedicPairings = DriverMedicPairing::where('driver_id', $driverAmbulancePairing->driver_id)
                     ->where('pairing_date', $caseDate)
-                    ->where('status', 'active')
+                    ->whereIn('status', ['active', 'completed'])
                     ->with('medic')
                     ->get();
                 
@@ -832,9 +853,11 @@ class CaseController extends Controller
                 ->get()
                 ->map(function ($case) {
                     // Get pairing information for the case date
+                    // Try multiple dates: timestamp, completed_at, created_at
                     $caseDate = $case->timestamp ? \Carbon\Carbon::parse($case->timestamp)->format('Y-m-d') : 
                                ($case->completed_at ? \Carbon\Carbon::parse($case->completed_at)->format('Y-m-d') : 
-                               date('Y-m-d'));
+                               ($case->created_at ? \Carbon\Carbon::parse($case->created_at)->format('Y-m-d') : 
+                               date('Y-m-d')));
                     
                     $driverPairing = null;
                     $medicPairing = null;
@@ -842,11 +865,29 @@ class CaseController extends Controller
                     
                     if ($case->ambulance_id) {
                         // Get driver-ambulance pairing for this ambulance on the case date
+                        // Check for both 'active' and 'completed' statuses since completed cases may have completed pairings
                         $driverAmbulancePairing = \App\Models\DriverAmbulancePairing::where('ambulance_id', $case->ambulance_id)
                             ->where('pairing_date', $caseDate)
-                            ->where('status', 'active')
+                            ->whereIn('status', ['active', 'completed'])
                             ->with('driver')
+                            ->orderBy('status', 'asc') // Prefer 'active' over 'completed'
                             ->first();
+                        
+                        // If no pairing found on primary date, try created_at date as fallback
+                        if (!$driverAmbulancePairing && $case->created_at) {
+                            $createdDate = \Carbon\Carbon::parse($case->created_at)->format('Y-m-d');
+                            if ($createdDate !== $caseDate) {
+                                $driverAmbulancePairing = \App\Models\DriverAmbulancePairing::where('ambulance_id', $case->ambulance_id)
+                                    ->where('pairing_date', $createdDate)
+                                    ->whereIn('status', ['active', 'completed'])
+                                    ->with('driver')
+                                    ->orderBy('status', 'asc')
+                                    ->first();
+                                if ($driverAmbulancePairing) {
+                                    $caseDate = $createdDate; // Update caseDate for medic pairing lookup
+                                }
+                            }
+                        }
                         
                         if ($driverAmbulancePairing && $driverAmbulancePairing->driver) {
                             $driverPairing = [
@@ -856,9 +897,10 @@ class CaseController extends Controller
                             ];
                             
                             // Get all medic-driver pairings for this driver on the same date (driver can have multiple medics)
+                            // Check for both 'active' and 'completed' statuses
                             $driverMedicPairings = \App\Models\DriverMedicPairing::where('driver_id', $driverAmbulancePairing->driver_id)
                                 ->where('pairing_date', $caseDate)
-                                ->where('status', 'active')
+                                ->whereIn('status', ['active', 'completed'])
                                 ->with('medic')
                                 ->get();
                             
