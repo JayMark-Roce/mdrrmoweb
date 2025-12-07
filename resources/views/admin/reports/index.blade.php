@@ -1198,6 +1198,31 @@ function showPrintOptionsModal(caseData) {
     }
 }
 
+// Function to print case details (fetches full case data with pairings)
+async function printCaseDetails(caseNum) {
+    try {
+        const response = await fetch(`/admin/cases/${caseNum}`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            credentials: 'same-origin'
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const caseData = await response.json();
+        printCase(caseData, 'details');
+    } catch (error) {
+        console.error('Error fetching case details:', error);
+        alert('Failed to load case details for printing. Please try again.');
+    }
+}
+
 function closePrintOptionsModal() {
     const modal = document.getElementById('print-options-modal');
     if (modal) {
@@ -2215,7 +2240,7 @@ document.getElementById('print-conduction-form')?.addEventListener('click', func
 document.getElementById('print-case-details')?.addEventListener('click', function(e) {
     e.preventDefault();
     if (currentPrintCaseData) {
-        printCase(currentPrintCaseData, 'details');
+        printCaseDetails(currentPrintCaseData.case_num);
     }
 });
 
