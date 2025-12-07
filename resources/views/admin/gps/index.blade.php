@@ -3054,6 +3054,28 @@ body.fullscreen-mode::before {
         transform: translateY(-2px);
     }
 
+    .driver-option--nearest {
+        background: linear-gradient(135deg, #dbeafe, #bfdbfe) !important;
+        border: 2px solid #3b82f6 !important;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+        position: relative;
+    }
+
+    .driver-option--nearest::before {
+        content: '📍 Nearest';
+        position: absolute;
+        top: -10px;
+        right: 12px;
+        background: #2563eb;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4);
+        z-index: 10;
+    }
+
     .driver-option--disabled {
         background: linear-gradient(to right, #fef2f2, #fee2e2);
         border-color: #fecaca;
@@ -3904,6 +3926,14 @@ body.fullscreen-mode::before {
                                         Select Driver *
                                         <span id="selected-count" style="color: #6b7280; font-size: 0.8rem; font-weight:600;">(0 selected)</span>
                                     </label>
+                                    <div id="nearest-driver-suggestion" style="display: none; background: linear-gradient(135deg, #dbeafe, #bfdbfe); border: 1px solid #3b82f6; border-radius: 8px; padding: 12px; margin-bottom: 12px; font-size: 0.875rem;">
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <i class="fas fa-map-marker-alt" style="color: #2563eb;"></i>
+                                            <span style="font-weight: 600; color: #1e40af;">Nearest Driver:</span>
+                                            <span id="nearest-driver-name" style="color: #1e3a8a; font-weight: 700;"></span>
+                                            <span id="nearest-driver-distance" style="color: #3b82f6; margin-left: auto;"></span>
+                                        </div>
+                                    </div>
                                     <div id="driver-checkboxes" class="driver-selection-container">
                                         @forelse($driversWithAmbulances as $driverInfo)
                                             @php
@@ -4188,6 +4218,111 @@ function updateSelectedCount() {
     const countSpan = document.getElementById('selected-count');
     if (countSpan) {
         countSpan.textContent = `(${count} selected)`;
+    }
+}
+
+/**
+ * Suggests the nearest driver to the pickup pin location
+ * This function finds the driver marker closest to the blue pickup pin
+ */
+function suggestNearestDriver() {
+    // Get pickup pin coordinates
+    const pickupLat = window.clickedLatitude;
+    const pickupLng = window.clickedLongitude;
+    
+    // Check if pickup pin exists
+    if (!pickupLat || !pickupLng) {
+        // Hide suggestion if no pickup pin
+        const suggestionEl = document.getElementById('nearest-driver-suggestion');
+        if (suggestionEl) {
+            suggestionEl.style.display = 'none';
+        }
+        return;
+    }
+    
+    // Check if driver markers exist
+    if (!driverMarkers || Object.keys(driverMarkers).length === 0) {
+        // Hide suggestion if no drivers available
+        const suggestionEl = document.getElementById('nearest-driver-suggestion');
+        if (suggestionEl) {
+            suggestionEl.style.display = 'none';
+        }
+        return;
+    }
+    
+    let nearestDriver = null;
+    let nearestDistance = Infinity;
+    let nearestAmbulanceId = null;
+    
+    // Iterate through all driver markers to find the nearest one
+    Object.keys(driverMarkers).forEach(ambId => {
+        const driverMarker = driverMarkers[ambId];
+        
+        // Skip if marker is not on the map
+        if (!map.hasLayer(driverMarker)) {
+            return;
+        }
+        
+        try {
+            const driverLatLng = driverMarker.getLatLng();
+            const distance = calculateDistance(pickupLat, pickupLng, driverLatLng.lat, driverLatLng.lng);
+            
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestAmbulanceId = ambId;
+                
+                // Get driver information from ambulance data or metadata
+                const ambData = ambulanceDataMap[ambId];
+                const driverMeta = driverMetaByAmbId[ambId];
+                
+                nearestDriver = {
+                    ambulanceId: ambId,
+                    driverName: ambData?.driver_name || ambData?.driver_first_name || driverMeta?.label || `Driver ${ambId}`,
+                    ambulanceName: ambData?.name || `Ambulance ${ambId}`,
+                    distance: distance
+                };
+            }
+        } catch (e) {
+            console.warn(`Error calculating distance for driver ${ambId}:`, e);
+        }
+    });
+    
+    // Display suggestion if nearest driver found
+    const suggestionEl = document.getElementById('nearest-driver-suggestion');
+    const driverNameEl = document.getElementById('nearest-driver-name');
+    const distanceEl = document.getElementById('nearest-driver-distance');
+    
+    if (nearestDriver && suggestionEl && driverNameEl && distanceEl) {
+        // Format distance (convert meters to kilometers if > 1000m)
+        let distanceText;
+        if (nearestDistance < 1000) {
+            distanceText = `${Math.round(nearestDistance)}m away`;
+        } else {
+            distanceText = `${(nearestDistance / 1000).toFixed(2)}km away`;
+        }
+        
+        driverNameEl.textContent = `${nearestDriver.driverName} (${nearestDriver.ambulanceName})`;
+        distanceEl.textContent = distanceText;
+        suggestionEl.style.display = 'block';
+        
+        // Highlight the nearest driver's checkbox if it exists
+        const checkboxes = document.querySelectorAll('input[name="drivers[]"]');
+        checkboxes.forEach(checkbox => {
+            const ambId = checkbox.getAttribute('data-ambulance-id');
+            const driverOption = checkbox.closest('.driver-option');
+            
+            // Remove previous highlight
+            if (driverOption) {
+                driverOption.classList.remove('driver-option--nearest');
+            }
+            
+            // Highlight if this is the nearest driver
+            if (ambId && String(ambId) === String(nearestDriver.ambulanceId) && driverOption) {
+                driverOption.classList.add('driver-option--nearest');
+            }
+        });
+    } else if (suggestionEl) {
+        suggestionEl.style.display = 'none';
     }
 }
 
@@ -6577,12 +6712,17 @@ async function geocodeAndPinFromAddress(address, type = 'pickup') {
                 if (coordEl) coordEl.textContent = `${newPos.lat.toFixed(6)}, ${newPos.lng.toFixed(6)}`;
                 setTimeout(() => setAddressFromLatLng(window.clickedLatitude, window.clickedLongitude, 'pickup'), 0);
                 updateConnectionLine();
+                // Suggest nearest driver when pin is moved
+                suggestNearestDriver();
             });
 
             // Open case creation and fill pickup address
             openModal('case-creation-modal');
             const addrField = document.getElementById('case-address');
             if (addrField) addrField.value = best.display_name || address;
+            
+            // Suggest nearest driver when modal opens
+            setTimeout(() => suggestNearestDriver(), 500);
             
         } else if (type === 'destination') {
             // Remove existing destination pin if any
@@ -6864,6 +7004,12 @@ function fetchAmbulanceData() {
             console.log(`GPS update complete. Total driver markers on map: ${Object.keys(driverMarkers).length}`);
             console.log('Active driver markers:', Object.keys(driverMarkers).map(id => `${id}: ${driverMarkers[id].getLatLng()}`));
             
+            // Update nearest driver suggestion if case creation modal is open
+            const caseModal = document.getElementById('case-creation-modal');
+            if (caseModal && caseModal.style.display !== 'none') {
+                suggestNearestDriver();
+            }
+            
             // Log summary of online vs offline drivers
             if (data.length === 0) {
                 console.log('⚠️ No drivers are currently online and sharing location');
@@ -7027,6 +7173,8 @@ map.on('click', async function (e) {
         // Auto-fill address after drag
         setTimeout(() => setAddressFromLatLng(window.clickedLatitude, window.clickedLongitude, 'pickup'), 0);
         updateConnectionLine();
+        // Suggest nearest driver when pin is moved
+        suggestNearestDriver();
     });
     
     // Open the case creation modal
@@ -7035,6 +7183,9 @@ map.on('click', async function (e) {
     setTimeout(() => setAddressFromLatLng(window.clickedLatitude, window.clickedLongitude, 'pickup'), 0);
     updateConnectionLine();
     document.body.classList.remove('pinning-mode');
+    
+    // Suggest nearest driver when modal opens
+    setTimeout(() => suggestNearestDriver(), 500);
 });
 
 async function resolveDriverId(ambulanceId) {
@@ -10474,7 +10625,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 setAddressFromLatLng(window.clickedLatitude, window.clickedLongitude, 'pickup');
                 updateConnectionLine();
+                // Suggest nearest driver when pin is moved
+                suggestNearestDriver();
             });
+            
+            // Suggest nearest driver when modal opens via URL
+            setTimeout(() => suggestNearestDriver(), 500);
             
             const pinCoords = document.getElementById('pin-coordinates');
             if (pinCoords) pinCoords.textContent = coordString;
