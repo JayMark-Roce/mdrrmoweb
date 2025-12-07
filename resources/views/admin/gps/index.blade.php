@@ -5615,14 +5615,29 @@ async function completeCaseAsAdmin(caseNum) {
     });
     if (!confirmed) return;
     
+    // Get CSRF token
+    const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
+    const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : null;
+    
+    if (!csrfToken) {
+        console.error('❌ CSRF token not found');
+        showInlineNotice('CSRF token not found. Please refresh the page and try again.', {
+            title: 'Security Error',
+            type: 'danger'
+        });
+        return;
+    }
+    
     try {
         const response = await fetch(`/admin/cases/${caseNum}/complete`, {
             method: 'POST',
             headers: {
+                'Content-Type': 'application/json',
                 'X-Requested-With': 'XMLHttpRequest',
                 'Accept': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
+                'X-CSRF-TOKEN': csrfToken
+            },
+            credentials: 'same-origin'
         });
         
         if (response.ok) {
@@ -5650,7 +5665,17 @@ async function completeCaseAsAdmin(caseNum) {
             // Refresh case counts
             loadAmbulanceCaseCounts();
         } else {
-            const error = await response.json();
+            // Handle CSRF token mismatch specifically
+            if (response.status === 419) {
+                console.error('❌ CSRF token mismatch');
+                showInlineNotice('Your session has expired. Please refresh the page and try again.', {
+                    title: 'Session Expired',
+                    type: 'danger'
+                });
+                return;
+            }
+            
+            const error = await response.json().catch(() => ({ message: 'Unknown error' }));
             console.error('❌ Error completing case:', error);
             showInlineNotice('Error completing case: ' + (error.message || 'Unknown error'), {
                 title: 'Completion Failed',
@@ -10490,14 +10515,26 @@ async function completeCaseFromGeofence() {
     });
     if (!confirmed) return;
     
+    // Get CSRF token
+    const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
+    const csrfToken = csrfTokenElement ? csrfTokenElement.getAttribute('content') : null;
+    
+    if (!csrfToken) {
+        console.error('❌ CSRF token not found');
+        showNotification('CSRF token not found. Please refresh the page and try again.', 'error');
+        return;
+    }
+    
     try {
         const response = await fetch(`/admin/cases/${caseNum}/complete`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'X-Requested-With': 'XMLHttpRequest'
-            }
+                'X-CSRF-TOKEN': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            },
+            credentials: 'same-origin'
         });
         
         if (response.ok) {
@@ -10517,7 +10554,14 @@ async function completeCaseFromGeofence() {
             console.log('🔍 Verifying case completion from server...');
             await verifyAndSyncCase(caseNum, true);
         } else {
-            const error = await response.json();
+            // Handle CSRF token mismatch specifically
+            if (response.status === 419) {
+                console.error('❌ CSRF token mismatch');
+                showNotification('Your session has expired. Please refresh the page and try again.', 'error');
+                return;
+            }
+            
+            const error = await response.json().catch(() => ({ message: 'Unknown error' }));
             showNotification('Error completing case: ' + (error.message || 'Unknown error'), 'error');
         }
     } catch (error) {

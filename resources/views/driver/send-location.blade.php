@@ -1854,6 +1854,9 @@ body::before {
     let wakeLockDesired = false; // Track if user wants wake lock ON (even after auto-release)
     let isRefreshingToken = false; // Prevent multiple simultaneous token refreshes
     let sessionExpired = false; // Track if session has expired
+    let sessionExpiredModal = null; // Modal for session expired
+    let consecutiveSessionFailures = 0; // Track consecutive session failures before showing modal
+    const MAX_SESSION_FAILURES = 3; // Show modal after 3 consecutive failures
 
     // ===== PWA bootstrap (register SW and ensure manifest) =====
     (function initPWA(){
@@ -1947,7 +1950,7 @@ body::before {
             <div style="position:absolute; inset:0; background:rgba(0,0,0,0.55);"></div>
             <div style="position:relative; max-width:500px; width:92%; margin:10vh auto; background:#0b2a5a; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.35); padding:18px; border:1px solid #1f3b77;">
                 <h3 style="margin:0 0 8px; color:#fff; font-weight:800;">Connection issue</h3>
-                <p style="margin:0 0 14px; color:#d1d5db;">We couldn’t send your location. Please retry or wait while we reconnect.</p>
+                <p style="margin:0 0 14px; color:#d1d5db;">We couldn't send your location. Please retry or wait while we reconnect.</p>
                 <div style="display:flex; gap:10px; justify-content:flex-end;">
                     <button id="retry-send" style="background:#f59e0b; color:#111827; border:none; padding:8px 12px; border-radius:10px; font-weight:800;">Retry now</button>
                 </div>
@@ -1982,6 +1985,89 @@ body::before {
     function showRetryModal(show){
         ensureRetryModal();
         retryModal.style.display = show ? 'block' : 'none';
+    }
+
+    // ===== Session Expired Modal =====
+    function ensureSessionExpiredModal(){
+        if (sessionExpiredModal) return sessionExpiredModal;
+        sessionExpiredModal = document.createElement('div');
+        sessionExpiredModal.id = 'session-expired-modal';
+        sessionExpiredModal.style.cssText = 'display:none; position:fixed; inset:0; z-index:5000;';
+        sessionExpiredModal.innerHTML = `
+            <div style="position:absolute; inset:0; background:rgba(0,0,0,0.65); backdrop-filter:blur(4px);"></div>
+            <div style="position:relative; max-width:480px; width:92%; margin:15vh auto; background:linear-gradient(135deg, #0b2a5a 0%, #1e3a8a 100%); border-radius:16px; box-shadow:0 10px 40px rgba(0,0,0,0.4); padding:24px; border:2px solid #ef4444;">
+                <div style="text-align:center; margin-bottom:16px;">
+                    <div style="font-size:48px; margin-bottom:12px;">🔒</div>
+                    <h3 style="margin:0 0 8px; color:#fff; font-weight:800; font-size:20px;">Session Expired</h3>
+                    <p style="margin:0 0 20px; color:#d1d5db; font-size:14px; line-height:1.6;">Your session has expired. Please login again to continue tracking.</p>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                    <button id="go-to-login-btn" style="background:linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color:#fff; border:none; padding:12px 20px; border-radius:10px; font-weight:800; font-size:15px; cursor:pointer; transition:transform 0.2s, box-shadow 0.2s; box-shadow:0 4px 12px rgba(239, 68, 68, 0.3);">
+                        Go to Login Page
+                    </button>
+                    <button id="retry-session-btn" style="background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(255,255,255,0.3); padding:12px 20px; border-radius:10px; font-weight:700; font-size:14px; cursor:pointer; transition:background 0.2s;">
+                        Retry Connection
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(sessionExpiredModal);
+        
+        // Go to login button handler
+        sessionExpiredModal.querySelector('#go-to-login-btn').onclick = () => {
+            window.location.href = '/driver/login';
+        };
+        
+        // Retry button handler
+        sessionExpiredModal.querySelector('#retry-session-btn').onclick = async () => {
+            const btn = sessionExpiredModal.querySelector('#retry-session-btn');
+            btn.setAttribute('disabled', 'true');
+            btn.textContent = 'Retrying...';
+            
+            try {
+                // Reset failure counter
+                consecutiveSessionFailures = 0;
+                sessionExpired = false;
+                
+                // Try to refresh token
+                const newToken = await refreshCSRFToken();
+                if (newToken) {
+                    // Success - hide modal and try to send location
+                    showSessionExpiredModal(false);
+                    if (lastCoords) {
+                        await postLocation(lastCoords.lat, lastCoords.lng, 1);
+                        setStatus(`✅ Session restored at ${new Date().toLocaleTimeString()}`, '#00ffe7');
+                    } else {
+                        navigator.geolocation.getCurrentPosition(pos => {
+                            postLocation(pos.coords.latitude, pos.coords.longitude, 1).then(() => {
+                                setStatus(`✅ Session restored at ${new Date().toLocaleTimeString()}`, '#00ffe7');
+                            });
+                        });
+                    }
+                } else {
+                    // Still failed - keep modal open
+                    btn.textContent = 'Retry Failed - Please Login';
+                    setTimeout(() => {
+                        btn.removeAttribute('disabled');
+                        btn.textContent = 'Retry Connection';
+                    }, 2000);
+                }
+            } catch (error) {
+                console.error('Retry failed:', error);
+                btn.textContent = 'Retry Failed - Please Login';
+                setTimeout(() => {
+                    btn.removeAttribute('disabled');
+                    btn.textContent = 'Retry Connection';
+                }, 2000);
+            }
+        };
+        
+        return sessionExpiredModal;
+    }
+
+    function showSessionExpiredModal(show){
+        ensureSessionExpiredModal();
+        sessionExpiredModal.style.display = show ? 'block' : 'none';
     }
 
     // ===== Screen Wake Lock (keep screen on to avoid OS suspending sends) =====
@@ -2131,31 +2217,52 @@ body::before {
             currentToken.setAttribute('content', tokenValue);
         }
         sessionExpired = false;
+        consecutiveSessionFailures = 0; // Reset failure counter on successful token refresh
         console.log('✅ CSRF token refreshed successfully');
     }
     
     async function handleAuthError(response, retryFunction) {
         // Check if it's a 401 or 419 error
         if (response.status === 401 || response.status === 419) {
-            console.log(`⚠️ Session expired (${response.status}), attempting to refresh...`);
-            sessionExpired = true;
+            console.log(`⚠️ Session error (${response.status}), attempting to refresh...`);
+            consecutiveSessionFailures += 1;
             
             // Try to refresh CSRF token
-            const newToken = await refreshCSRFToken();
-            
-            if (newToken) {
-                // Retry the original request with new token
-                if (retryFunction) {
-                    return retryFunction();
+            try {
+                const newToken = await refreshCSRFToken();
+                
+                if (newToken) {
+                    // Success - reset failure counter and retry
+                    consecutiveSessionFailures = 0;
+                    sessionExpired = false;
+                    // Retry the original request with new token
+                    if (retryFunction) {
+                        return retryFunction();
+                    }
+                } else {
+                    // Token refresh failed - increment counter
+                    sessionExpired = true;
+                    
+                    // Only show modal after multiple consecutive failures
+                    if (consecutiveSessionFailures >= MAX_SESSION_FAILURES) {
+                        console.error('❌ Multiple session failures detected, showing login modal...');
+                        showSessionExpiredModal(true);
+                        throw new Error('Session expired');
+                    } else {
+                        // Not enough failures yet - just log and throw to allow retry
+                        console.warn(`⚠️ Session refresh failed (${consecutiveSessionFailures}/${MAX_SESSION_FAILURES} failures)`);
+                        throw new Error('Session refresh failed');
+                    }
                 }
-            } else {
-                // If token refresh fails, redirect to login
-                console.error('❌ Failed to refresh session, redirecting to login...');
-                showToast('Session expired. Please login again.', 'error', null, 3000);
-                setTimeout(() => {
-                    window.location.href = '/driver/login';
-                }, 2000);
-                throw new Error('Session expired');
+            } catch (error) {
+                if (error.message === 'Session completely expired') {
+                    // Definitely expired - show modal immediately
+                    consecutiveSessionFailures = MAX_SESSION_FAILURES;
+                    sessionExpired = true;
+                    showSessionExpiredModal(true);
+                    throw new Error('Session expired');
+                }
+                throw error;
             }
         }
         
@@ -2163,9 +2270,18 @@ body::before {
         const contentType = response.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {
             console.log('⚠️ Received non-JSON response, refreshing token...');
-            await refreshCSRFToken();
-            if (retryFunction) {
-                return retryFunction();
+            try {
+                await refreshCSRFToken();
+                if (retryFunction) {
+                    return retryFunction();
+                }
+            } catch (error) {
+                // If refresh fails, increment counter but don't show modal yet
+                consecutiveSessionFailures += 1;
+                if (consecutiveSessionFailures >= MAX_SESSION_FAILURES) {
+                    sessionExpired = true;
+                    showSessionExpiredModal(true);
+                }
             }
         }
         
@@ -2295,6 +2411,8 @@ body::before {
             // Continue with normal processing only if not logged out
             lastSuccessfulSendAt = Date.now();
             consecutiveSendFailures = 0;
+            consecutiveSessionFailures = 0; // Reset session failure counter on successful send
+            sessionExpired = false; // Clear session expired flag
             setStatus(`✅ GPS sent at ${new Date().toLocaleTimeString()}`, '#00ffe7');
             showRetryModal(false);
             
@@ -2349,21 +2467,50 @@ body::before {
             }
             
             // If session expired, try to refresh token and retry
-            if (err.message === 'Session expired' || (err.name === 'TypeError' && err.message.includes('JSON'))) {
+            if (err.message === 'Session expired' || err.message === 'Session refresh failed' || (err.name === 'TypeError' && err.message.includes('JSON'))) {
                 if (attempt <= 2) {
-                    console.log('🔄 Session expired, refreshing token and retrying...');
+                    console.log('🔄 Session issue detected, refreshing token and retrying...');
                     try {
-                        await refreshCSRFToken();
-                        // Retry with fresh token (no abort signal for retries)
-                        return postLocation(lat, lng, attempt + 1);
+                        const newToken = await refreshCSRFToken();
+                        if (newToken) {
+                            // Success - reset failure counter and retry
+                            consecutiveSessionFailures = 0;
+                            sessionExpired = false;
+                            // Retry with fresh token (no abort signal for retries)
+                            return postLocation(lat, lng, attempt + 1);
+                        } else {
+                            // Token refresh failed - increment counter
+                            consecutiveSessionFailures += 1;
+                            if (consecutiveSessionFailures >= MAX_SESSION_FAILURES) {
+                                // Show modal after multiple failures
+                                sessionExpired = true;
+                                showSessionExpiredModal(true);
+                                return;
+                            } else {
+                                // Not enough failures yet - retry once more
+                                if (attempt < 2) {
+                                    return postLocation(lat, lng, attempt + 1);
+                                }
+                            }
+                        }
                     } catch (refreshError) {
                         console.error('Failed to refresh token:', refreshError);
-                        // If refresh fails, redirect to login
-                        showToast('Session expired. Please login again.', 'error', null, 3000);
-                        setTimeout(() => {
-                            window.location.href = '/driver/login';
-                        }, 2000);
-                        return;
+                        consecutiveSessionFailures += 1;
+                        if (consecutiveSessionFailures >= MAX_SESSION_FAILURES || refreshError.message === 'Session completely expired') {
+                            // Show modal instead of auto-redirecting
+                            sessionExpired = true;
+                            showSessionExpiredModal(true);
+                            return;
+                        } else if (attempt < 2) {
+                            // Retry once more
+                            return postLocation(lat, lng, attempt + 1);
+                        }
+                    }
+                } else {
+                    // After all retries, check if we should show modal
+                    if (consecutiveSessionFailures >= MAX_SESSION_FAILURES) {
+                        sessionExpired = true;
+                        showSessionExpiredModal(true);
                     }
                 }
             }
@@ -2440,7 +2587,7 @@ body::before {
                             icon: driverIcon,
                             riseOnHover: true,
                             riseOffset: 250
-                        }).addTo(map).bindPopup("🚑 You are here").openPopup();
+                        }).addTo(map).bindPopup().openPopup();
                         map.setView([lat, lng], 15);
                     } else {
                         currentMarker.setLatLng([lat, lng]);
@@ -4826,6 +4973,13 @@ setInterval(() => {
     loadCaseNotificationsOnly();
 }, 10000); // Check every 10 seconds
 
+// Auto-refresh for case pins/markers on map every 30 seconds
+setInterval(() => {
+    // Refresh all case markers on the map without reloading the page
+    console.log('🔄 Auto-refreshing case pins on map...');
+    loadAllCases();
+}, 30000); // Refresh pins every 30 seconds
+
 // Check for completed cases and remove markers
 async function checkForCompletedCases() {
     try {
@@ -4873,12 +5027,7 @@ async function checkForCompletedCases() {
 // Check for completed cases every 3 seconds
 setInterval(checkForCompletedCases, 3000);
 
-// Brute-force safety net: hard refresh the page periodically to ensure UI never goes stale
-setInterval(() => {
-    if (document.hidden) return; // Avoid refreshing while in background to prevent user disruption
-    console.log('🔄 Auto refreshing driver page to keep map data in sync...');
-    window.location.reload();
-}, PAGE_REFRESH_INTERVAL_MS);
+// Auto-reload removed per user request - page will stay active without forced refresh
 
 
 
