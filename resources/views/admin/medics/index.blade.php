@@ -254,6 +254,18 @@ html, body {
     background: #ffffff;
 }
 
+.form-field input[name="admin_key"] {
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+}
+
+.form-field input[name="admin_key"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    background: #ffffff;
+}
+
 /* Phone number input styling */
 .form-field input[type="text"][maxlength="10"]:focus {
     border-color: var(--accent);
@@ -962,8 +974,18 @@ body .nav-links a.active {
                 <div class="card-header">
                     <h4><i class="fas fa-user-plus"></i> Register New User</h4>
                 </div>
-                <form method="POST" action="{{ route('admin.users.register') }}" class="register-form">
+                <form method="POST" action="{{ route('admin.users.register') }}" class="register-form" id="registerUserForm">
                     @csrf
+                    @if($errors->any())
+                        <div style="background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                            <div style="font-weight: 800; margin-bottom: 0.5rem;">Validation Errors:</div>
+                            <ul style="margin: 0; padding-left: 1.5rem;">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     <div class="form-grid">
                         <div class="form-field">
                             <label for="name"><i class="fas fa-user"></i> Full Name</label>
@@ -972,6 +994,16 @@ body .nav-links a.active {
                         <div class="form-field">
                             <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
                             <input id="email" type="email" name="email" value="{{ old('email') }}" required placeholder="Enter email address">
+                        </div>
+                        <div class="form-field">
+                            <label for="admin_key"><i class="fas fa-key"></i> Admin Key <span style="color: var(--danger);">*</span></label>
+                            <div style="position: relative;">
+                                <input id="admin_key" type="password" name="admin_key" required placeholder="Enter admin key" autocomplete="off" style="padding-right: 2.5rem;">
+                                <span id="admin_key_indicator" style="position: absolute; right: 0.85rem; top: 50%; transform: translateY(-50%); pointer-events: none; font-size: 1rem; opacity: 0; transition: opacity 0.2s ease;"></span>
+                            </div>
+                            <small id="admin_key_hint" style="color: var(--muted); font-size: 0.75rem; margin-top: 0.25rem; display: block;">
+                                <i class="fas fa-info-circle"></i> Required to register a new admin user
+                            </small>
                         </div>
                         <div class="form-field">
                             <label for="password"><i class="fas fa-lock"></i> Password</label>
@@ -1850,6 +1882,88 @@ function setupPhoneNumberHandlers() {
     }
 }
 
+// Admin key validation
+function setupAdminKeyValidation() {
+    const registerForm = document.getElementById('registerUserForm');
+    if (!registerForm) return;
+    
+    const adminKeyInput = document.getElementById('admin_key');
+    const adminKeyIndicator = document.getElementById('admin_key_indicator');
+    const adminKeyHint = document.getElementById('admin_key_hint');
+    
+    if (!adminKeyInput) return;
+    
+    const correctAdminKey = 'MDRRMO2025!';
+    
+    // Real-time validation feedback
+    adminKeyInput.addEventListener('input', function() {
+        const value = this.value;
+        
+        if (value.length > 0 && value !== correctAdminKey) {
+            this.style.borderColor = 'var(--danger)';
+            this.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.15)';
+            if (adminKeyIndicator) {
+                adminKeyIndicator.innerHTML = '<i class="fas fa-times-circle" style="color: var(--danger);"></i>';
+                adminKeyIndicator.style.opacity = '1';
+            }
+            if (adminKeyHint) {
+                adminKeyHint.style.color = 'var(--danger)';
+                adminKeyHint.innerHTML = '<i class="fas fa-exclamation-circle"></i> Invalid admin key';
+            }
+        } else if (value === correctAdminKey) {
+            this.style.borderColor = 'var(--success)';
+            this.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.15)';
+            if (adminKeyIndicator) {
+                adminKeyIndicator.innerHTML = '<i class="fas fa-check-circle" style="color: var(--success);"></i>';
+                adminKeyIndicator.style.opacity = '1';
+            }
+            if (adminKeyHint) {
+                adminKeyHint.style.color = 'var(--success)';
+                adminKeyHint.innerHTML = '<i class="fas fa-check-circle"></i> Admin key verified';
+            }
+        } else {
+            this.style.borderColor = 'rgba(148, 163, 184, 0.5)';
+            this.style.boxShadow = 'none';
+            if (adminKeyIndicator) {
+                adminKeyIndicator.style.opacity = '0';
+            }
+            if (adminKeyHint) {
+                adminKeyHint.style.color = 'var(--muted)';
+                adminKeyHint.innerHTML = '<i class="fas fa-info-circle"></i> Required to register a new admin user';
+            }
+        }
+    });
+    
+    // Reset on blur if empty
+    adminKeyInput.addEventListener('blur', function() {
+        if (this.value.length === 0) {
+            this.style.borderColor = 'rgba(148, 163, 184, 0.5)';
+            this.style.boxShadow = 'none';
+            if (adminKeyIndicator) {
+                adminKeyIndicator.style.opacity = '0';
+            }
+            if (adminKeyHint) {
+                adminKeyHint.style.color = 'var(--muted)';
+                adminKeyHint.innerHTML = '<i class="fas fa-info-circle"></i> Required to register a new admin user';
+            }
+        }
+    });
+    
+    // Form submission validation
+    registerForm.addEventListener('submit', function(e) {
+        const enteredKey = adminKeyInput.value.trim();
+        
+        if (enteredKey !== correctAdminKey) {
+            e.preventDefault();
+            adminKeyInput.focus();
+            adminKeyInput.style.borderColor = 'var(--danger)';
+            adminKeyInput.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.15)';
+            showErrorModal('Invalid admin key. Please enter the correct admin key to register a new user.');
+            return false;
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function(){
     showDriverSection(1);
     setupDriverFormSubmission();
@@ -1857,6 +1971,7 @@ document.addEventListener('DOMContentLoaded', function(){
     handlePostCreateRedirect();
     setupPhoneNumberHandlers();
     setupPhoneInputFocusStates();
+    setupAdminKeyValidation();
 
     @if(session('success'))
         showSuccessModal('{{ session('success') }}');

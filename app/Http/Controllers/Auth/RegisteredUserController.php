@@ -67,7 +67,18 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'admin_key' => ['required', 'string'],
         ]);
+
+        // Validate admin key
+        $adminKey = $request->input('admin_key');
+        $correctAdminKey = 'MDRRMO2025!';
+        
+        if ($adminKey !== $correctAdminKey) {
+            return redirect()->back()
+                ->withInput($request->except('admin_key', 'password', 'password_confirmation'))
+                ->withErrors(['admin_key' => 'Invalid admin key. Please enter the correct admin key to register a new user.']);
+        }
 
         $user = User::create([
             'name' => $request->name,
