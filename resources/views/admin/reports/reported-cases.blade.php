@@ -479,6 +479,106 @@ html, body {
     gap: 1rem;
 }
 
+/* Pagination buttons - small and compact */
+.pagination-bar .pagination {
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.pagination-bar .pagination .page-item {
+    margin: 0;
+}
+
+.pagination-bar .pagination .page-link {
+    padding: 0.4rem 0.65rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #475569;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    transition: all 0.2s ease;
+}
+
+.pagination-bar .pagination .page-link:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #2563eb;
+    transform: translateY(-1px);
+}
+
+.pagination-bar .pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #ffffff;
+    border-color: #2563eb;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+
+.pagination-bar .pagination .page-item.disabled .page-link {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f8fafc;
+    color: #94a3b8;
+}
+
+.pagination-bar .pagination .page-item.disabled .page-link:hover {
+    transform: none;
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    color: #94a3b8;
+}
+
+/* Simple text-based pagination */
+.pagination-simple {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.pagination-simple .pagination-link {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #2563eb;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+.pagination-simple .pagination-link:hover:not(.disabled) {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #1d4ed8;
+}
+
+.pagination-simple .pagination-link.disabled {
+    color: #94a3b8;
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.pagination-simple .pagination-info {
+    font-size: 0.8rem;
+    color: #64748b;
+    font-weight: 600;
+    padding: 0 0.5rem;
+}
+
 .action-buttons {
     display: flex;
     flex-wrap: wrap;
@@ -1180,8 +1280,20 @@ body .nav-links a.active {
                 <div>
                     <strong>Tip:</strong> Click actions to manage case status.
                 </div>
-                <div>
-                    {{ $cases->links() }}
+                <div class="pagination-simple">
+                    @if($cases->onFirstPage())
+                        <span class="pagination-link disabled">Previous</span>
+                    @else
+                        <a href="{{ $cases->previousPageUrl() }}" class="pagination-link">Previous</a>
+                    @endif
+                    
+                    <span class="pagination-info">Page {{ $cases->currentPage() }} of {{ $cases->lastPage() }}</span>
+                    
+                    @if($cases->hasMorePages())
+                        <a href="{{ $cases->nextPageUrl() }}" class="pagination-link">Next</a>
+                    @else
+                        <span class="pagination-link disabled">Next</span>
+                    @endif
                 </div>
             </div>
         </section>

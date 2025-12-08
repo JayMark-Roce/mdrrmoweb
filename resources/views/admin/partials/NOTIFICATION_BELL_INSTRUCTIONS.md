@@ -198,3 +198,4 @@ function clearBadge() {
 - Clicking a notification redirects to the reported-cases page
 
 
+
