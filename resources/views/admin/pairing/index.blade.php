@@ -1423,7 +1423,19 @@ body .nav-links a.active {
                             <select name="driver_id" id="dmDriverSelect" required>
                                 <option value="">Select Driver</option>
                                 @foreach($drivers as $driver)
-                                    <option value="{{ $driver->id }}">{{ $driver->name }}</option>
+                                    @php
+                                        $medicCount = $driverMedicCounts[$driver->id] ?? 0;
+                                        $atCapacity = $medicCount >= 3;
+                                    @endphp
+                                    <option value="{{ $driver->id }}" {{ $atCapacity ? 'disabled' : '' }} data-medic-count="{{ $medicCount }}">
+                                        {{ $driver->name }}
+                                        @if($medicCount)
+                                            ({{ $medicCount }}/3 medics)
+                                        @endif
+                                        @if($atCapacity)
+                                            - Max reached
+                                        @endif
+                                    </option>
                                 @endforeach
                             </select>
                             <div id="dmDriverIdError" style="color: #ef4444; font-size: 0.8rem; margin-top: 0.25rem; display: none;"></div>
@@ -1699,6 +1711,25 @@ async function updateDriverAmbulanceOptions() {
 
 function updateDriverMedicSelects(options) {
     const medicSelect = document.getElementById('dmMedicSelect');
+    const driverSelect = document.getElementById('dmDriverSelect');
+    
+    // Update drivers with capacity info
+    if (driverSelect && options && options.drivers) {
+        const currentDriver = driverSelect.value;
+        options.drivers.forEach(driver => {
+            const option = driverSelect.querySelector(`option[value="${driver.id}"]`);
+            if (option) {
+                const medicCountLabel = driver.medic_count ? ` (${driver.medic_count}/3 medics)` : '';
+                option.textContent = `${driver.name}${medicCountLabel}${driver.isAtCapacity ? ' - Max reached' : ''}`;
+                option.disabled = driver.isAtCapacity;
+                option.style.color = driver.isAtCapacity ? '#9ca3af' : '';
+            }
+        });
+        if (currentDriver && options.drivers.find(d => d.id == currentDriver && d.isAtCapacity)) {
+            driverSelect.value = '';
+        }
+    }
+    
     if (!medicSelect) return;
     
     const currentValue = medicSelect.value;

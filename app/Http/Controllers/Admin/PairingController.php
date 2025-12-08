@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use App\Models\Driver;
 use App\Models\Medic;
 use App\Models\Ambulance;
@@ -103,6 +104,12 @@ class PairingController extends Controller
             ->pluck('medic_id')
             ->unique()
             ->toArray();
+        // Track how many active medics each driver already has on the selected date
+        $driverMedicCounts = DriverMedicPairing::selectRaw('driver_id, COUNT(*) as medic_count')
+            ->where('pairing_date', $selectedDate)
+            ->where('status', 'active')
+            ->groupBy('driver_id')
+            ->pluck('medic_count', 'driver_id');
         // Drivers already paired in Driver-Medic for the selected date (active) - for display only, not blocking
         $driversPairedWithMedics = DriverMedicPairing::where('pairing_date', $selectedDate)
             ->where('status', 'active')
@@ -128,6 +135,11 @@ class PairingController extends Controller
                 ->pluck('medic_id')
                 ->unique()
                 ->toArray();
+            $driverMedicCountsForDate = DriverMedicPairing::selectRaw('driver_id, COUNT(*) as medic_count')
+                ->where('pairing_date', $requestedDate)
+                ->where('status', 'active')
+                ->groupBy('driver_id')
+                ->pluck('medic_count', 'driver_id');
             $pairedDriversForDate = DriverAmbulancePairing::where('pairing_date', $requestedDate)
                 ->where('status', 'active')
                 ->pluck('driver_id')
@@ -137,6 +149,15 @@ class PairingController extends Controller
             if ($request->get('get_options') === 'driver_medic') {
                 return response()->json([
                     'options' => [
+                        'drivers' => $drivers->map(function($driver) use ($driverMedicCountsForDate) {
+                            $medicCount = (int) ($driverMedicCountsForDate[$driver->id] ?? 0);
+                            return [
+                                'id' => $driver->id,
+                                'name' => $driver->name,
+                                'medic_count' => $medicCount,
+                                'isAtCapacity' => $medicCount >= 3,
+                            ];
+                        })->values(),
                         'medics' => $medics->map(function($medic) use ($pairedMedicsForDate) {
                             return [
                                 'id' => $medic->id,
@@ -233,7 +254,7 @@ class PairingController extends Controller
             ]);
         }
         
-        return view('admin.pairing.index', compact('driverMedicPairings', 'driverAmbulancePairings', 'groupedDriverMedicPairings', 'groupedDriverAmbulancePairings', 'drivers', 'medics', 'ambulances', 'selectedDate', 'pairedMedics', 'pairedAmbulances', 'pairedDriversAmbulance', 'groupOperators', 'driverAmbulancePairsAll', 'driversPairedWithMedics'));
+        return view('admin.pairing.index', compact('driverMedicPairings', 'driverAmbulancePairings', 'groupedDriverMedicPairings', 'groupedDriverAmbulancePairings', 'drivers', 'medics', 'ambulances', 'selectedDate', 'pairedMedics', 'pairedAmbulances', 'pairedDriversAmbulance', 'groupOperators', 'driverAmbulancePairsAll', 'driversPairedWithMedics', 'driverMedicCounts'));
     }
 
     public function createDriverMedicPairing(Request $request)
@@ -306,7 +327,24 @@ class PairingController extends Controller
                 ->withErrors(['medic_id' => 'This medic is already paired with another driver on this date.']);
         }
 
-        // Note: Drivers can have multiple medics, so we don't check for other medic pairings
+        // Enforce max 3 medics per driver per date
+        $activeMedicCountForDriver = DriverMedicPairing::where('driver_id', $request->driver_id)
+            ->where('pairing_date', $request->pairing_date)
+            ->where('status', 'active')
+            ->count();
+        if ($activeMedicCountForDriver >= 3) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This driver already has the maximum of 3 medics on this date.',
+                    'errors' => ['driver_id' => ['This driver already has the maximum of 3 medics on this date.']]
+                ], 422);
+            }
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['driver_id' => 'This driver already has the maximum of 3 medics on this date.']);
+        }
+
         // Drivers paired with ambulances can still be paired with medics
 
         $pairing = DriverMedicPairing::create($request->all());
@@ -880,11 +918,20 @@ class PairingController extends Controller
                         ->get();
                         
                     foreach ($pairings as $pairing) {
-                        $oldData = $pairing->toArray();
-                        $pairing->update(['status' => $status]);
-                        
-                        $this->logPairingAction('driver_medic', $pairing->id, $status, $oldData, $pairing->fresh()->toArray());
-                        $updated++;
+                        DB::transaction(function() use ($pairing, $status, &$updated) {
+                            // Clear any conflicting record with the same medic/date and target status to avoid unique constraint violations
+                            DriverMedicPairing::where('medic_id', $pairing->medic_id)
+                                ->where('pairing_date', $pairing->pairing_date)
+                                ->where('status', $status)
+                                ->where('id', '!=', $pairing->id)
+                                ->delete();
+                            
+                            $oldData = $pairing->toArray();
+                            $pairing->update(['status' => $status]);
+                            
+                            $this->logPairingAction('driver_medic', $pairing->id, $status, $oldData, $pairing->fresh()->toArray());
+                            $updated++;
+                        });
                     }
                 }
             }
@@ -962,11 +1009,20 @@ class PairingController extends Controller
                     ->get();
                     
                 foreach ($pairings as $pairing) {
-                    $oldData = $pairing->toArray();
-                    $pairing->update(['status' => $status]);
-                    
-                    $this->logPairingAction('driver_medic', $pairing->id, $status, $oldData, $pairing->fresh()->toArray());
-                    $updated++;
+                    DB::transaction(function() use ($pairing, $status, &$updated) {
+                        // Clear any conflicting record with the same medic/date and target status to avoid unique constraint violations
+                        DriverMedicPairing::where('medic_id', $pairing->medic_id)
+                            ->where('pairing_date', $pairing->pairing_date)
+                            ->where('status', $status)
+                            ->where('id', '!=', $pairing->id)
+                            ->delete();
+                        
+                        $oldData = $pairing->toArray();
+                        $pairing->update(['status' => $status]);
+                        
+                        $this->logPairingAction('driver_medic', $pairing->id, $status, $oldData, $pairing->fresh()->toArray());
+                        $updated++;
+                    });
                 }
             } else {
                 // For driver-ambulance: group key is {ambulance_id}_{date}

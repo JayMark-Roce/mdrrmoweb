@@ -5991,7 +5991,7 @@ let ambulanceDataMap = {}; // Store ambulance data by ID for navigation checking
 
 // Auto-fit map bounds variables (matching dashboard view behavior)
 let isUserInteracting = false; // Track if user is manually interacting with map
-let autoFitBoundsEnabled = true; // Enable/disable auto-fit bounds
+let autoFitBoundsEnabled = false; // Disable auto-fit bounds by default to stop recentering
 let lastAutoFitBounds = null; // Store last bounds to avoid unnecessary refits
 let caseMarkers = {}; // Store case markers
 let geofenceCircles = {}; // Store geofence circles for case destinations
@@ -6004,7 +6004,7 @@ let hospitalDataMap = {}; // Store hospital data (name, lat, lng) mapped by mark
 const GPS_TIMING = {
     STALE_THRESHOLD_SEC: 120,        // 2 minutes = marker shows as "stale" (grayed)
     REMOVAL_THRESHOLD_MIN: 30,       // 30 minutes = marker removed from map
-    POLL_INTERVAL_MS: 10000,         // 10 seconds = admin poll frequency
+    POLL_INTERVAL_MS: 5000,          // 5 seconds = admin poll frequency (tighter sync with drivers)
     STALE_UPDATE_INTERVAL_MS: 5000,  // 5 seconds = how often to refresh stale styling
     ONLINE_THRESHOLD_SEC: 120,       // 2 minutes = backend considers "online"
     INTERACTION_RESUME_DELAY_MS: 5000, // 5 seconds = delay before resuming after map interaction
@@ -6013,9 +6013,24 @@ const GPS_TIMING = {
     RECENT_ACTIONS_CHECK_INTERVAL_MS: 10000 // 10 seconds = check for recent driver actions
 };
 
+// Refresh guard to prevent overlapping requests when network is slow
+let isRefreshing = false;
+let lastRefreshOkAt = null;
+
 // Dashboard-style driver markers and routed trails
 let driverMarkers = {};
 let driverLastSeen = {}; // ambulanceId -> timestamp (ms)
+
+// Helper: get age in seconds since last seen for marker labeling
+function getDriverAgeSec(ambId, amb) {
+    if (driverLastSeen[ambId]) {
+        return Math.max(0, (Date.now() - driverLastSeen[ambId]) / 1000);
+    }
+    if (amb && amb.last_seen_minutes_ago !== undefined && amb.last_seen_minutes_ago !== null) {
+        return amb.last_seen_minutes_ago * 60;
+    }
+    return 0;
+}
 
 // Auto-fit map bounds to show all visible drivers and cases (matching dashboard view behavior)
 function autoFitMapBounds() {
@@ -6689,9 +6704,8 @@ function createDriverIcon(label, photoUrl, ageSec = 0, ambId = null) {
     const isStale = Number.isFinite(ageSec) && ageSec > GPS_TIMING.STALE_THRESHOLD_SEC;
     const safeLabel = label || '';
     const initials = getDriverInitials(safeLabel);
-    const lastSeenHtml = isStale
-        ? `<div style="margin-top:4px; font-size:10px; color:#94a3b8; font-weight:600;">${formatAge(ageSec)} ago</div>`
-        : '';
+    const ageText = Number.isFinite(ageSec) ? `${formatAge(ageSec)} ago` : 'age n/a';
+    const lastSeenHtml = `<div style="margin-top:4px; font-size:10px; color:${isStale ? '#f87171' : '#e5e7eb'}; font-weight:700;">${ageText}</div>`;
     
     let healthBadge = '';
     if (ambId) {
@@ -7019,7 +7033,8 @@ async function geocodeAndPinFromAddress(address, type = 'pickup') {
 
 
 function fetchAmbulanceData() {
-    fetch("{{ route('admin.gps.data') }}")
+    // Return the fetch promise so callers can await data before filtering cases/drivers
+    return fetch("{{ route('admin.gps.data') }}")
         .then(res => {
             if (!res.ok) {
                 throw new Error(`HTTP error! status: ${res.status}`);
@@ -7112,9 +7127,7 @@ function fetchAmbulanceData() {
                     if (driverMarkers[amb.id]) {
                         driverMarkers[amb.id].setLatLng(latLng);
                         // Calculate age for icon display
-                        const ageSec = amb.last_seen_minutes_ago !== undefined && amb.last_seen_minutes_ago !== null 
-                            ? amb.last_seen_minutes_ago * 60 
-                            : 0;
+                        const ageSec = getDriverAgeSec(amb.id, amb);
                         driverMarkers[amb.id].setIcon(createDriverIcon(computedLabel, photoUrl, ageSec, amb.id));
                         // Ensure click handler is attached (in case marker was created without it)
                         if (!driverMarkers[amb.id]._gpsClickHandler) {
@@ -7124,9 +7137,7 @@ function fetchAmbulanceData() {
                             driverMarkers[amb.id]._gpsClickHandler = true;
                         }
                     } else {
-                        const ageSec = amb.last_seen_minutes_ago !== undefined && amb.last_seen_minutes_ago !== null 
-                            ? amb.last_seen_minutes_ago * 60 
-                            : 0;
+                        const ageSec = getDriverAgeSec(amb.id, amb);
                         driverMarkers[amb.id] = L.marker(latLng, { icon: createDriverIcon(computedLabel, photoUrl, ageSec, amb.id), interactive: true }).addTo(map);
                         // Add click handler to open driver details modal
                         driverMarkers[amb.id].on('click', function() {
@@ -7212,8 +7223,7 @@ function fetchAmbulanceData() {
                 console.warn('Failed to update status counts:', e); 
             }
             
-            // Auto-fit bounds to show all visible drivers after data update
-            setTimeout(() => autoFitMapBounds(), 300);
+            // Auto-fit disabled by default to avoid interrupting manual navigation
 
             // Build the filter list from ALL drivers returned by the API (not only visible on map)
             try {
@@ -7883,8 +7893,7 @@ document.getElementById('case-creation-form')?.addEventListener('submit', async 
                 caseMarkers[destKey] = destMarker;
             }
             
-            // Auto-fit bounds to show all markers including new case
-            setTimeout(() => autoFitMapBounds(), 400);
+            // Auto-fit disabled by default to avoid interrupting manual navigation
             
             // Determine priority based on incident type (new set: VA, TR, ME, SB, OB, NVAT, COORDINATION, TRAINING)
             const highTypes = ['VA', 'TR', 'ME'];
@@ -9122,6 +9131,23 @@ map.on('dragend', function() {
 
 // Modified refresh function
 async function performAutoRefresh() {
+    // Avoid overlapping refreshes; if previous run is still active, skip this tick
+    if (isRefreshing) {
+        console.warn('⏳ Skipping refresh: previous run still in flight');
+        // Retry shortly to avoid long gaps if a single slow request blocks the interval
+        setTimeout(() => {
+            if (!isRefreshing) {
+                performAutoRefresh();
+            }
+        }, 800);
+        return;
+    }
+    // Skip if browser reports offline to avoid hammering
+    if (navigator && navigator.onLine === false) {
+        console.warn('⚠️ Browser offline, skipping refresh this tick');
+        return;
+    }
+    isRefreshing = true;
     
     console.log('🔄 Auto-refreshing GPS data...');
     
@@ -9150,6 +9176,7 @@ async function performAutoRefresh() {
         await fetchAmbulanceData();
         loadAmbulanceCaseCounts();
         lastPollOkAt = Date.now();
+        lastRefreshOkAt = lastPollOkAt;
         await Promise.resolve(refreshCaseStatuses());
         // After cases/trails updated, enforce visibility mode to prevent mismatch (trails without pins/markers)
         try { applyDriverVisibility(); } catch(_){ }
@@ -9182,6 +9209,9 @@ async function performAutoRefresh() {
         }
     }
     
+    // Always clear in-flight flag
+    isRefreshing = false;
+    
     // Hide indicator after 3 seconds
     setTimeout(() => {
         if (indicator) {
@@ -9198,6 +9228,8 @@ loadExistingCases();
 loadAmbulanceCaseCounts();
 // Draw initial driver → case routes shortly after initial data loads
 setTimeout(() => { try { refreshCaseStatuses(); } catch(_){} }, 800);
+// Kick off an immediate refresh so admins see fresh data without waiting for the first interval tick
+performAutoRefresh();
 
 console.log(`⏰ Setting up auto-refresh interval (${GPS_TIMING.POLL_INTERVAL_MS/1000} seconds)`);
 autoRefreshInterval = setInterval(performAutoRefresh, GPS_TIMING.POLL_INTERVAL_MS);
@@ -10075,16 +10107,16 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-function applyDriverSelection(id){
+async function applyDriverSelection(id){
     currentFilterDriverId = id || 'all';
     // Normalize 'amb-{id}' to plain ambulance id mapping when comparing later
     if (typeof currentFilterDriverId === 'string' && currentFilterDriverId.startsWith('amb-')) {
         currentFilterDriverId = currentFilterDriverId; // keep as is; we'll handle in comparisons
     }
     // Refresh data and render trails/cases to reflect selected driver
-    try { fetchAmbulanceData(); } catch(_){ }
-    if (typeof loadExistingCases === 'function') { try { loadExistingCases(); } catch(_){} }
-    if (typeof refreshCaseStatuses === 'function') { try { refreshCaseStatuses(); } catch(_){} }
+    try { await fetchAmbulanceData(); } catch(_){ }
+    if (typeof loadExistingCases === 'function') { try { await loadExistingCases(); } catch(_){} }
+    if (typeof refreshCaseStatuses === 'function') { try { await refreshCaseStatuses(); } catch(_){} }
     try { applyDriverVisibility(); } catch(_){}
 }
 

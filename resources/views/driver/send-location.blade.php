@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#1e3c72">
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -1861,7 +1862,9 @@ body::before {
     // ===== GPS ACCURACY ENHANCEMENT SYSTEM =====
     let gpsHistory = []; // Buffer of recent GPS readings for smoothing
     const GPS_HISTORY_SIZE = 5; // Keep last 5 readings for averaging
-    const MAX_ACCURACY_METERS = 50; // Reject readings with accuracy worse than 50m
+    const MAX_ACCURACY_METERS = 120; // Prefer fixes within 120m
+    const MAX_DEGRADED_ACCURACY_METERS = 200; // Hard cap to keep marker visible on weak signal
+    const MAX_REUSE_AGE_MS = 4000; // Reject cached fixes older than 4s
     const MAX_JUMP_DISTANCE_METERS = 500; // Reject jumps larger than 500m (impossible for ambulance)
     const MAX_SPEED_KMH = 120; // Maximum reasonable speed (km/h) for ambulance
     const GPS_SMOOTHING_ENABLED = true; // Enable coordinate smoothing
@@ -2423,11 +2426,21 @@ body::before {
      * Check if GPS reading accuracy is acceptable
      */
     function validateAccuracy(accuracy) {
-        if (!accuracy || accuracy > MAX_ACCURACY_METERS) {
-            console.warn(`⚠️ GPS accuracy too low: ${accuracy}m (max: ${MAX_ACCURACY_METERS}m)`);
+        if (!accuracy) {
+            console.warn('⚠️ GPS accuracy missing');
             return false;
         }
-        return true;
+        // Accept good fixes immediately
+        if (accuracy <= MAX_ACCURACY_METERS) return true;
+        // Gracefully accept degraded accuracy if we've been waiting too long for a valid fix
+        const waitedMs = Date.now() - (lastSuccessfulSendAt || trackingStartedAt || Date.now());
+        // Prefer better fixes: if degraded, try to hold out a bit unless we're already waiting
+        if (waitedMs > 8000 && accuracy <= MAX_DEGRADED_ACCURACY_METERS) { // after 8s, accept up to hard cap
+            console.warn(`⚠️ Accepting degraded accuracy ${accuracy}m after wait ${waitedMs}ms`);
+            return true;
+        }
+        console.warn(`⚠️ GPS accuracy too low: ${accuracy}m (max: ${MAX_ACCURACY_METERS}m)`);
+        return false;
     }
     
     /**
@@ -2811,31 +2824,58 @@ body::before {
         // Enhanced GPS options for better accuracy
         const gpsOptions = {
             enableHighAccuracy: true, // Use GPS instead of network location
-            timeout: 8000, // Maximum time to wait for GPS reading (8 seconds)
-            maximumAge: 2000 // Accept cached position if less than 2 seconds old
+            timeout: 6000, // Faster timeout so we retry sooner on bad locks
+            maximumAge: 1000 // Only accept cached position if under 1 second old
         };
         
+        // Start a watchPosition to keep the freshest reading between sends
+        // We store the best recent fix and still run validation before use
+        if ('geolocation' in navigator) {
+            if (window.activeGeoWatchId) {
+                navigator.geolocation.clearWatch(window.activeGeoWatchId);
+            }
+            window.activeGeoWatchId = navigator.geolocation.watchPosition(
+                position => {
+                    // Stash latest raw reading; validation happens at send-time
+                    window.latestRawPosition = position;
+                },
+                err => {
+                    console.warn('⚠️ watchPosition error', err);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 6000,
+                    maximumAge: 1000
+                }
+            );
+        }
+
         // Periodic sender with enhanced GPS validation
         sendIntervalId = setInterval(() => {
-            navigator.geolocation.getCurrentPosition(position => {
+            const useLatest = window.latestRawPosition;
+            const getter = (useLatest)
+                ? (cb, errCb) => cb(useLatest)
+                : (cb, errCb) => navigator.geolocation.getCurrentPosition(cb, errCb, gpsOptions);
+
+            getter(position => {
                 // Process and validate GPS reading
                 const validatedCoords = processGPSReading(position);
                 
                 if (!validatedCoords) {
-                    // GPS reading was rejected - use last valid coordinates if available
-                    if (lastValidCoords) {
-                        console.log('📍 Using last valid coordinates (current reading rejected)');
-                        const lat = lastValidCoords.lat;
-                        const lng = lastValidCoords.lng;
+                    // GPS reading was rejected - use last valid OR last raw if within degraded cap
+                    const fallback = lastValidCoords || (position && position.coords && position.coords.accuracy && position.coords.accuracy <= MAX_DEGRADED_ACCURACY_METERS
+                        ? { lat: position.coords.latitude, lng: position.coords.longitude }
+                        : null);
+                    if (fallback) {
+                        const lat = fallback.lat;
+                        const lng = fallback.lng;
                         lastCoords = { lat, lng };
+                        lastValidCoords = { lat, lng };
+                        console.warn('📍 Using fallback coordinates to keep marker visible');
                         
-                        // Still update backend with last valid position
                         postLocation(lat, lng)
                         .then(() => {
-                            // Update map marker with last valid position
-                            if (currentMarker) {
-                                currentMarker.setLatLng([lat, lng]);
-                            }
+                            if (currentMarker) currentMarker.setLatLng([lat, lng]);
                         });
                     } else {
                         console.warn('⚠️ No valid GPS reading available');
@@ -2848,6 +2888,7 @@ body::before {
                 const lat = validatedCoords.lat;
                 const lng = validatedCoords.lng;
                 lastCoords = { lat, lng };
+                lastValidCoords = { lat, lng }; // ensure marker has a valid reference
                 
                 // Update backend with validated position
                 postLocation(lat, lng)
@@ -2860,7 +2901,7 @@ body::before {
                             icon: driverIcon,
                             riseOnHover: true,
                             riseOffset: 250
-                        }).addTo(map).bindPopup().openPopup();
+                        }).addTo(map);
                         map.setView([lat, lng], 15);
                     } else {
                         currentMarker.setLatLng([lat, lng]);
@@ -2924,21 +2965,21 @@ body::before {
         });
         // Don't release on pagehide - we want to keep trying to re-acquire if user wants it ON
 
-        // Watchdog: if no successful send for >15s, show reconnecting; >60s, warn offline
+        // Watchdog: tighter thresholds to surface stale GPS sooner
         setInterval(() => {
             const now = Date.now();
             const delta = now - (lastSuccessfulSendAt || 0);
             const sinceStart = now - (trackingStartedAt || now);
-            if (lastSuccessfulSendAt && delta > 60000) {
-                setStatus('🚫 No GPS sync for 1+ minute. Reconnecting...', '#ff7e5f');
+            if (lastSuccessfulSendAt && delta > 45000) {
+                setStatus('🚫 No GPS sync for 45+ sec. Reconnecting...', '#ff7e5f');
                 showRetryModal(true);
-            } else if (lastSuccessfulSendAt && delta > 15000) {
-                setStatus('⏳ Sync delayed... attempting to reconnect', '#ffb020');
+            } else if (lastSuccessfulSendAt && delta > 10000) {
+                setStatus('⏳ Sync delayed... acquiring a clean GPS fix', '#ffb020');
                 showRetryModal(true);
-            } else if (!lastSuccessfulSendAt && sinceStart > 30000) {
+            } else if (!lastSuccessfulSendAt && sinceStart > 20000) {
                 setStatus('⏳ Still connecting to GPS service...', '#ffb020');
             }
-        }, 5000);
+        }, 4000);
         
         // Check for GPS resend requests from admin
         checkResendRequest();
@@ -5416,49 +5457,8 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// ===== Super Admin Presence System =====
-(function() {
-    const banner = document.getElementById('superadmin-banner');
-    if (!banner) return;
-    
-    // Check super admin status (drivers don't send heartbeat, only view)
-    function checkSuperAdminStatus() {
-        fetchWithAuth('/presence/superadmin/status', {
-            headers: {
-                'Accept': 'application/json'
-            }
-        })
-        .then(res => {
-            if (!res.ok) return null;
-            return res.json();
-        })
-        .then(data => {
-            if (!data) return;
-            if (data.active) {
-                banner.style.display = 'block';
-                // Adjust container padding
-                const container = document.querySelector('.container');
-                if (container) container.style.paddingTop = '56px';
-            } else {
-                banner.style.display = 'none';
-                const container = document.querySelector('.container');
-                if (container) container.style.paddingTop = '0';
-            }
-        })
-        .catch(err => {
-            // Silently handle errors - not critical for super admin status
-            if (err.message !== 'Session expired') {
-                console.error('Status check error:', err);
-            }
-        });
-    }
-    
-    // Initial check
-    checkSuperAdminStatus();
-    
-    // Poll every 5 seconds
-    setInterval(checkSuperAdminStatus, 5000);
-})();
+// ===== Super Admin Presence System (disabled to avoid 404s on driver app) =====
+// Removed polling to /presence/superadmin/status for drivers to prevent 404 spam.
 
 // ===== GEOFENCING SYSTEM FOR DRIVER =====
 // Function to calculate distance (Haversine formula)
