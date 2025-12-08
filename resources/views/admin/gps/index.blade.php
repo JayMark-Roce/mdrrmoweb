@@ -1,3 +1,4 @@
+@extends('layouts.app')
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -10795,8 +10796,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const locationToPin = urlParams.get('location');
     const latParam = urlParams.get('lat');
     const lngParam = urlParams.get('lng');
-    const nameParam = urlParams.get('caller_name');
-    const contactParam = urlParams.get('caller_contact');
+    // Support both parameter names for backward compatibility
+    const nameParam = urlParams.get('caller_name') || urlParams.get('name');
+    const contactParam = urlParams.get('caller_contact') || urlParams.get('contact');
 
     let targetLat = null;
     let targetLng = null;
@@ -10811,11 +10813,18 @@ document.addEventListener('DOMContentLoaded', function() {
     function fillCaseForm() {
         if (nameParam) {
             const nameField = document.getElementById('caller-name');
-            if (nameField) nameField.value = nameParam;
+            if (nameField) nameField.value = decodeURIComponent(nameParam);
         }
         if (contactParam) {
             const contactField = document.getElementById('caller-contact');
-            if (contactField) contactField.value = contactParam;
+            if (contactField) contactField.value = decodeURIComponent(contactParam);
+        }
+        // Fill pickup address if location parameter is provided
+        if (locationToPin) {
+            const addressField = document.getElementById('case-address');
+            if (addressField) {
+                addressField.value = decodeURIComponent(locationToPin);
+            }
         }
     }
 
@@ -10839,7 +10848,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (addrField) {
             if (locationToPin && locationToPin.trim() !== "") {
-                addrField.value = locationToPin;
+                addrField.value = decodeURIComponent(locationToPin);
             } else {
                 addrField.value = coordString;
             }

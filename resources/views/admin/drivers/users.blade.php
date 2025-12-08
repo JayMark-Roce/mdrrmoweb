@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Users Management - MDRRMO</title>
+    <title>Admin Management - MDRRMO</title>
 
     <!-- CSS -->
     <link rel="stylesheet" href="{{ asset('css/stylish.css') }}">
@@ -447,7 +447,6 @@ html, body {
 }
 
 .users-pill--role-admin { background: rgba(239, 68, 68, 0.15); color: #991b1b; }
-.users-pill--role-user { background: rgba(59, 130, 246, 0.15); color: #1e40af; }
 .users-pill--status-active { background: rgba(16, 185, 129, 0.15); color: #047857; }
 .users-pill--status-inactive { background: rgba(148, 163, 184, 0.25); color: #475569; }
 
@@ -597,11 +596,11 @@ body .nav-links a.active {
         <section class="hero-card">
             <div>
                 <span class="hero-badge">
-                    <i class="fas fa-users-cog"></i> User Management
+                    <i class="fas fa-users-cog"></i> Admin Management
                 </span>
-                <h3>Manage system users and access.</h3>
+                <h3>Manage system administrators.</h3>
                 <p>
-                    View, manage, and control user accounts, roles, and permissions across the MDRRMO system.
+                    View, manage, and control administrator accounts and access across the MDRRMO system.
                 </p>
                 <div class="hero-actions">
                     <button type="button" class="primary" id="refreshUsersBtn"><i class="fas fa-rotate"></i> Refresh data</button>
@@ -610,15 +609,15 @@ body .nav-links a.active {
             </div>
             <div class="hero-kpis">
                 <div class="hero-kpi-card">
-                    <span>Total Users</span>
+                    <span>Total Admins</span>
                     <strong id="metricTotalUsers">--</strong>
                 </div>
                 <div class="hero-kpi-card">
-                    <span>Admins</span>
+                    <span>Active Admins</span>
                     <strong id="metricAdmins">--</strong>
                 </div>
                 <div class="hero-kpi-card">
-                    <span>Active Users</span>
+                    <span>Inactive Admins</span>
                     <strong id="metricActiveUsers">--</strong>
                 </div>
                 <div class="hero-kpi-card">
@@ -630,24 +629,24 @@ body .nav-links a.active {
 
         <section class="insight-grid" id="usersInsights">
             <article class="insight-card">
-                <small>Total accounts</small>
+                <small>Total admins</small>
                 <h4 id="insightTotal">--</h4>
-                <div class="insight-trend"><i class="fas fa-users" style="color: var(--accent);"></i><span>System users</span></div>
+                <div class="insight-trend"><i class="fas fa-user-shield" style="color: var(--accent);"></i><span>Administrator accounts</span></div>
             </article>
             <article class="insight-card">
-                <small>Administrators</small>
+                <small>Active admins</small>
                 <h4 id="insightAdmins">--</h4>
-                <div class="insight-trend"><i class="fas fa-user-shield" style="color: var(--danger);"></i><span>Admin accounts</span></div>
-            </article>
-            <article class="insight-card">
-                <small>Regular users</small>
-                <h4 id="insightRegular">--</h4>
-                <div class="insight-trend"><i class="fas fa-user" style="color: var(--accent);"></i><span>Standard accounts</span></div>
-            </article>
-            <article class="insight-card">
-                <small>Active sessions</small>
-                <h4 id="insightActive">--</h4>
                 <div class="insight-trend"><i class="fas fa-circle" style="color: var(--success);"></i><span>Currently active</span></div>
+            </article>
+            <article class="insight-card">
+                <small>Inactive admins</small>
+                <h4 id="insightRegular">--</h4>
+                <div class="insight-trend"><i class="fas fa-user-slash" style="color: var(--muted);"></i><span>Inactive accounts</span></div>
+            </article>
+            <article class="insight-card">
+                <small>Recent logins</small>
+                <h4 id="insightActive">--</h4>
+                <div class="insight-trend"><i class="fas fa-clock" style="color: var(--accent-alt);"></i><span>Last 24 hours</span></div>
             </article>
         </section>
 
@@ -668,7 +667,6 @@ body .nav-links a.active {
                     <select id="users-role" class="users-select">
                         <option value="">All</option>
                         <option value="admin">Admin</option>
-                        <option value="user">User</option>
                     </select>
                 </label>
                 <label class="users-field">
@@ -685,7 +683,7 @@ body .nav-links a.active {
         <section class="table-card">
             <div class="table-card-header">
                 <div>
-                    <h4>Users Directory</h4>
+                    <h4>Admins Directory</h4>
                     <div class="table-meta">
                         <span id="lastRefreshedLabel">Waiting for first sync...</span>
                         <span id="tableCountLabel">0 entries visible</span>
@@ -716,7 +714,7 @@ body .nav-links a.active {
                             <td colspan="7">
                                 <div class="users-empty">
                                     <i class="fas fa-spinner fa-spin"></i>
-                                    <p>Loading users...</p>
+                                    <p>Loading admins...</p>
                                 </div>
                             </td>
                         </tr>
@@ -732,7 +730,7 @@ body .nav-links a.active {
 <div id="editUserModal" style="display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; padding: 1rem;">
     <div style="background: #ffffff; border-radius: 20px; max-width: 480px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 60px rgba(0,0,0,0.3);">
         <div style="padding: 1.5rem; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
-            <h3 style="margin: 0; font-size: 1.25rem; font-weight: 900; color: #0f172a;">Edit User</h3>
+            <h3 style="margin: 0; font-size: 1.25rem; font-weight: 900; color: #0f172a;">Edit Admin</h3>
             <button id="closeEditModal" style="background: transparent; border: none; font-size: 1.5rem; color: #6b7280; cursor: pointer; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: background 0.2s;">
                 <i class="fas fa-times"></i>
             </button>
@@ -751,7 +749,6 @@ body .nav-links a.active {
                 <label style="display: flex; flex-direction: column; gap: 0.4rem;">
                     <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 800; letter-spacing: 0.06em; color: #6b7280;">Role</span>
                     <select id="editUserRole" name="role" required style="border-radius: 12px; border: 1.5px solid rgba(148, 163, 184, 0.5); padding: 0.7rem 0.85rem; font-size: 0.95rem; font-weight: 600; color: #0f172a; background: #f8fafc; transition: border 0.2s, box-shadow 0.2s;" onfocus="this.style.borderColor='#2563eb'; this.style.boxShadow='0 0 0 3px rgba(37, 99, 235, 0.15)'; this.style.background='#ffffff';" onblur="this.style.borderColor='rgba(148, 163, 184, 0.5)'; this.style.boxShadow='none'; this.style.background='#f8fafc';">
-                        <option value="user">User</option>
                         <option value="admin">Admin</option>
                     </select>
                 </label>
@@ -812,7 +809,7 @@ async function loadUsers() {
                     <td colspan="7">
                         <div class="users-error">
                             <i class="fas fa-exclamation-triangle"></i>
-                            <p>Error loading users: ${error.message}</p>
+                            <p>Error loading admins: ${error.message}</p>
                             <p style="font-size: 0.8rem; margin-top: 0.5rem;">Please check the console for details.</p>
                         </div>
                     </td>
@@ -832,7 +829,7 @@ function getUsersFilters() {
 function filterUsers(list) {
     const { search, role, status } = getUsersFilters();
     return list.filter(u => {
-        const matchesRole = !role || (u.role || 'user').toLowerCase() === role.toLowerCase();
+        const matchesRole = !role || (u.role || 'admin').toLowerCase() === role.toLowerCase();
         const matchesStatus = !status || (u.status || 'active').toLowerCase() === status.toLowerCase();
         const haystack = `${u.name || ''} ${u.email || ''}`.toLowerCase();
         const matchesSearch = !search || haystack.includes(search);
@@ -855,18 +852,23 @@ function formatDateTime(value) {
 
 function updateUsersInsights() {
     const total = usersCache.length;
-    const admins = usersCache.filter(u => (u.role || 'user').toLowerCase() === 'admin').length;
-    const regular = total - admins;
-    const active = usersCache.filter(u => (u.status || 'active').toLowerCase() === 'active').length;
+        const active = usersCache.filter(u => (u.status || 'active').toLowerCase() === 'active').length;
+    const inactive = total - active;
 
     document.getElementById('metricTotalUsers').textContent = total || '--';
-    document.getElementById('metricAdmins').textContent = admins || '--';
-    document.getElementById('metricActiveUsers').textContent = active || '--';
+    document.getElementById('metricAdmins').textContent = active || '--';
+    document.getElementById('metricActiveUsers').textContent = inactive || '--';
     
     document.getElementById('insightTotal').textContent = total || '--';
-    document.getElementById('insightAdmins').textContent = admins || '--';
-    document.getElementById('insightRegular').textContent = regular || '--';
-    document.getElementById('insightActive').textContent = active || '--';
+    document.getElementById('insightAdmins').textContent = active || '--';
+    document.getElementById('insightRegular').textContent = inactive || '--';
+    document.getElementById('insightActive').textContent = usersCache.filter(u => {
+        if (!u.last_login_at && !u.last_login) return false;
+        const lastLogin = new Date(u.last_login_at || u.last_login);
+        const now = new Date();
+        const hoursDiff = (now - lastLogin) / (1000 * 60 * 60);
+        return hoursDiff <= 24;
+    }).length || '--';
 }
 
 function updateTableCountLabel(count = 0) {
@@ -904,7 +906,7 @@ function renderUsersList() {
                 <td colspan="7">
                     <div class="users-empty">
                         <i class="fas fa-inbox"></i>
-                        <p>No users found</p>
+                        <p>No admins found</p>
                     </div>
                 </td>
             </tr>
@@ -913,9 +915,9 @@ function renderUsersList() {
     }
 
     filtered.forEach(user => {
-        const role = (user.role || 'user').toLowerCase();
+        const role = (user.role || 'admin').toLowerCase();
         const status = (user.status || 'active').toLowerCase();
-        const roleClass = role === 'admin' ? 'users-pill--role-admin' : 'users-pill--role-user';
+        const roleClass = 'users-pill--role-admin';
         const statusClass = status === 'active' ? 'users-pill--status-active' : 'users-pill--status-inactive';
 
         const row = document.createElement('tr');
@@ -1001,14 +1003,14 @@ function updateSidebarDateTime() {
 function openEditModal(userId) {
     const user = usersCache.find(u => u.id == userId);
     if (!user) {
-        alert('User not found');
+        alert('Admin not found');
         return;
     }
     
     document.getElementById('editUserId').value = user.id;
     document.getElementById('editUserName').value = user.name || '';
     document.getElementById('editUserEmail').value = user.email || '';
-    document.getElementById('editUserRole').value = (user.role || 'user').toLowerCase();
+    document.getElementById('editUserRole').value = (user.role || 'admin').toLowerCase();
     document.getElementById('editUserStatus').value = (user.status || 'active').toLowerCase();
     
     document.getElementById('editUserModal').style.display = 'flex';
@@ -1040,14 +1042,14 @@ async function archiveUser(userId, userName) {
         const data = await response.json();
         
         if (data.success) {
-            alert('User archived successfully');
+            alert('Admin archived successfully');
             loadUsers();
         } else {
-            alert(data.message || 'Failed to archive user');
+            alert(data.message || 'Failed to archive admin');
         }
     } catch (error) {
-        console.error('Error archiving user:', error);
-        alert('Error archiving user. Please try again.');
+        console.error('Error archiving admin:', error);
+        alert('Error archiving admin. Please try again.');
     }
 }
 
@@ -1095,15 +1097,15 @@ document.getElementById('editUserForm')?.addEventListener('submit', async functi
         const data = await response.json();
         
         if (data.success) {
-            alert('User updated successfully');
+            alert('Admin updated successfully');
             closeEditModal();
             loadUsers();
         } else {
-            alert(data.message || 'Failed to update user');
+            alert(data.message || 'Failed to update admin');
         }
     } catch (error) {
-        console.error('Error updating user:', error);
-        alert('Error updating user. Please try again.');
+        console.error('Error updating admin:', error);
+        alert('Error updating admin. Please try again.');
     }
 });
 
@@ -1122,7 +1124,7 @@ document.getElementById('editUserModal')?.addEventListener('click', function(e) 
 document.addEventListener('DOMContentLoaded', function() {
     updateSidebarDateTime();
     setInterval(updateSidebarDateTime, 1000);
-    loadUsers(); // Load users data on page load
+    loadUsers(); // Load admins data on page load
 });
 </script>
 

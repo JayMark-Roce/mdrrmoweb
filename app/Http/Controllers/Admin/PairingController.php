@@ -120,15 +120,6 @@ class PairingController extends Controller
             ->pluck('driver_id')
             ->unique()
             ->toArray();
-        // Ambulances that already have 2 drivers (max limit)
-        $ambulancesWithTwoDrivers = DriverAmbulancePairing::where('pairing_date', $selectedDate)
-            ->where('status', 'active')
-            ->selectRaw('ambulance_id, COUNT(*) as driver_count')
-            ->groupBy('ambulance_id')
-            ->having('driver_count', '>=', 2)
-            ->pluck('ambulance_id')
-            ->toArray();
-        
         // If requesting options for modals
         if ($request->filled('get_options')) {
             $requestedDate = $request->get('pairing_date', date('Y-m-d'));
@@ -142,19 +133,6 @@ class PairingController extends Controller
                 ->pluck('driver_id')
                 ->unique()
                 ->toArray();
-            $ambulancesWithTwoDriversForDate = DriverAmbulancePairing::where('pairing_date', $requestedDate)
-                ->where('status', 'active')
-                ->selectRaw('ambulance_id, COUNT(*) as driver_count')
-                ->groupBy('ambulance_id')
-                ->having('driver_count', '>=', 2)
-                ->pluck('ambulance_id')
-                ->toArray();
-            
-            $ambulanceDriverCounts = DriverAmbulancePairing::where('pairing_date', $requestedDate)
-                ->where('status', 'active')
-                ->selectRaw('ambulance_id, COUNT(*) as driver_count')
-                ->groupBy('ambulance_id')
-                ->pluck('driver_count', 'ambulance_id');
             
             if ($request->get('get_options') === 'driver_medic') {
                 return response()->json([
@@ -170,6 +148,13 @@ class PairingController extends Controller
                     ]
                 ]);
             } else if ($request->get('get_options') === 'driver_ambulance') {
+                // Get all paired ambulances (not just those with 2 drivers) - only 1 driver per ambulance allowed
+                $pairedAmbulancesForDate = DriverAmbulancePairing::where('pairing_date', $requestedDate)
+                    ->where('status', 'active')
+                    ->pluck('ambulance_id')
+                    ->unique()
+                    ->toArray();
+                
                 return response()->json([
                     'options' => [
                         'drivers' => $drivers->map(function($driver) use ($pairedDriversForDate) {
@@ -179,13 +164,12 @@ class PairingController extends Controller
                                 'isPaired' => in_array($driver->id, $pairedDriversForDate),
                             ];
                         })->values(),
-                        'ambulances' => $ambulances->map(function($ambulance) use ($ambulancesWithTwoDriversForDate, $ambulanceDriverCounts) {
+                        'ambulances' => $ambulances->map(function($ambulance) use ($pairedAmbulancesForDate) {
                             return [
                                 'id' => $ambulance->id,
                                 'name' => $ambulance->name,
                                 'plate_number' => $ambulance->plate_number,
-                                'isFull' => in_array($ambulance->id, $ambulancesWithTwoDriversForDate),
-                                'driverCount' => $ambulanceDriverCounts->get($ambulance->id, 0),
+                                'isPaired' => in_array($ambulance->id, $pairedAmbulancesForDate),
                             ];
                         })->values(),
                     ]
@@ -249,7 +233,7 @@ class PairingController extends Controller
             ]);
         }
         
-        return view('admin.pairing.index', compact('driverMedicPairings', 'driverAmbulancePairings', 'groupedDriverMedicPairings', 'groupedDriverAmbulancePairings', 'drivers', 'medics', 'ambulances', 'selectedDate', 'pairedMedics', 'pairedAmbulances', 'pairedDriversAmbulance', 'groupOperators', 'driverAmbulancePairsAll', 'driversPairedWithMedics', 'ambulancesWithTwoDrivers'));
+        return view('admin.pairing.index', compact('driverMedicPairings', 'driverAmbulancePairings', 'groupedDriverMedicPairings', 'groupedDriverAmbulancePairings', 'drivers', 'medics', 'ambulances', 'selectedDate', 'pairedMedics', 'pairedAmbulances', 'pairedDriversAmbulance', 'groupOperators', 'driverAmbulancePairsAll', 'driversPairedWithMedics'));
     }
 
     public function createDriverMedicPairing(Request $request)
@@ -404,23 +388,23 @@ class PairingController extends Controller
                 ->withErrors(['driver_id' => 'This driver-ambulance pairing already exists on this date.']);
         }
 
-        // Check if ambulance already has 2 drivers (max limit)
-        $ambulanceDriverCount = DriverAmbulancePairing::where('ambulance_id', $request->ambulance_id)
+        // Check if ambulance is already paired (only 1 driver per ambulance allowed)
+        $existingAmbulancePairing = DriverAmbulancePairing::where('ambulance_id', $request->ambulance_id)
             ->where('pairing_date', $request->pairing_date)
             ->where('status', 'active')
-            ->count();
+            ->first();
 
-        if ($ambulanceDriverCount >= 2) {
+        if ($existingAmbulancePairing) {
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'This ambulance already has 2 drivers paired on this date (maximum limit).',
-                    'errors' => ['ambulance_id' => ['This ambulance already has 2 drivers paired on this date (maximum limit).']]
+                    'message' => 'This ambulance is already paired with a driver on this date.',
+                    'errors' => ['ambulance_id' => ['This ambulance is already paired with a driver on this date.']]
                 ], 422);
             }
             return redirect()->back()
                 ->withInput()
-                ->withErrors(['ambulance_id' => 'This ambulance already has 2 drivers paired on this date (maximum limit).']);
+                ->withErrors(['ambulance_id' => 'This ambulance is already paired with a driver on this date.']);
         }
 
         // Check if driver is already paired with a different ambulance
@@ -811,14 +795,14 @@ class PairingController extends Controller
                             continue;
                         }
 
-                        // Check if ambulance already has 2 drivers (max limit)
-                        $ambulanceDriverCount = DriverAmbulancePairing::where('ambulance_id', $ambulanceId)
+                        // Check if ambulance is already paired (only 1 driver per ambulance allowed)
+                        $existingAmbulancePairing = DriverAmbulancePairing::where('ambulance_id', $ambulanceId)
                             ->where('pairing_date', $request->pairing_date)
                             ->where('status', 'active')
-                            ->count();
+                            ->first();
 
-                        if ($ambulanceDriverCount >= 2) {
-                            $errors[] = "Ambulance {$ambulanceId} already has 2 drivers paired on this date (maximum limit)";
+                        if ($existingAmbulancePairing) {
+                            $errors[] = "Ambulance {$ambulanceId} is already paired with a driver on this date";
                             continue;
                         }
 

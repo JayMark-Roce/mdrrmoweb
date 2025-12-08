@@ -3711,7 +3711,8 @@ async function loadCaseNotifications() {
             const incomingNums = new Set(activeCases.map(c => c.case_num));
             activeCases.forEach(c => {
                 if (!knownCaseNums.has(c.case_num) && !c.driver_accepted && c.status !== 'Rejected') {
-                    showToast(`New case #${c.case_num}: ${c.name}`, 'info', () => {
+                    const caseName = c.name || 'New case issued';
+                    showToast(`New case #${c.case_num}: ${caseName}`, 'info', () => {
                         document.getElementById('cases-modal').style.display = 'block';
                         loadAllCases();
                     });
@@ -3754,7 +3755,8 @@ async function loadCaseNotificationsOnly() {
             const incomingNums = new Set(activeCases.map(c => c.case_num));
             activeCases.forEach(c => {
                 if (!knownCaseNums.has(c.case_num) && !c.driver_accepted && c.status !== 'Rejected') {
-                    showToast(`New case #${c.case_num}: ${c.name}`, 'info', () => {
+                    const caseName = c.name || 'New case issued';
+                    showToast(`New case #${c.case_num}: ${caseName}`, 'info', () => {
                         document.getElementById('cases-modal').style.display = 'block';
                         loadAllCases();
                     });

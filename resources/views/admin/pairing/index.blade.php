@@ -1507,11 +1507,16 @@ body .nav-links a.active {
                             <select name="ambulance_id" id="daAmbulanceSelect" required>
                                 <option value="">Select Ambulance</option>
                                 @foreach($ambulances as $ambulance)
-                                    <option value="{{ $ambulance->id }}">{{ $ambulance->name }}@if($ambulance->plate_number) ({{ $ambulance->plate_number }})@endif</option>
+                                    @php
+                                        $isPaired = in_array($ambulance->id, $pairedAmbulances ?? []);
+                                    @endphp
+                                    <option value="{{ $ambulance->id }}" {{ $isPaired ? 'disabled' : '' }} style="{{ $isPaired ? 'color: #9ca3af;' : '' }}">
+                                        {{ $ambulance->name }}@if($ambulance->plate_number) ({{ $ambulance->plate_number }})@endif@if($isPaired) - Already paired@endif
+                                    </option>
                                 @endforeach
                             </select>
                             <div id="daAmbulanceIdError" style="color: #ef4444; font-size: 0.8rem; margin-top: 0.25rem; display: none;"></div>
-                            <p class="modal-helper">Maximum 2 drivers per ambulance</p>
+                            <p class="modal-helper">Only 1 driver per ambulance allowed</p>
                         </div>
                     </div>
                     <div class="modal-field">
@@ -1750,18 +1755,17 @@ function updateDriverAmbulanceSelects(options) {
             const option = ambulanceSelect.querySelector(`option[value="${ambulance.id}"]`);
             if (option) {
                 const plateText = ambulance.plate_number ? ` (${ambulance.plate_number})` : '';
-                option.disabled = ambulance.isFull;
-                if (ambulance.isFull) {
-                    option.textContent = ambulance.name + plateText + ' - Full (2/2 drivers)';
+                option.disabled = ambulance.isPaired;
+                if (ambulance.isPaired) {
+                    option.textContent = ambulance.name + plateText + ' - Already paired';
                     option.style.color = '#9ca3af';
                 } else {
-                    const count = ambulance.driverCount || 0;
-                    option.textContent = ambulance.name + plateText + (count > 0 ? ` (${count}/2 drivers)` : '');
+                    option.textContent = ambulance.name + plateText;
                     option.style.color = '';
                 }
             }
         });
-        if (currentAmbulanceValue && options.ambulances.find(a => a.id == currentAmbulanceValue && a.isFull)) {
+        if (currentAmbulanceValue && options.ambulances.find(a => a.id == currentAmbulanceValue && a.isPaired)) {
             ambulanceSelect.value = '';
         }
     }
