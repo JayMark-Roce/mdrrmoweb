@@ -5906,9 +5906,17 @@ document.getElementById('cancel-pin-btn')?.addEventListener('click', function(ev
         map.removeLayer(currentPinMarker);
         currentPinMarker = null;
     }
+    if (currentPinGeofenceCircle) {
+        map.removeLayer(currentPinGeofenceCircle);
+        currentPinGeofenceCircle = null;
+    }
     if (currentDestinationMarker) {
         map.removeLayer(currentDestinationMarker);
         currentDestinationMarker = null;
+    }
+    if (currentDestinationGeofenceCircle) {
+        map.removeLayer(currentDestinationGeofenceCircle);
+        currentDestinationGeofenceCircle = null;
     }
     
     // Close the modal
@@ -5985,6 +5993,20 @@ try {
     }
 } catch (e) { /* pane creation is best-effort */ }
 
+// Create a dedicated pane for geo fence circles so they render above markers and trails
+try {
+    map.createPane('geofencePane');
+    const geofencePane = map.getPane('geofencePane');
+    if (geofencePane) {
+        // Place geo fence circles above markers (zIndexOffset 500) and trails (700) but below tooltips (1000+)
+        geofencePane.style.zIndex = 750; // Higher than trails (700) to ensure visibility
+        geofencePane.style.pointerEvents = 'none'; // Don't interfere with map interactions
+        console.log('✅ Created geofencePane with z-index 750');
+    }
+} catch (e) { 
+    console.warn('Could not create geofencePane:', e);
+}
+
 let markers = {}, trails = {}, positions = {}, destMarkers = {};
 let stopMarkers = [];
 let ambulanceDataMap = {}; // Store ambulance data by ID for navigation checking
@@ -5995,8 +6017,10 @@ let autoFitBoundsEnabled = false; // Disable auto-fit bounds by default to stop 
 let lastAutoFitBounds = null; // Store last bounds to avoid unnecessary refits
 let caseMarkers = {}; // Store case markers
 let geofenceCircles = {}; // Store geofence circles for case destinations
-const GEOFENCE_RADIUS = 100; // 100 meters radius
+const GEOFENCE_RADIUS = 50; // 50 meters radius
 let currentPinMarker = null; // Current pin being placed
+let currentPinGeofenceCircle = null; // Geo fence circle for current pickup pin
+let currentDestinationGeofenceCircle = null; // Geo fence circle for current destination pin
 let isMovingPin = false; // Flag for pin movement mode
 let hospitalMarkers = {}; // Store hospital markers
 let hospitalDataMap = {}; // Store hospital data (name, lat, lng) mapped by marker ID
@@ -6935,6 +6959,11 @@ async function geocodeAndPinFromAddress(address, type = 'pickup') {
             if (currentPinMarker) {
                 map.removeLayer(currentPinMarker);
             }
+            // Remove existing pickup geo fence circle if any
+            if (currentPinGeofenceCircle) {
+                map.removeLayer(currentPinGeofenceCircle);
+                currentPinGeofenceCircle = null;
+            }
 
             // Set globals for pickup
             window.clickedLatitude = lat;
@@ -6942,6 +6971,26 @@ async function geocodeAndPinFromAddress(address, type = 'pickup') {
 
             // Add pickup marker
             currentPinMarker = L.marker([lat, lng], { icon: pinIcon, draggable: true }).addTo(map);
+            
+            // Add geo fence circle around pickup pin
+            if (currentPinGeofenceCircle) {
+                map.removeLayer(currentPinGeofenceCircle);
+            }
+            currentPinGeofenceCircle = L.circle([lat, lng], {
+                radius: GEOFENCE_RADIUS,
+                color: '#1e40af',
+                fillColor: '#3b82f6',
+                        fillOpacity: 0.4,
+                        weight: 3,
+                interactive: false,
+                pane: 'geofencePane' // Use dedicated pane with higher z-index
+            }).addTo(map);
+            
+            // Bring circle to front and force redraw
+            if (currentPinGeofenceCircle) {
+                currentPinGeofenceCircle.bringToFront();
+                map.invalidateSize();
+            }
             
             // Update coords label if present
             const coordEl = document.getElementById('pin-coordinates');
@@ -6953,6 +7002,10 @@ async function geocodeAndPinFromAddress(address, type = 'pickup') {
                 window.clickedLatitude = newPos.lat;
                 window.clickedLongitude = newPos.lng;
                 if (coordEl) coordEl.textContent = `${newPos.lat.toFixed(6)}, ${newPos.lng.toFixed(6)}`;
+                // Update geo fence circle position
+                if (currentPinGeofenceCircle) {
+                    currentPinGeofenceCircle.setLatLng(newPos);
+                }
                 setTimeout(() => setAddressFromLatLng(window.clickedLatitude, window.clickedLongitude, 'pickup'), 0);
                 updateConnectionLine();
                 // Suggest nearest driver and hospital when pin is moved
@@ -6976,6 +7029,11 @@ async function geocodeAndPinFromAddress(address, type = 'pickup') {
             if (currentDestinationMarker) {
                 map.removeLayer(currentDestinationMarker);
             }
+            // Remove existing destination geo fence circle if any
+            if (currentDestinationGeofenceCircle) {
+                map.removeLayer(currentDestinationGeofenceCircle);
+                currentDestinationGeofenceCircle = null;
+            }
 
             // Set globals for destination
             window.destinationLatitude = lat;
@@ -6987,6 +7045,27 @@ async function geocodeAndPinFromAddress(address, type = 'pickup') {
                 draggable: true,
                 zIndexOffset: 1000  // Ensure destination markers appear above other markers
             }).addTo(map);
+            
+            // Add geo fence circle around destination pin
+            if (currentDestinationGeofenceCircle) {
+                map.removeLayer(currentDestinationGeofenceCircle);
+            }
+            currentDestinationGeofenceCircle = L.circle([lat, lng], {
+                radius: GEOFENCE_RADIUS,
+                color: '#1e40af',
+                fillColor: '#3b82f6',
+                        fillOpacity: 0.4,
+                        weight: 3,
+                interactive: false,
+                pane: 'geofencePane' // Use dedicated pane with higher z-index
+            }).addTo(map);
+            
+            // Bring circle to front and force redraw
+            if (currentDestinationGeofenceCircle) {
+                currentDestinationGeofenceCircle.bringToFront();
+                map.invalidateSize();
+            }
+            
             // Label destination for the currently edited case if available
             if (typeof window.currentCaseNumber !== 'undefined' && window.currentCaseNumber !== null) {
                 currentDestinationMarker.bindTooltip(`Case ${window.currentCaseNumber} Destination`, {
@@ -7001,6 +7080,10 @@ async function geocodeAndPinFromAddress(address, type = 'pickup') {
             currentDestinationMarker.on('dragend', function(e) {
                 const newPos = e.target.getLatLng();
                 window.destinationLatitude = newPos.lat;
+                // Update geo fence circle position
+                if (currentDestinationGeofenceCircle) {
+                    currentDestinationGeofenceCircle.setLatLng(newPos);
+                }
                 window.destinationLongitude = newPos.lng;
                 setTimeout(() => setAddressFromLatLng(window.destinationLatitude, window.destinationLongitude, 'destination'), 0);
                 updateConnectionLine();
@@ -7332,6 +7415,10 @@ map.on('click', async function (e) {
         currentPinMarker.setLatLng(e.latlng);
         window.clickedLatitude = e.latlng.lat;
         window.clickedLongitude = e.latlng.lng;
+        // Update geo fence circle position
+        if (currentPinGeofenceCircle) {
+            currentPinGeofenceCircle.setLatLng(e.latlng);
+        }
         document.getElementById('pin-coordinates').textContent = 
             `${e.latlng.lat.toFixed(6)}, ${e.latlng.lng.toFixed(6)}`;
         // Update address on move
@@ -7349,6 +7436,11 @@ map.on('click', async function (e) {
         if (currentDestinationMarker) {
             map.removeLayer(currentDestinationMarker);
         }
+        // Remove existing destination geo fence circle
+        if (currentDestinationGeofenceCircle) {
+            map.removeLayer(currentDestinationGeofenceCircle);
+            currentDestinationGeofenceCircle = null;
+        }
         
         // Store destination coordinates
         window.destinationLatitude = e.latlng.lat;
@@ -7360,6 +7452,27 @@ map.on('click', async function (e) {
             draggable: true,
             zIndexOffset: 1000  // Ensure destination markers appear above other markers
         }).addTo(map);
+        
+        // Add geo fence circle around destination pin
+        if (currentDestinationGeofenceCircle) {
+            map.removeLayer(currentDestinationGeofenceCircle);
+        }
+        currentDestinationGeofenceCircle = L.circle([e.latlng.lat, e.latlng.lng], {
+            radius: GEOFENCE_RADIUS,
+            color: '#1e40af',
+            fillColor: '#3b82f6',
+                        fillOpacity: 0.4,
+                        weight: 3,
+            interactive: false,
+            pane: 'geofencePane' // Use dedicated pane with higher z-index
+        }).addTo(map);
+        
+        // Bring circle to front and force redraw
+        if (currentDestinationGeofenceCircle) {
+            currentDestinationGeofenceCircle.bringToFront();
+            map.invalidateSize();
+        }
+        
         // Label destination for the currently edited case if available
         if (typeof window.currentCaseNumber !== 'undefined' && window.currentCaseNumber !== null) {
             currentDestinationMarker.bindTooltip(`Case ${window.currentCaseNumber} Destination`, {
@@ -7372,6 +7485,11 @@ map.on('click', async function (e) {
         
         // Make destination pin draggable
         currentDestinationMarker.on('dragend', function(e) {
+            // Update geo fence circle position
+            if (currentDestinationGeofenceCircle) {
+                const newPos = e.target.getLatLng();
+                currentDestinationGeofenceCircle.setLatLng(newPos);
+            }
             const newPos = e.target.getLatLng();
             window.destinationLatitude = newPos.lat;
             window.destinationLongitude = newPos.lng;
@@ -7406,6 +7524,26 @@ map.on('click', async function (e) {
         draggable: true
     }).addTo(map);
     
+    // Add geo fence circle around pickup pin
+    if (currentPinGeofenceCircle) {
+        map.removeLayer(currentPinGeofenceCircle);
+    }
+    currentPinGeofenceCircle = L.circle([e.latlng.lat, e.latlng.lng], {
+        radius: GEOFENCE_RADIUS,
+        color: '#1e40af',
+        fillColor: '#3b82f6',
+                        fillOpacity: 0.4,
+                        weight: 3,
+        interactive: false,
+        pane: 'geofencePane' // Use dedicated pane with higher z-index
+    }).addTo(map);
+    
+    // Bring circle to front and force redraw
+    if (currentPinGeofenceCircle) {
+        currentPinGeofenceCircle.bringToFront();
+        map.invalidateSize();
+    }
+    
     // Make pin draggable
     currentPinMarker.on('dragend', function(e) {
         const newPos = e.target.getLatLng();
@@ -7413,6 +7551,10 @@ map.on('click', async function (e) {
         window.clickedLongitude = newPos.lng;
         document.getElementById('pin-coordinates').textContent = 
             `${newPos.lat.toFixed(6)}, ${newPos.lng.toFixed(6)}`;
+        // Update geo fence circle position
+        if (currentPinGeofenceCircle) {
+            currentPinGeofenceCircle.setLatLng(newPos);
+        }
         // Auto-fill address after drag
         setTimeout(() => setAddressFromLatLng(window.clickedLatitude, window.clickedLongitude, 'pickup'), 0);
         updateConnectionLine();
@@ -7819,9 +7961,17 @@ document.getElementById('case-creation-form')?.addEventListener('submit', async 
                 map.removeLayer(currentPinMarker);
                 currentPinMarker = null;
             }
+            if (currentPinGeofenceCircle) {
+                map.removeLayer(currentPinGeofenceCircle);
+                currentPinGeofenceCircle = null;
+            }
             if (currentDestinationMarker) {
                 map.removeLayer(currentDestinationMarker);
                 currentDestinationMarker = null;
+            }
+            if (currentDestinationGeofenceCircle) {
+                map.removeLayer(currentDestinationGeofenceCircle);
+                currentDestinationGeofenceCircle = null;
             }
             
             // Clear coordinates
@@ -7847,17 +7997,23 @@ document.getElementById('case-creation-form')?.addEventListener('submit', async 
             // Store case marker for future reference
             caseMarkers[result.case_num] = caseMarker;
             
-            // Add geofence circle for pickup location
+            // Add geofence circle for pickup location - MAKE IT VERY VISIBLE
             if (formData.latitude && formData.longitude) {
-                const pickupGeofenceCircle = L.circle([formData.latitude, formData.longitude], {
-                    radius: GEOFENCE_RADIUS,
-                    color: '#6b7280',
-                    fillColor: '#6b7280',
-                    fillOpacity: 0.2,
-                    weight: 2
-                }).addTo(map);
+                    const pickupGeofenceCircle = L.circle([formData.latitude, formData.longitude], {
+                        radius: GEOFENCE_RADIUS,
+                        color: '#1e40af', // Dark blue border for maximum contrast
+                        fillColor: '#3b82f6',
+                        fillOpacity: 0.25, // Visible but not too opaque
+                        weight: 2, // Border for visibility
+                        interactive: false,
+                        pane: 'geofencePane' // Use dedicated pane with higher z-index
+                    }).addTo(map);
                 
+                // Bring circle to front and ensure it's visible
+                pickupGeofenceCircle.bringToFront();
+                map.invalidateSize();
                 geofenceCircles[`${result.case_num}_pickup`] = pickupGeofenceCircle;
+                console.log(`✅ Added geo fence circle (${GEOFENCE_RADIUS}m radius) for new Case #${result.case_num} pickup`);
             }
             
             // Add destination marker and geofence circle if destination coordinates exist
@@ -7867,11 +8023,20 @@ document.getElementById('case-creation-form')?.addEventListener('submit', async 
                 // Add geofence circle for destination
                 const destGeofenceCircle = L.circle(destLatLng, {
                     radius: GEOFENCE_RADIUS,
-                    color: '#6b7280',
-                    fillColor: '#6b7280',
-                    fillOpacity: 0.2,
-                    weight: 2
+                    color: '#1e40af', // Dark blue border for maximum contrast
+                    fillColor: '#3b82f6',
+                    fillOpacity: 0.25, // Visible but not too opaque
+                    weight: 2, // Border for visibility
+                    interactive: false,
+                    pane: 'geofencePane' // Use dedicated pane with higher z-index
                 }).addTo(map);
+                
+                // Bring circle to front and force redraw
+                destGeofenceCircle.bringToFront();
+                map.invalidateSize();
+                
+                // Bring circle to front to ensure visibility
+                destGeofenceCircle.bringToFront();
                 
                 geofenceCircles[`${result.case_num}_destination`] = destGeofenceCircle;
                 
@@ -8074,30 +8239,43 @@ async function loadExistingCases() {
                 // Store case marker
                 caseMarkers[caseData.case_num] = caseMarker;
                 
-                // Add geofence circle for pickup location
+                // Add geofence circle for pickup location - MAKE IT VERY VISIBLE
                 if (caseData.latitude && caseData.longitude) {
                     const pickupGeofenceCircle = L.circle([caseData.latitude, caseData.longitude], {
                         radius: GEOFENCE_RADIUS,
-                        color: '#6b7280', // Gray when outside
-                        fillColor: '#6b7280',
-                        fillOpacity: 0.2,
-                        weight: 2
+                        color: '#1e40af', // Dark blue border for maximum contrast
+                        fillColor: '#3b82f6',
+                        fillOpacity: 0.4, // Visible but not too opaque
+                        weight: 3, // Thicker border for visibility
+                        interactive: false,
+                        pane: 'geofencePane' // Use dedicated pane with higher z-index
                     }).addTo(map);
                     
+                    // Bring circle to front and ensure it's visible
+                    pickupGeofenceCircle.bringToFront();
+                    // Force redraw
+                    map.invalidateSize();
                     geofenceCircles[`${caseData.case_num}_pickup`] = pickupGeofenceCircle;
+                    console.log(`✅ Added geo fence circle (${GEOFENCE_RADIUS}m radius) for Case #${caseData.case_num} pickup at [${caseData.latitude}, ${caseData.longitude}]`);
                 }
                 
                 // Add geofence circle for destination if coordinates exist
                 if (caseData.to_go_to_latitude && caseData.to_go_to_longitude) {
                     const destGeofenceCircle = L.circle([caseData.to_go_to_latitude, caseData.to_go_to_longitude], {
                         radius: GEOFENCE_RADIUS,
-                        color: '#6b7280', // Gray when outside
-                        fillColor: '#6b7280',
-                        fillOpacity: 0.2,
-                        weight: 2
+                        color: '#1e40af', // Dark blue border for maximum contrast
+                        fillColor: '#3b82f6',
+                        fillOpacity: 0.25, // Visible but not too opaque
+                        weight: 2, // Border for visibility
+                        interactive: false,
+                        pane: 'geofencePane' // Use dedicated pane with higher z-index
                     }).addTo(map);
                     
+                    // Bring circle to front and ensure it's visible
+                    destGeofenceCircle.bringToFront();
+                    map.invalidateSize();
                     geofenceCircles[`${caseData.case_num}_destination`] = destGeofenceCircle;
+                    console.log(`✅ Added geo fence circle (${GEOFENCE_RADIUS}m radius) for Case #${caseData.case_num} destination`);
 
                     const destLatLng = [parseFloat(caseData.to_go_to_latitude), parseFloat(caseData.to_go_to_longitude)];
                     const destKey = `dest_${caseData.case_num}`;
@@ -8905,21 +9083,33 @@ async function refreshCaseStatuses() {
                 if (caseData.latitude && caseData.longitude && !geofenceCircles[`${caseData.case_num}_pickup`]) {
                     const pickupCircle = L.circle([caseData.latitude, caseData.longitude], {
                         radius: GEOFENCE_RADIUS,
-                        color: '#6b7280',
-                        fillColor: '#6b7280',
-                        fillOpacity: 0.2,
-                        weight: 2
+                        color: '#1e40af',
+                        fillColor: '#3b82f6',
+                        fillOpacity: 0.4,
+                        weight: 3,
+                        interactive: false,
+                        pane: 'geofencePane' // Use dedicated pane with higher z-index
                     }).addTo(map);
+                    
+                    // Bring circle to front and force redraw
+                    pickupCircle.bringToFront();
+                    map.invalidateSize();
                     geofenceCircles[`${caseData.case_num}_pickup`] = pickupCircle;
                 }
                 if (caseData.to_go_to_latitude && caseData.to_go_to_longitude && !geofenceCircles[`${caseData.case_num}_destination`]) {
                     const destCircle = L.circle([caseData.to_go_to_latitude, caseData.to_go_to_longitude], {
                         radius: GEOFENCE_RADIUS,
-                        color: '#6b7280',
-                        fillColor: '#6b7280',
-                        fillOpacity: 0.2,
-                        weight: 2
+                        color: '#1e40af',
+                        fillColor: '#3b82f6',
+                        fillOpacity: 0.4,
+                        weight: 3,
+                        interactive: false,
+                        pane: 'geofencePane' // Use dedicated pane with higher z-index
                     }).addTo(map);
+                    
+                    // Bring circle to front and force redraw
+                    destCircle.bringToFront();
+                    map.invalidateSize();
                     geofenceCircles[`${caseData.case_num}_destination`] = destCircle;
                 }
             } else if (caseData.latitude && caseData.longitude) {
@@ -8927,21 +9117,33 @@ async function refreshCaseStatuses() {
                 if (caseData.latitude && caseData.longitude && !geofenceCircles[`${caseData.case_num}_pickup`]) {
                     const pickupCircle = L.circle([caseData.latitude, caseData.longitude], {
                         radius: GEOFENCE_RADIUS,
-                        color: '#6b7280',
-                        fillColor: '#6b7280',
-                        fillOpacity: 0.2,
-                        weight: 2
+                        color: '#1e40af',
+                        fillColor: '#3b82f6',
+                        fillOpacity: 0.4,
+                        weight: 3,
+                        interactive: false,
+                        pane: 'geofencePane' // Use dedicated pane with higher z-index
                     }).addTo(map);
+                    
+                    // Bring circle to front and force redraw
+                    pickupCircle.bringToFront();
+                    map.invalidateSize();
                     geofenceCircles[`${caseData.case_num}_pickup`] = pickupCircle;
                 }
                 if (caseData.to_go_to_latitude && caseData.to_go_to_longitude && !geofenceCircles[`${caseData.case_num}_destination`]) {
                     const destCircle = L.circle([caseData.to_go_to_latitude, caseData.to_go_to_longitude], {
                         radius: GEOFENCE_RADIUS,
-                        color: '#6b7280',
-                        fillColor: '#6b7280',
-                        fillOpacity: 0.2,
-                        weight: 2
+                        color: '#1e40af',
+                        fillColor: '#3b82f6',
+                        fillOpacity: 0.4,
+                        weight: 3,
+                        interactive: false,
+                        pane: 'geofencePane' // Use dedicated pane with higher z-index
                     }).addTo(map);
+                    
+                    // Bring circle to front and force redraw
+                    destCircle.bringToFront();
+                    map.invalidateSize();
                     geofenceCircles[`${caseData.case_num}_destination`] = destCircle;
                 }
             }
@@ -10458,10 +10660,12 @@ function showGeofenceNotification(notification) {
     const circleKey = `${notification.case_num}_${locationType}`;
     if (geofenceCircles[circleKey]) {
         geofenceCircles[circleKey].setStyle({
-            color: '#10b981',
+            color: '#047857',
             fillColor: '#10b981',
-            fillOpacity: 0.3
+            fillOpacity: 0.8,
+            weight: 8
         });
+        geofenceCircles[circleKey].bringToFront();
     }
 }
 
@@ -10708,20 +10912,24 @@ function updateGeofenceCircleColors() {
             // Get ambulance assigned to this case
             const ambulanceId = caseData.ambulance_id;
             if (!ambulanceId) {
-                // Keep gray if no ambulance assigned
+                // Keep blue if no ambulance assigned
                 if (geofenceCircles[`${caseData.case_num}_pickup`]) {
                     geofenceCircles[`${caseData.case_num}_pickup`].setStyle({
-                        color: '#6b7280',
-                        fillColor: '#6b7280',
-                        fillOpacity: 0.2
+                        color: '#1e3a8a',
+                        fillColor: '#3b82f6',
+                        fillOpacity: 0.7,
+                        weight: 8
                     });
+                    geofenceCircles[`${caseData.case_num}_pickup`].bringToFront();
                 }
                 if (geofenceCircles[`${caseData.case_num}_destination`]) {
                     geofenceCircles[`${caseData.case_num}_destination`].setStyle({
-                        color: '#6b7280',
-                        fillColor: '#6b7280',
-                        fillOpacity: 0.2
+                        color: '#1e3a8a',
+                        fillColor: '#3b82f6',
+                        fillOpacity: 0.7,
+                        weight: 8
                     });
+                    geofenceCircles[`${caseData.case_num}_destination`].bringToFront();
                 }
                 return;
             }
@@ -10729,20 +10937,24 @@ function updateGeofenceCircleColors() {
             // Get ambulance location (driver marker)
             const ambulance = driverMarkers[ambulanceId];
             if (!ambulance || !ambulance.getLatLng) {
-                // Keep gray if ambulance location not available
+                // Keep blue if ambulance location not available
                 if (geofenceCircles[`${caseData.case_num}_pickup`]) {
                     geofenceCircles[`${caseData.case_num}_pickup`].setStyle({
-                        color: '#6b7280',
-                        fillColor: '#6b7280',
-                        fillOpacity: 0.2
+                        color: '#1e3a8a',
+                        fillColor: '#3b82f6',
+                        fillOpacity: 0.7,
+                        weight: 8
                     });
+                    geofenceCircles[`${caseData.case_num}_pickup`].bringToFront();
                 }
                 if (geofenceCircles[`${caseData.case_num}_destination`]) {
                     geofenceCircles[`${caseData.case_num}_destination`].setStyle({
-                        color: '#6b7280',
-                        fillColor: '#6b7280',
-                        fillOpacity: 0.2
+                        color: '#1e3a8a',
+                        fillColor: '#3b82f6',
+                        fillOpacity: 0.7,
+                        weight: 8
                     });
+                    geofenceCircles[`${caseData.case_num}_destination`].bringToFront();
                 }
                 return;
             }
@@ -10758,16 +10970,20 @@ function updateGeofenceCircleColors() {
                 
                 if (pickupDistance <= GEOFENCE_RADIUS) {
                     geofenceCircles[`${caseData.case_num}_pickup`].setStyle({
-                        color: '#10b981',
+                        color: '#047857',
                         fillColor: '#10b981',
-                        fillOpacity: 0.3
+                        fillOpacity: 0.5,
+                        weight: 3
                     });
+                    geofenceCircles[`${caseData.case_num}_pickup`].bringToFront();
                 } else {
                     geofenceCircles[`${caseData.case_num}_pickup`].setStyle({
-                        color: '#6b7280',
-                        fillColor: '#6b7280',
-                        fillOpacity: 0.2
+                        color: '#1e40af',
+                        fillColor: '#3b82f6',
+                        fillOpacity: 0.4,
+                        weight: 3
                     });
+                    geofenceCircles[`${caseData.case_num}_pickup`].bringToFront();
                 }
             }
             
@@ -10779,16 +10995,20 @@ function updateGeofenceCircleColors() {
                 
                 if (destDistance <= GEOFENCE_RADIUS) {
                     geofenceCircles[`${caseData.case_num}_destination`].setStyle({
-                        color: '#10b981',
+                        color: '#047857',
                         fillColor: '#10b981',
-                        fillOpacity: 0.3
+                        fillOpacity: 0.5,
+                        weight: 3
                     });
+                    geofenceCircles[`${caseData.case_num}_destination`].bringToFront();
                 } else {
                     geofenceCircles[`${caseData.case_num}_destination`].setStyle({
-                        color: '#6b7280',
-                        fillColor: '#6b7280',
-                        fillOpacity: 0.2
+                        color: '#1e40af',
+                        fillColor: '#3b82f6',
+                        fillOpacity: 0.4,
+                        weight: 3
                     });
+                    geofenceCircles[`${caseData.case_num}_destination`].bringToFront();
                 }
             }
         });
@@ -10889,6 +11109,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // Wait slightly for map to load
         setTimeout(() => {
             if (window.currentPinMarker) map.removeLayer(window.currentPinMarker);
+            // Remove existing geo fence circle if any
+            if (currentPinGeofenceCircle) {
+                map.removeLayer(currentPinGeofenceCircle);
+                currentPinGeofenceCircle = null;
+            }
             
             // Set globals
             window.clickedLatitude = targetLat;
@@ -10896,6 +11121,24 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Drop Pin & Pan
             window.currentPinMarker = L.marker([targetLat, targetLng], { icon: pinIcon, draggable: true }).addTo(map);
+            
+            // Add geo fence circle around pin - MAKE IT VERY VISIBLE
+            currentPinGeofenceCircle = L.circle([targetLat, targetLng], {
+                radius: GEOFENCE_RADIUS,
+                color: '#1e40af',
+                fillColor: '#3b82f6',
+                        fillOpacity: 0.4,
+                        weight: 3,
+                interactive: false,
+                pane: 'geofencePane' // Use dedicated pane with higher z-index
+            }).addTo(map);
+            
+            // Bring circle to front and force redraw
+            if (currentPinGeofenceCircle) {
+                currentPinGeofenceCircle.bringToFront();
+                map.invalidateSize();
+            }
+            
             map.setView([targetLat, targetLng], 17);
             
             // Open Modal & Fill Data
@@ -10914,6 +11157,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 const newPos = e.target.getLatLng();
                 window.clickedLatitude = newPos.lat;
                 window.clickedLongitude = newPos.lng;
+                
+                // Update geo fence circle position
+                if (currentPinGeofenceCircle) {
+                    currentPinGeofenceCircle.setLatLng(newPos);
+                }
                 
                 const pinCoords = document.getElementById('pin-coordinates');
                 if (pinCoords) pinCoords.textContent = `${newPos.lat.toFixed(6)}, ${newPos.lng.toFixed(6)}`;

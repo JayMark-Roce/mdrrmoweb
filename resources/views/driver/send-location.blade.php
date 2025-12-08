@@ -3666,7 +3666,7 @@ document.getElementById('stop-navigation-mobile')?.addEventListener('click', sto
 // Case notification functions
 let caseMarkers = {};
 let geofenceCircles = {}; // Store geofence circles for case destinations
-const GEOFENCE_RADIUS = 100; // 100 meters radius
+const GEOFENCE_RADIUS = 50; // 50 meters radius
 let currentLocation = null; // Store driver's current location
 let acceptedCases = new Set();
 let knownCaseNums = new Set();
@@ -4456,10 +4456,11 @@ function addCaseMarkersToMap(cases) {
                 // Add geofence circle for pickup location
                 const pickupGeofenceCircle = L.circle([pickupLat, pickupLng], {
                     radius: GEOFENCE_RADIUS,
-                    color: '#6b7280', // Gray when outside
-                    fillColor: '#6b7280',
-                    fillOpacity: 0.2,
-                    weight: 2
+                    color: '#1e40af', // Dark blue border for maximum contrast
+                    fillColor: '#3b82f6',
+                    fillOpacity: 0.3,
+                    weight: 3,
+                    interactive: false
                 }).addTo(map);
                 
                 geofenceCircles[`${caseData.case_num}_pickup`] = pickupGeofenceCircle;
@@ -4495,10 +4496,11 @@ function addCaseMarkersToMap(cases) {
                 // Add geofence circle for destination
                 const destGeofenceCircle = L.circle([destLat, destLng], {
                     radius: GEOFENCE_RADIUS,
-                    color: '#6b7280', // Gray when outside
-                    fillColor: '#6b7280',
-                    fillOpacity: 0.2,
-                    weight: 2
+                    color: '#1e40af', // Dark blue border for maximum contrast
+                    fillColor: '#3b82f6',
+                    fillOpacity: 0.3,
+                    weight: 3,
+                    interactive: false
                 }).addTo(map);
                 
                 geofenceCircles[`${caseData.case_num}_destination`] = destGeofenceCircle;
@@ -5497,9 +5499,9 @@ function updateDriverGeofenceCircles(driverLat, driverLng) {
                 
                 if (pickupDistance <= GEOFENCE_RADIUS) {
                     geofenceCircles[`${caseNum}_pickup`].setStyle({
-                        color: '#10b981',
+                        color: '#047857',
                         fillColor: '#10b981',
-                        fillOpacity: 0.3,
+                        fillOpacity: 0.4,
                         weight: 3
                     });
                     
@@ -5509,10 +5511,10 @@ function updateDriverGeofenceCircles(driverLat, driverLng) {
                     }
                 } else {
                     geofenceCircles[`${caseNum}_pickup`].setStyle({
-                        color: '#6b7280',
-                        fillColor: '#6b7280',
-                        fillOpacity: 0.2,
-                        weight: 2
+                        color: '#1e40af',
+                        fillColor: '#3b82f6',
+                        fillOpacity: 0.3,
+                        weight: 3
                     });
                 }
             }
@@ -5528,9 +5530,9 @@ function updateDriverGeofenceCircles(driverLat, driverLng) {
                 
                 if (destDistance <= GEOFENCE_RADIUS) {
                     geofenceCircles[`${caseNum}_destination`].setStyle({
-                        color: '#10b981',
+                        color: '#047857',
                         fillColor: '#10b981',
-                        fillOpacity: 0.3,
+                        fillOpacity: 0.4,
                         weight: 3
                     });
                     
@@ -5540,10 +5542,10 @@ function updateDriverGeofenceCircles(driverLat, driverLng) {
                     }
                 } else {
                     geofenceCircles[`${caseNum}_destination`].setStyle({
-                        color: '#6b7280',
-                        fillColor: '#6b7280',
-                        fillOpacity: 0.2,
-                        weight: 2
+                        color: '#1e40af',
+                        fillColor: '#3b82f6',
+                        fillOpacity: 0.3,
+                        weight: 3
                     });
                 }
             }
