@@ -178,6 +178,113 @@
   box-shadow: 0 1px 3px rgba(0,0,0,0.4);
 }
 
+/* Barangay Hall Marker Wrapper */
+.brgy-marker-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+/* Barangay Hall Label Below Icon */
+.brgy-label {
+  background: #ffffff;
+  color: #2563eb;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  border: 1px solid rgba(37,99,235,0.2);
+  font-family: 'Roboto', Arial, sans-serif;
+  letter-spacing: 0.5px;
+  max-width: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Barangay Hall Icon - Blue Circle with B */
+.brgy-marker-icon {
+  position: relative !important;
+}
+
+/* Barangay Hall Hover Tooltip */
+.brgy-hover-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  background: rgba(0, 0, 0, 0.85);
+  color: #ffffff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  font-family: 'Roboto', Arial, sans-serif;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.brgy-hover-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid rgba(0, 0, 0, 0.85);
+}
+
+.brgy-marker-icon:hover .brgy-hover-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-12px);
+  pointer-events: auto;
+}
+
+.brgy-icon-css {
+  width: 20px !important;
+  height: 20px !important;
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  z-index: 10 !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  font-size: 14px !important;
+  font-family: 'Roboto', Arial, sans-serif !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+}
+
+.brgy-popup-icon {
+  background: #2563eb;
+  position: relative;
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 12px;
+  font-family: 'Roboto', Arial, sans-serif;
+}
+
 /* Driver Icon Container - Circle with gradient background */
 .driver-icon-container {
   position: relative;
@@ -960,8 +1067,12 @@ body.fullscreen-mode::before {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
+    padding: 0;
     animation: fadeIn 0.3s ease;
+}
+
+#case-creation-modal.modal-overlay {
+    padding: 0;
 }
 
 @keyframes fadeIn {
@@ -2023,14 +2134,19 @@ body.fullscreen-mode::before {
     .case-modal-shell {
         background: #f8fafc;
         border-radius: 24px;
-        border: 1px solid rgba(148, 163, 184, 0.35);
+        border: none;
         box-shadow: 0 35px 60px rgba(15, 23, 42, 0.12);
         display: flex;
         flex-direction: column;
         overflow: hidden;
         min-height: 0;
-        flex: 1;
-        max-height: 90vh;
+        max-height: 95vh;
+    }
+    
+    #caseCreationContainer {
+        background: #f8fafc;
+        border-radius: 24px;
+        border: none;
     }
 
     .case-modal-header {
@@ -2107,11 +2223,13 @@ body.fullscreen-mode::before {
     }
 
     .case-modal-body {
-        padding: 1.5rem;
+        padding: 2.5rem;
         display: flex;
-        gap: 1.5rem;
-        flex-wrap: wrap;
+        gap: 2.5rem;
+        flex-wrap: nowrap;
         overflow-y: auto;
+        overflow-x: hidden;
+        min-width: 0;
     }
 
     .case-modal-sidebar {
@@ -2119,6 +2237,8 @@ body.fullscreen-mode::before {
         display: flex;
         flex-direction: column;
         gap: 1rem;
+        min-width: 0;
+        overflow-x: hidden;
     }
 
     .case-tip-card {
@@ -2184,56 +2304,259 @@ body.fullscreen-mode::before {
         flex: 2 1 420px;
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: 1.5rem;
+        min-width: 0;
+        overflow-x: hidden;
+        overflow-y: visible;
+        max-height: none;
+        height: auto;
     }
 
     .case-form-card {
         background: #ffffff;
-        border-radius: 20px;
-        padding: 1rem 1.25rem;
-        border: 1px solid rgba(148, 163, 184, 0.35);
-        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+        border-radius: 16px;
+        padding: 2rem;
+        border: 1.5px solid rgba(226, 232, 240, 0.8);
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+        transition: all 0.2s ease;
+        min-width: 0;
+        overflow-x: hidden;
+        overflow-y: visible;
+        max-height: none;
+        height: 100%;
+        min-height: 60%;
+        margin-bottom: 1.5rem;
+    }
+
+    .case-form-card:hover {
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+        border-color: rgba(148, 163, 184, 0.5);
+    }
+
+    /* Caller Information Card */
+    .case-form-card-callerInfo {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 2rem;
+        border: 1.5px solid rgba(226, 232, 240, 0.8);
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+        transition: all 0.2s ease;
+        min-width: 0;
+        overflow-x: hidden;
+        overflow-y: visible;
+        max-height: none;
+        height: 100%;
+        min-height: 40%;
+        margin-bottom: 1.5rem;
+    }
+
+    .case-form-card-callerInfo:hover {
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+        border-color: rgba(148, 163, 184, 0.5);
+    }
+
+    /* Patient Information Card */
+    .case-form-card-patientInfo {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 2rem;
+        border: 1.5px solid rgba(226, 232, 240, 0.8);
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+        transition: all 0.2s ease;
+        min-width: 0;
+        overflow-x: hidden;
+        overflow-y: visible;
+        max-height: none;
+        height: 100%;
+        min-height: 60%;
+        margin-bottom: 1.5rem;
+    }
+
+    .case-form-card-patientInfo:hover {
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+        border-color: rgba(148, 163, 184, 0.5);
+    }
+
+    /* Location Details Card */
+    .case-form-card-locationDetails {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 2rem;
+        border: 1.5px solid rgba(226, 232, 240, 0.8);
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+        transition: all 0.2s ease;
+        min-width: 0;
+        overflow-x: hidden;
+        overflow-y: visible;
+        max-height: none;
+        height: 100%;
+        min-height: 60%;
+        margin-bottom: 1.5rem;
+    }
+
+    .case-form-card-locationDetails:hover {
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+        border-color: rgba(148, 163, 184, 0.5);
+    }
+
+    /* Incident Details Card */
+    .case-form-card-incidentDetails {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 2rem;
+        border: 1.5px solid rgba(226, 232, 240, 0.8);
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+        transition: all 0.2s ease;
+        min-width: 0;
+        overflow-x: hidden;
+        overflow-y: visible;
+        max-height: none;
+        height: 100%;
+        min-height: 40%;
+        margin-bottom: 1.5rem;
+    }
+
+    .case-form-card-incidentDetails:hover {
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+        border-color: rgba(148, 163, 184, 0.5);
+    }
+
+    /* Driver Selection Card */
+    .case-form-card-driverSelection {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 2rem;
+        border: 1.5px solid rgba(226, 232, 240, 0.8);
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+        transition: all 0.2s ease;
+        min-width: 0;
+        overflow-x: hidden;
+        overflow-y: visible;
+        max-height: none;
+        height: 100%;
+        min-height: 60%;
+        margin-bottom: 1.5rem;
+    }
+
+    .case-form-card-driverSelection:hover {
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+        border-color: rgba(148, 163, 184, 0.5);
     }
 
     .case-form-card__title {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        font-size: 0.95rem;
+        gap: 0.75rem;
+        font-size: 1.1rem;
         font-weight: 800;
         color: #0f172a;
-        margin-bottom: 0.85rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f1f5f9;
     }
 
     .case-form-card__title i {
         color: #2563eb;
     }
 
-    .case-form-card .form-row {
-        margin-bottom: 0.85rem;
-    }
-
-    .case-form-card .form-row:last-child {
+    .case-form-card .form-row,
+    .case-form-card-callerInfo .form-row,
+    .case-form-card-patientInfo .form-row,
+    .case-form-card-locationDetails .form-row,
+    .case-form-card-incidentDetails .form-row,
+    .case-form-card-driverSelection .form-row {
         margin-bottom: 0;
+        min-width: 0;
+        overflow-x: hidden;
+        overflow-y: visible;
+        max-height: none;
+        height: auto;
+    }
+    
+    @media (max-width: 1024px) {
+        .case-form-card .form-row[style*="grid-template-columns: 1fr 1fr"],
+        .case-form-card-callerInfo .form-row[style*="grid-template-columns: 1fr 1fr"],
+        .case-form-card-patientInfo .form-row[style*="grid-template-columns: 1fr 1fr"],
+        .case-form-card-locationDetails .form-row[style*="grid-template-columns: 1fr 1fr"],
+        .case-form-card-incidentDetails .form-row[style*="grid-template-columns: 1fr 1fr"],
+        .case-form-card-driverSelection .form-row[style*="grid-template-columns: 1fr 1fr"] {
+            grid-template-columns: 1fr !important;
+        }
     }
 
-    .case-form-card .form-group:last-child {
+    .case-form-card .form-group,
+    .case-form-card-callerInfo .form-group,
+    .case-form-card-patientInfo .form-group,
+    .case-form-card-locationDetails .form-group,
+    .case-form-card-incidentDetails .form-group,
+    .case-form-card-driverSelection .form-group {
         margin-bottom: 0;
+        overflow: visible;
+        max-height: none;
+        height: auto;
     }
 
-    .case-form-card textarea {
-        min-height: 90px;
-        text-align: center;
-        line-height: 1.4;
+    .case-form-card textarea,
+    .case-form-card-callerInfo textarea,
+    .case-form-card-patientInfo textarea,
+    .case-form-card-locationDetails textarea,
+    .case-form-card-incidentDetails textarea,
+    .case-form-card-driverSelection textarea {
+        min-height: 60px;
+        line-height: 1.5;
+        font-family: inherit;
     }
 
-    .case-form-card select {
-        background: #f9fafb;
+    .case-form-card select,
+    .case-form-card-callerInfo select,
+    .case-form-card-patientInfo select,
+    .case-form-card-locationDetails select,
+    .case-form-card-incidentDetails select,
+    .case-form-card-driverSelection select {
+        background: #ffffff;
+        cursor: pointer;
+    }
+
+    .case-form-card select:focus,
+    .case-form-card-callerInfo select:focus,
+    .case-form-card-patientInfo select:focus,
+    .case-form-card-locationDetails select:focus,
+    .case-form-card-incidentDetails select:focus,
+    .case-form-card-driverSelection select:focus {
+        outline: none;
     }
 
     .case-form-actions {
         display: flex;
         justify-content: flex-end;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 2px solid #f1f5f9;
+    }
+
+    .case-form-actions .submit-btn {
+        background: linear-gradient(135deg, #031273, #4c6ef5);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.875rem 2rem;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 4px 16px rgba(3, 18, 115, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .case-form-actions .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(3, 18, 115, 0.4);
+    }
+
+    .case-form-actions .submit-btn:active {
+        transform: translateY(0);
     }
 
     .case-details-wrapper {
@@ -2603,11 +2926,17 @@ body.fullscreen-mode::before {
 
         .case-modal-body {
             flex-direction: column;
+            padding: 1.5rem !important;
         }
 
         .case-form-grid,
         .case-modal-sidebar {
             flex: 1 1 auto;
+            min-width: 0;
+        }
+        
+        .case-modal-sidebar {
+            flex: 0 0 auto !important;
         }
 
         .gm-status-bar {
@@ -2942,7 +3271,7 @@ body.fullscreen-mode::before {
         animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .map-modal-md { max-width: 720px; }
+    .map-modal-md { max-width: 1400px; width: 96vw; }
     .map-modal-sm { max-width: 520px; }
 
     .map-modal .modal-header {
@@ -2989,8 +3318,9 @@ body.fullscreen-mode::before {
 
     /* Driver Selection Styles */
     .driver-selection-container {
-        max-height: 280px;
-        overflow-y: auto;
+        max-height: none;
+        overflow-y: visible;
+        overflow-x: hidden;
         border: 1px solid #e2e8f0;
         border-radius: 16px;
         padding: 1rem;
@@ -3508,7 +3838,40 @@ body.fullscreen-mode::before {
                 <div id="driver-filter-toggle" style="display:none;"></div>
                 <div id="driver-filter-panel" style="display:none;"></div>
 
-                <!-- Dashboard-style controls: Filter removed by request -->
+                <!-- Map Filters Panel -->
+                <div id="map-filters-panel" class="map-filters-panel" style="position: absolute; top: 80px; right: 20px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 16px; z-index: 110; min-width: 220px; display: none;" onclick="event.stopPropagation();">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #1e293b;">
+                            <i class="fas fa-filter" style="color: #6366f1; margin-right: 8px;"></i>
+                            Map Filters
+                        </h4>
+                        <button onclick="toggleFiltersPanel(); event.stopPropagation();" style="background: none; border: none; color: #64748b; cursor: pointer; font-size: 1.2rem; padding: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.875rem; color: #475569;" onclick="event.stopPropagation();">
+                            <input type="checkbox" id="filter-hospitals" onchange="toggleHospitalFilter(); event.stopPropagation();" style="width: 18px; height: 18px; cursor: pointer;">
+                            <i class="fas fa-hospital" style="color: #dc2626; width: 16px;"></i>
+                            <span>Show Hospitals</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.875rem; color: #475569;" onclick="event.stopPropagation();">
+                            <input type="checkbox" id="filter-dasma-brgy" onchange="toggleDasmaBrgyFilter(); event.stopPropagation();" style="width: 18px; height: 18px; cursor: pointer;">
+                            <i class="fas fa-building" style="color: #2563eb; width: 16px;"></i>
+                            <span>Show Dasma Barangays</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.875rem; color: #475569;" onclick="event.stopPropagation();">
+                            <input type="checkbox" id="filter-silang-brgy" onchange="toggleSilangBrgyFilter(); event.stopPropagation();" style="width: 18px; height: 18px; cursor: pointer;">
+                            <i class="fas fa-building" style="color: #2563eb; width: 16px;"></i>
+                            <span>Show Silang Barangays</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Filter Toggle Button -->
+                <button id="map-filters-toggle" onclick="toggleFiltersPanel(); event.stopPropagation();" style="position: absolute; top: 80px; right: 20px; background: white; border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 12px; z-index: 110; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; color: #6366f1;">
+                    <i class="fas fa-filter"></i>
+                </button>
                 
                 <!-- Update Indicator -->
                 <div id="update-indicator" class="update-indicator" style="z-index: 104;">
@@ -3526,7 +3889,7 @@ body.fullscreen-mode::before {
 
 <!-- Active Cases Modal -->
 <div id="active-modal" class="modal-overlay" style="display:none; z-index: 9999;">
-    <div class="modal-content map-modal map-modal-md" style="max-width: 1120px; width: 96vw;">
+    <div class="modal-content map-modal map-modal-md" style="max-width: 1120px; width: 96vw;" onclick="event.stopPropagation();">
         <button type="button" id="close-active-modal" class="modal-close" style="position: absolute; top: 10px; right: 12px; background: var(--brand-navy); color: #ffffff; border: 0; width: 36px; height: 36px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;">
             <i class="fas fa-times"></i>
         </button>
@@ -3601,8 +3964,8 @@ body.fullscreen-mode::before {
     </div>
 
 <!-- Geocode (Pin by Address) Modal -->
-<div id="geocode-modal" class="modal-overlay geocode-modal-overlay" style="display:none;">
-    <div class="modal-content geocode-modal" style="max-width: 520px; width: 96vw; min-height:auto; padding: 0; border-radius: 18px; background: transparent; box-shadow: none; border:none;">
+<div id="geocode-modal" class="modal-overlay geocode-modal-overlay" style="display:none;" onclick="event.stopPropagation();">
+    <div class="modal-content geocode-modal" style="max-width: 520px; width: 96vw; min-height:auto; padding: 0; border-radius: 18px; background: transparent; box-shadow: none; border:none;" onclick="event.stopPropagation();">
         <div id="geocodeContainer" class="modal-iframe" title="Pin by Address" style="background:transparent; overflow:visible; border: 0; display: block; width: 100%; height:auto; max-height: 60vh; padding: 0.25rem 0.25rem 0.5rem; box-sizing: border-box;">
             <div style="background: linear-gradient(135deg, #0ea5e9, #0369a1); color:#ffffff; border-radius: 12px 12px 0 0; padding: 0.45rem 0.7rem; display:flex; align-items:center; justify-content:space-between; gap:0.6rem;">
                 <div style="display:flex; align-items:center; gap:0.5rem;">
@@ -3758,23 +4121,23 @@ body.fullscreen-mode::before {
 
 <!-- Case Creation Modal -->
         <div id="case-creation-modal" class="modal-overlay" style="display:none;">
-            <div class="modal-content map-modal map-modal-md">
-                <button type="button" id="close-case-creation-modal" class="modal-close" style="position: absolute; top: 10px; right: 12px; background: var(--brand-navy); color: #ffffff; border: 0; width: 36px; height: 36px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;">
+            <div id="caseCreationContainer" class="case-modal-shell" title="Create New Case" onclick="event.stopPropagation();" style="max-height: 95vh; max-width: 1400px; width: 96vw; display: flex; flex-direction: column; position: relative; margin: auto;">
+                <button type="button" id="close-case-creation-modal" class="modal-close" style="position: absolute; top: 16px; right: 16px; background: rgba(15, 23, 42, 0.8); color: #ffffff; border: 0; width: 40px; height: 40px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" onmouseover="this.style.background='rgba(15, 23, 42, 1)'; this.style.transform='scale(1.05)'" onmouseout="this.style.background='rgba(15, 23, 42, 0.8)'; this.style.transform='scale(1)'">
                     <i class="fas fa-times"></i>
                 </button>
-                <div id="caseCreationContainer" class="case-modal-shell" title="Create New Case">
-                    <div class="case-modal-header">
+                    <div class="case-modal-header" style="flex-shrink: 0;">
                         <div>
                             <p class="case-modal-eyebrow">Live Dispatch</p>
-                            <h3>
-                                <i class="fas fa-plus-circle" style="color:#4ade80;"></i>
+                            <h3 style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-plus-circle" style="color:#4ade80; font-size: 1.5rem;"></i>
                                 Create New Case
                             </h3>
                             <p class="case-modal-subtitle">
-                                Pin location: <span id="pin-coordinates">Select a point on the map</span>
+                                <i class="fas fa-map-pin" style="margin-right: 6px;"></i>
+                                Pin location: <span id="pin-coordinates" style="font-weight: 600;">Select a point on the map</span>
                             </p>
                         </div>
-                        <div class="case-modal-header-meta">
+                        <div class="case-modal-header-meta" style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
                             <span class="case-pill">
                                 <i class="fas fa-bolt"></i>
                                 Rapid intake
@@ -3783,137 +4146,147 @@ body.fullscreen-mode::before {
                                 <i class="fas fa-map-marker-alt"></i>
                                 Syncs with live map
                             </span>
-                        </div>
-                    </div>
-                    <div class="case-modal-body">
-                        <aside class="case-modal-sidebar">
-                            <div class="case-tip-card">
-                                <h4><i class="fas fa-lightbulb" style="color:#facc15;"></i> Quick Tips</h4>
-                                <ul class="case-tip-list">
-                                    <li>Click on the map for pickup, hold <strong>Ctrl</strong> + click for destination.</li>
-                                    <li>Need precision? Use <strong>Pin by Address</strong> above the map.</li>
-                                    <li>Assign multiple ambulances—first to accept owns the case.</li>
-                                </ul>
-                            </div>
-                            <div class="case-pin-actions">
-                                <button type="button" id="move-pin-btn" class="case-pin-action--move">
+                            <div class="case-pin-actions" style="display: flex; gap: 0.75rem; margin-left: auto; padding-right: 60px;">
+                                <button type="button" id="move-pin-btn" class="case-pin-action--move" style="flex: 0 0 auto; border: none; border-radius: 12px; padding: 0.65rem 1rem; font-weight: 700; font-size: 0.85rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; box-shadow: 0 12px 30px rgba(15, 23, 42, 0.15); cursor: pointer; transition: transform 0.2s ease; background: linear-gradient(135deg, #f59e0b, #fb923c); color: #ffffff;">
                                     <i class="fas fa-hand-pointer"></i>
                                     Move Pin
                                 </button>
-                                <button type="button" id="cancel-pin-btn" class="case-pin-action--cancel">
+                                <button type="button" id="cancel-pin-btn" class="case-pin-action--cancel" style="flex: 0 0 auto; border: none; border-radius: 12px; padding: 0.65rem 1rem; font-weight: 700; font-size: 0.85rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; box-shadow: 0 12px 30px rgba(15, 23, 42, 0.15); cursor: pointer; transition: transform 0.2s ease; background: linear-gradient(135deg, #ef4444, #b91c1c); color: #ffffff;">
                                     <i class="fas fa-times"></i>
                                     Cancel Pin
                                 </button>
                             </div>
-                        </aside>
-                        <form id="case-creation-form" class="case-form-grid">
-                            <section class="case-form-card">
+                        </div>
+                    </div>
+                    <div class="case-modal-body" style="flex: 1; overflow-y: auto; overflow-x: hidden; padding: 2.5rem; min-width: 0;">
+                        <form id="case-creation-form" class="case-form-grid" style="flex: 1; min-width: 0; overflow-x: hidden;">
+                            <section class="case-form-card case-form-card-callerInfo">
                                 <div class="case-form-card__title">
                                     <i class="fas fa-headset"></i>
                                     Caller Information
                                 </div>
-                                <div class="form-row">
+                                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
                                     <div class="form-group compact">
-                                        <label class="form-label compact">
-                                            <i class="fas fa-user-circle"></i>
+                                        <label class="form-label compact" style="font-size: 0.85rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; color: #475569; font-weight: 600;">
+                                            <i class="fas fa-user-circle" style="color: #6366f1; font-size: 0.85rem;"></i>
                                             Caller Name *
                                         </label>
-                                        <input type="text" id="caller-name" class="form-input compact" placeholder="Enter caller name" required>
+                                        <input type="text" id="caller-name" class="form-input compact" placeholder="Enter caller name" required style="padding: 0.85rem 1rem; font-size: 0.9rem; border-radius: 8px; border: 1.5px solid #e2e8f0; transition: all 0.2s;" onfocus="this.style.borderColor='#6366f1'; this.style.boxShadow='0 0 0 3px rgba(99, 102, 241, 0.1)'" onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
                                     </div>
                                     <div class="form-group compact">
-                                        <label class="form-label compact">
-                                            <i class="fas fa-phone-volume"></i>
+                                        <label class="form-label compact" style="font-size: 0.85rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; color: #475569; font-weight: 600;">
+                                            <i class="fas fa-phone-volume" style="color: #10b981; font-size: 0.85rem;"></i>
                                             Caller Contact *
                                         </label>
-                                        <input type="tel" id="caller-contact" class="form-input compact" placeholder="Enter caller contact number" required>
+                                        <input type="tel" id="caller-contact" class="form-input compact" placeholder="Enter caller contact number" required style="padding: 0.85rem 1rem; font-size: 0.9rem; border-radius: 8px; border: 1.5px solid #e2e8f0; transition: all 0.2s;" onfocus="this.style.borderColor='#10b981'; this.style.boxShadow='0 0 0 3px rgba(16, 185, 129, 0.1)'" onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
                                     </div>
                                 </div>
                             </section>
 
-                            <section class="case-form-card">
+                            <section class="case-form-card case-form-card-patientInfo">
                                 <div class="case-form-card__title">
                                     <i class="fas fa-user"></i>
-                                    Patient Information
+                                    Patient Information (OPTIONAL)
                                 </div>
-                                <div class="form-row">
+                                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
                                     <div class="form-group compact">
-                                        <label class="form-label compact">
-                                            <i class="fas fa-user"></i>
+                                        <label class="form-label compact" style="font-size: 0.85rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; color: #475569; font-weight: 600;">
+                                            <i class="fas fa-user" style="color: #8b5cf6; font-size: 0.85rem;"></i>
                                             Patient Name (optional)
                                         </label>
-                                        <input type="text" id="case-name" class="form-input compact" placeholder="Enter patient name">
+                                        <input type="text" id="case-name" class="form-input compact" placeholder="Enter patient name" style="padding: 0.85rem 1rem; font-size: 0.9rem; border-radius: 8px; border: 1.5px solid #e2e8f0; transition: all 0.2s;" onfocus="this.style.borderColor='#8b5cf6'; this.style.boxShadow='0 0 0 3px rgba(139, 92, 246, 0.1)'" onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
                                     </div>
                                     <div class="form-group compact">
-                                        <label class="form-label compact">
-                                            <i class="fas fa-phone"></i>
+                                        <label class="form-label compact" style="font-size: 0.85rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; color: #475569; font-weight: 600;">
+                                            <i class="fas fa-phone" style="color: #f59e0b; font-size: 0.85rem;"></i>
                                             Patient Contact (optional)
                                         </label>
-                                        <input type="tel" id="case-contact" class="form-input compact" placeholder="Enter patient contact number">
+                                        <input type="tel" id="case-contact" class="form-input compact" placeholder="Enter patient contact number" style="padding: 0.85rem 1rem; font-size: 0.9rem; border-radius: 8px; border: 1.5px solid #e2e8f0; transition: all 0.2s;" onfocus="this.style.borderColor='#f59e0b'; this.style.boxShadow='0 0 0 3px rgba(245, 158, 11, 0.1)'" onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
                                     </div>
                                 </div>
-                                <div class="form-row">
+                                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
                                     <div class="form-group compact">
-                                        <label class="form-label compact">
-                                            <i class="fas fa-calendar-alt"></i>
+                                        <label class="form-label compact" style="font-size: 0.85rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; color: #475569; font-weight: 600;">
+                                            <i class="fas fa-calendar-alt" style="color: #ec4899; font-size: 0.85rem;"></i>
                                             Age
                                         </label>
-                                        <input type="number" id="case-age" class="form-input compact" placeholder="Enter age" min="0" max="120">
+                                        <input type="number" id="case-age" class="form-input compact" placeholder="Enter age" min="0" max="120" style="padding: 0.85rem 1rem; font-size: 0.9rem; border-radius: 8px; border: 1.5px solid #e2e8f0; transition: all 0.2s;" onfocus="this.style.borderColor='#ec4899'; this.style.boxShadow='0 0 0 3px rgba(236, 72, 153, 0.1)'" onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
                                     </div>
                                     <div class="form-group compact">
-                                        <label class="form-label compact">
-                                            <i class="fas fa-birthday-cake"></i>
+                                        <label class="form-label compact" style="font-size: 0.85rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; color: #475569; font-weight: 600;">
+                                            <i class="fas fa-birthday-cake" style="color: #06b6d4; font-size: 0.85rem;"></i>
                                             Date of Birth
                                         </label>
-                                        <input type="date" id="case-date-of-birth" class="form-input compact" max="{{ date('Y-m-d') }}">
+                                        <input type="date" id="case-date-of-birth" class="form-input compact" max="{{ date('Y-m-d') }}" style="padding: 0.85rem 1rem; font-size: 0.9rem; border-radius: 8px; border: 1.5px solid #e2e8f0; transition: all 0.2s;" onfocus="this.style.borderColor='#06b6d4'; this.style.boxShadow='0 0 0 3px rgba(6, 182, 212, 0.1)'" onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
                                     </div>
                                 </div>
                             </section>
 
-                            <section class="case-form-card">
+                            <section class="case-form-card case-form-card-locationDetails">
                                 <div class="case-form-card__title">
                                     <i class="fas fa-route"></i>
                                     Location Details
                                 </div>
-                                <div class="form-row">
+                                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
                                     <div class="form-group compact">
-                                        <label class="form-label compact">
-                                            <i class="fas fa-map-marker-alt"></i>
+                                        <label class="form-label compact" style="font-size: 0.85rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; color: #475569; font-weight: 600;">
+                                            <i class="fas fa-map-marker-alt" style="color: #ef4444; font-size: 0.85rem;"></i>
                                             Pickup Address *
                                         </label>
-                                        <textarea id="case-address" class="form-textarea compact" placeholder="Enter pickup address" rows="2" required></textarea>
+                                        <textarea id="case-address" class="form-textarea compact" placeholder="Enter pickup address" rows="2" required style="padding: 0.85rem 1rem; font-size: 0.9rem; border-radius: 8px; border: 1.5px solid #e2e8f0; transition: all 0.2s; resize: vertical; min-height: 60px;" onfocus="this.style.borderColor='#ef4444'; this.style.boxShadow='0 0 0 3px rgba(239, 68, 68, 0.1)'" onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'"></textarea>
                                     </div>
                                     <div class="form-group compact">
-                                        <label class="form-label compact">
-                                            <i class="fas fa-flag-checkered"></i>
+                                        <label class="form-label compact" style="font-size: 0.85rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; color: #475569; font-weight: 600;">
+                                            <i class="fas fa-flag-checkered" style="color: #9333ea; font-size: 0.85rem;"></i>
                                             Destination (optional)
                                         </label>
-                                        <div id="nearest-hospital-suggestion" style="display: none; background: linear-gradient(135deg, #fef3c7, #fde68a); border: 1px solid #f59e0b; border-radius: 8px; padding: 12px; margin-bottom: 12px; font-size: 0.875rem;">
-                                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                                                <i class="fas fa-hospital" style="color: #d97706;"></i>
-                                                <span style="font-weight: 600; color: #92400e;">Nearest Hospital:</span>
-                                                <span id="nearest-hospital-name" style="color: #78350f; font-weight: 700;"></span>
-                                                <span id="nearest-hospital-distance" style="color: #d97706; margin-left: auto;"></span>
+                                        <textarea id="case-destination" class="form-textarea compact" placeholder="Enter destination address (you can set this later)" rows="2" style="padding: 0.85rem 1rem; font-size: 0.9rem; border-radius: 8px; border: 1.5px solid #e2e8f0; transition: all 0.2s; resize: vertical; min-height: 60px;" onfocus="this.style.borderColor='#9333ea'; this.style.boxShadow='0 0 0 3px rgba(147, 51, 234, 0.1)'" onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'"></textarea>
+                                        <div id="nearest-brgy-suggestion-destination" style="display: none; background: linear-gradient(135deg, #e0e7ff, #c7d2fe); border: 2px solid #6366f1; border-radius: 10px; padding: 14px; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15); margin-top: 10px;">
+                                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                                <div style="width: 36px; height: 36px; background: #6366f1; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                                    <i class="fas fa-building" style="color: white; font-size: 1rem;"></i>
+                                                </div>
+                                                <div style="flex: 1; min-width: 0;">
+                                                    <div style="font-size: 0.75rem; color: #4f46e5; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Nearest Barangay Hall</div>
+                                                    <div style="font-size: 0.9rem; color: #1e293b; font-weight: 700; word-wrap: break-word;" id="nearest-brgy-name-destination"></div>
+                                                </div>
+                                                <div style="background: #6366f1; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; white-space: nowrap; flex-shrink: 0;" id="nearest-brgy-distance-destination"></div>
                                             </div>
-                                            <button type="button" id="use-nearest-hospital-btn" style="width: 100%; background: #f59e0b; color: white; border: none; border-radius: 6px; padding: 8px 12px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#d97706'" onmouseout="this.style.background='#f59e0b'">
-                                                <i class="fas fa-check-circle"></i> Use This Hospital as Destination
+                                            <button type="button" id="use-nearest-brgy-btn-destination" style="width: 100%; background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; border: none; border-radius: 8px; padding: 10px 14px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(99, 102, 241, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(99, 102, 241, 0.3)'">
+                                                <i class="fas fa-check-circle" style="margin-right: 6px;"></i> Use This Barangay Hall
                                             </button>
                                         </div>
-                                        <textarea id="case-destination" class="form-textarea compact" placeholder="Enter destination address (you can set this later)" rows="2"></textarea>
+                                        <div id="nearest-hospital-suggestion" style="display: none; background: linear-gradient(135deg, #fef3c7, #fde68a); border: 2px solid #f59e0b; border-radius: 10px; padding: 14px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15); margin-top: 10px;">
+                                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                                <div style="width: 36px; height: 36px; background: #f59e0b; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                                    <i class="fas fa-hospital" style="color: white; font-size: 1rem;"></i>
+                                                </div>
+                                                <div style="flex: 1; min-width: 0;">
+                                                    <div style="font-size: 0.75rem; color: #d97706; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Nearest Hospital</div>
+                                                    <div style="font-size: 0.9rem; color: #1e293b; font-weight: 700; word-wrap: break-word;" id="nearest-hospital-name"></div>
+                                                </div>
+                                                <div style="background: #f59e0b; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; white-space: nowrap; flex-shrink: 0;" id="nearest-hospital-distance"></div>
+                                            </div>
+                                            <button type="button" id="use-nearest-hospital-btn" style="width: 100%; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; border-radius: 8px; padding: 10px 14px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(245, 158, 11, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(245, 158, 11, 0.3)'">
+                                                <i class="fas fa-check-circle" style="margin-right: 6px;"></i> Use This Hospital
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </section>
 
-                            <section class="case-form-card">
+                            <section class="case-form-card case-form-card-incidentDetails">
                                 <div class="case-form-card__title">
                                     <i class="fas fa-exclamation-triangle"></i>
                                     Incident Details
                                 </div>
-                                <div class="form-row">
+                                <div class="form-row" style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
                                     <div class="form-group compact">
-                                        <label class="form-label compact">
+                                        <label class="form-label compact" style="font-size: 0.85rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; color: #475569; font-weight: 600;">
+                                            <i class="fas fa-tag" style="color: #f97316; font-size: 0.85rem;"></i>
                                             Incident Type
                                         </label>
-                                        <select id="case-type" class="form-select compact">
+                                        <select id="case-type" class="form-select compact" style="padding: 0.85rem 1rem; font-size: 0.9rem; border-radius: 8px; border: 1.5px solid #e2e8f0; transition: all 0.2s; background: white; cursor: pointer;" onfocus="this.style.borderColor='#f97316'; this.style.boxShadow='0 0 0 3px rgba(249, 115, 22, 0.1)'" onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
                                             <option value="">Select type</option>
                                             <option value="VA">VA</option>
                                             <option value="TR">TR</option>
@@ -3928,7 +4301,7 @@ body.fullscreen-mode::before {
                                 </div>
                             </section>
 
-                            <section class="case-form-card">
+                            <section class="case-form-card case-form-card-driverSelection">
                                 <div class="case-form-card__title">
                                     <i class="fas fa-user"></i>
                                     Select A Driver
@@ -4033,7 +4406,6 @@ body.fullscreen-mode::before {
                         </form>
                     </div>
                 </div>
-            </div>
 </div>
 
     </div>
@@ -4268,12 +4640,13 @@ function suggestNearestHospital() {
     let nearestMarkerId = null;
     
     // Iterate through all hospital markers to find the nearest one
+    // Check all hospitals regardless of filter visibility for suggestions
     Object.keys(hospitalMarkers).forEach(markerId => {
         const hospitalMarker = hospitalMarkers[markerId];
         const hospitalData = hospitalDataMap[markerId];
         
-        // Skip if marker is not on the map or data is missing
-        if (!map.hasLayer(hospitalMarker) || !hospitalData) {
+        // Skip if data is missing (but check all markers even if hidden by filter)
+        if (!hospitalData) {
             return;
         }
         
@@ -4373,6 +4746,11 @@ function suggestNearestHospital() {
                     // Update the connection line between pickup and destination
                     updateConnectionLine();
                     
+                    // Show nearest barangay hall suggestion for destination (based on pickup location, with delay to ensure markers are loaded)
+                    setTimeout(() => {
+                        showNearestBrgyForDestination();
+                    }, 500);
+                    
                     // Fit map to show both pins if both exist
                     if (currentPinMarker && currentDestinationMarker) {
                         const group = new L.featureGroup([currentPinMarker, currentDestinationMarker]);
@@ -4388,6 +4766,317 @@ function suggestNearestHospital() {
         suggestionEl.style.display = 'none';
         // Clear stored hospital data when no hospital found
         window.nearestHospitalData = null;
+    }
+}
+
+/**
+ * Suggests the nearest barangay hall to the pickup pin location
+ * This function finds the barangay hall marker closest to the blue pickup pin
+ */
+function suggestNearestBrgy() {
+    // Get pickup pin coordinates
+    const pickupLat = window.clickedLatitude;
+    const pickupLng = window.clickedLongitude;
+    
+    // Check if pickup pin exists
+    if (!pickupLat || !pickupLng) {
+        // Hide suggestion if no pickup pin
+        const suggestionEl = document.getElementById('nearest-brgy-suggestion');
+        if (suggestionEl) {
+            suggestionEl.style.display = 'none';
+        }
+        return;
+    }
+    
+    // Check if barangay hall markers exist
+    if (!brgyMarkers || Object.keys(brgyMarkers).length === 0) {
+        // Hide suggestion if no barangay halls available
+        const suggestionEl = document.getElementById('nearest-brgy-suggestion');
+        if (suggestionEl) {
+            suggestionEl.style.display = 'none';
+        }
+        return;
+    }
+    
+    let nearestBrgy = null;
+    let nearestDistance = Infinity;
+    let nearestMarkerId = null;
+    
+    // Iterate through all barangay hall markers to find the nearest one
+    // Check all barangay halls regardless of filter visibility for suggestions
+    Object.keys(brgyMarkers).forEach(markerId => {
+        const brgyMarker = brgyMarkers[markerId];
+        const brgyData = brgyDataMap[markerId];
+        
+        // Skip if data is missing (but check all markers even if hidden by filter)
+        if (!brgyData) {
+            return;
+        }
+        
+        try {
+            const brgyLat = brgyData.lat;
+            const brgyLng = brgyData.lng;
+            const distance = calculateDistance(pickupLat, pickupLng, brgyLat, brgyLng);
+            
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestMarkerId = markerId;
+                nearestBrgy = {
+                    markerId: markerId,
+                    name: brgyData.name,
+                    lat: brgyLat,
+                    lng: brgyLng,
+                    address: brgyData.address || '',
+                    distance: distance
+                };
+            }
+        } catch (e) {
+            console.warn(`Error calculating distance for barangay hall ${markerId}:`, e);
+        }
+    });
+    
+    // Store nearest barangay hall globally for button click handler
+    window.nearestBrgyData = nearestBrgy;
+    
+    // Display suggestion if nearest barangay hall found
+    const suggestionEl = document.getElementById('nearest-brgy-suggestion');
+    const brgyNameEl = document.getElementById('nearest-brgy-name');
+    const distanceEl = document.getElementById('nearest-brgy-distance');
+    const useBtn = document.getElementById('use-nearest-brgy-btn');
+    
+    if (nearestBrgy && suggestionEl && brgyNameEl && distanceEl) {
+        // Format distance (convert meters to kilometers if > 1000m)
+        let distanceText;
+        if (nearestDistance < 1000) {
+            distanceText = `${Math.round(nearestDistance)}m away`;
+        } else {
+            distanceText = `${(nearestDistance / 1000).toFixed(2)}km away`;
+        }
+        
+        brgyNameEl.textContent = nearestBrgy.name;
+        distanceEl.textContent = distanceText;
+        suggestionEl.style.display = 'block';
+        
+        // Store nearest barangay hall data for the use button
+        if (useBtn) {
+            useBtn.onclick = function() {
+                const nearestBrgy = window.nearestBrgyData;
+                const destinationField = document.getElementById('case-destination');
+                if (destinationField && nearestBrgy) {
+                    // Use barangay hall name and address if available
+                    let destinationText = nearestBrgy.name;
+                    if (nearestBrgy.address) {
+                        destinationText += `, ${nearestBrgy.address}`;
+                    }
+                    destinationField.value = destinationText;
+                    
+                    // Place purple destination pin on the barangay hall coordinates
+                    if (currentDestinationMarker) {
+                        map.removeLayer(currentDestinationMarker);
+                    }
+                    
+                    window.destinationLatitude = nearestBrgy.lat;
+                    window.destinationLongitude = nearestBrgy.lng;
+                    
+                    currentDestinationMarker = L.marker([nearestBrgy.lat, nearestBrgy.lng], { 
+                        icon: destinationIcon, 
+                        draggable: true,
+                        zIndexOffset: 1000
+                    }).addTo(map);
+                    
+                    if (typeof window.currentCaseNumber !== 'undefined' && window.currentCaseNumber !== null) {
+                        currentDestinationMarker.bindTooltip(`Case ${window.currentCaseNumber} Destination`, {
+                            permanent: true,
+                            direction: 'bottom',
+                            offset: [0, 18],
+                            className: 'case-label'
+                        });
+                    }
+                    
+                    currentDestinationMarker.on('dragend', function(e) {
+                        const newPos = e.target.getLatLng();
+                        window.destinationLatitude = newPos.lat;
+                        window.destinationLongitude = newPos.lng;
+                        setTimeout(() => setAddressFromLatLng(window.destinationLatitude, window.destinationLongitude, 'destination'), 0);
+                        updateConnectionLine();
+                    });
+                    
+                    updateConnectionLine();
+                    
+                    if (currentPinMarker && currentDestinationMarker) {
+                        const group = new L.featureGroup([currentPinMarker, currentDestinationMarker]);
+                        map.fitBounds(group.getBounds().pad(0.1));
+                    } else if (currentDestinationMarker) {
+                        map.setView([nearestBrgy.lat, nearestBrgy.lng], 15);
+                    }
+                }
+            };
+        }
+    } else if (suggestionEl) {
+        suggestionEl.style.display = 'none';
+        window.nearestBrgyData = null;
+    }
+}
+
+/**
+ * Shows nearest barangay hall suggestion for destination field
+ * Based on pickup location (similar to hospital recommendation)
+ */
+function showNearestBrgyForDestination() {
+    // Get pickup pin coordinates (not destination coordinates)
+    const pickupLat = window.clickedLatitude;
+    const pickupLng = window.clickedLongitude;
+    
+    // Check if pickup pin exists
+    if (!pickupLat || !pickupLng) {
+        // Hide suggestion if no pickup pin
+        const suggestionEl = document.getElementById('nearest-brgy-suggestion-destination');
+        if (suggestionEl) {
+            suggestionEl.style.display = 'none';
+        }
+        return;
+    }
+    
+    // Check if barangay hall markers exist
+    if (!brgyMarkers || Object.keys(brgyMarkers).length === 0) {
+        // Hide suggestion if no barangay halls available
+        const suggestionEl = document.getElementById('nearest-brgy-suggestion-destination');
+        if (suggestionEl) {
+            suggestionEl.style.display = 'none';
+        }
+        return;
+    }
+    
+    // Check if barangay hall data map exists
+    if (!brgyDataMap || Object.keys(brgyDataMap).length === 0) {
+        // Hide suggestion if no barangay hall data available
+        const suggestionEl = document.getElementById('nearest-brgy-suggestion-destination');
+        if (suggestionEl) {
+            suggestionEl.style.display = 'none';
+        }
+        return;
+    }
+    
+    let nearestBrgy = null;
+    let nearestDistance = Infinity;
+    
+    // Iterate through all barangay hall markers to find the nearest one to pickup location
+    // Check all barangay halls regardless of filter visibility for suggestions
+    Object.keys(brgyMarkers).forEach(markerId => {
+        const brgyMarker = brgyMarkers[markerId];
+        const brgyData = brgyDataMap[markerId];
+        
+        // Skip if data is missing (but check all markers even if hidden by filter)
+        if (!brgyData) {
+            return;
+        }
+        
+        try {
+            const brgyLat = brgyData.lat;
+            const brgyLng = brgyData.lng;
+            const distance = calculateDistance(pickupLat, pickupLng, brgyLat, brgyLng);
+            
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestBrgy = {
+                    markerId: markerId,
+                    name: brgyData.name,
+                    lat: brgyLat,
+                    lng: brgyLng,
+                    address: brgyData.address || '',
+                    distance: distance
+                };
+            }
+        } catch (e) {
+            console.warn(`Error calculating distance for barangay hall ${markerId}:`, e);
+        }
+    });
+    
+    // Store nearest barangay hall globally for button click handler
+    window.nearestBrgyDataDestination = nearestBrgy;
+    
+    // Display suggestion if nearest barangay hall found
+    const suggestionEl = document.getElementById('nearest-brgy-suggestion-destination');
+    const brgyNameEl = document.getElementById('nearest-brgy-name-destination');
+    const distanceEl = document.getElementById('nearest-brgy-distance-destination');
+    const useBtn = document.getElementById('use-nearest-brgy-btn-destination');
+    
+    if (nearestBrgy && suggestionEl && brgyNameEl && distanceEl) {
+        // Format distance (convert meters to kilometers if > 1000m)
+        let distanceText;
+        if (nearestDistance < 1000) {
+            distanceText = `${Math.round(nearestDistance)}m away`;
+        } else {
+            distanceText = `${(nearestDistance / 1000).toFixed(2)}km away`;
+        }
+        
+        brgyNameEl.textContent = nearestBrgy.name;
+        distanceEl.textContent = distanceText;
+        suggestionEl.style.display = 'block';
+        
+        // Store nearest barangay hall data for the use button
+        if (useBtn) {
+            useBtn.onclick = function() {
+                const nearestBrgy = window.nearestBrgyDataDestination;
+                const destinationField = document.getElementById('case-destination');
+                if (destinationField && nearestBrgy) {
+                    // Get current destination field value
+                    const currentValue = destinationField.value.trim();
+                    
+                    // Use barangay hall name and address if available
+                    let destinationText = nearestBrgy.name;
+                    if (nearestBrgy.address) {
+                        destinationText += `, ${nearestBrgy.address}`;
+                    }
+                    destinationText += ' - BRGY HALL';
+                    
+                    // Append to existing value if it exists, otherwise set it
+                    if (currentValue) {
+                        destinationField.value = currentValue + ' ' + destinationText;
+                    } else {
+                        destinationField.value = destinationText;
+                    }
+                    
+                    // Place purple destination pin on the barangay hall coordinates
+                    if (currentDestinationMarker) {
+                        map.removeLayer(currentDestinationMarker);
+                    }
+                    
+                    window.destinationLatitude = nearestBrgy.lat;
+                    window.destinationLongitude = nearestBrgy.lng;
+                    
+                    currentDestinationMarker = L.marker([nearestBrgy.lat, nearestBrgy.lng], { 
+                        icon: destinationIcon, 
+                        draggable: true,
+                        zIndexOffset: 1000
+                    }).addTo(map);
+                    
+                    if (typeof window.currentCaseNumber !== 'undefined' && window.currentCaseNumber !== null) {
+                        currentDestinationMarker.bindTooltip(`Case ${window.currentCaseNumber} Destination`, {
+                            permanent: true,
+                            direction: 'bottom',
+                            offset: [0, 18],
+                            className: 'case-label'
+                        });
+                    }
+                    
+                    currentDestinationMarker.on('dragend', function(e) {
+                        const newPos = e.target.getLatLng();
+                        window.destinationLatitude = newPos.lat;
+                        window.destinationLongitude = newPos.lng;
+                        setTimeout(() => setAddressFromLatLng(window.destinationLatitude, window.destinationLongitude, 'destination'), 0);
+                        updateConnectionLine();
+                    });
+                    
+                    updateConnectionLine();
+                    // Show nearest barangay hall suggestion for destination (based on pickup location)
+                    showNearestBrgyForDestination();
+                }
+            };
+        }
+    } else if (suggestionEl) {
+        suggestionEl.style.display = 'none';
+        window.nearestBrgyDataDestination = null;
     }
 }
 
@@ -4681,6 +5370,34 @@ document.getElementById('filterPanel')?.addEventListener('click', function(event
 document.getElementById('filterToggle')?.addEventListener('click', function(event) {
     event.preventDefault();
     event.stopPropagation();
+});
+
+// Prevent map clicks when interacting with filter panel
+document.getElementById('map-filters-panel')?.addEventListener('click', function(event) {
+    event.stopPropagation();
+});
+document.getElementById('map-filters-panel')?.addEventListener('mousedown', function(event) {
+    event.stopPropagation();
+});
+document.getElementById('map-filters-toggle')?.addEventListener('click', function(event) {
+    event.stopPropagation();
+});
+document.getElementById('map-filters-toggle')?.addEventListener('mousedown', function(event) {
+    event.stopPropagation();
+});
+
+// Prevent map clicks when modals are open - add handlers to modal content
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click handlers to all modal content divs
+    const modalContents = document.querySelectorAll('.modal-content');
+    modalContents.forEach(modalContent => {
+        modalContent.addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+        modalContent.addEventListener('mousedown', function(event) {
+            event.stopPropagation();
+        });
+    });
 });
 
 // Row GPS Control button toggles the existing GPS control panel (fullscreen only)
@@ -6024,6 +6741,11 @@ let currentDestinationGeofenceCircle = null; // Geo fence circle for current des
 let isMovingPin = false; // Flag for pin movement mode
 let hospitalMarkers = {}; // Store hospital markers
 let hospitalDataMap = {}; // Store hospital data (name, lat, lng) mapped by marker ID
+let brgyMarkers = {}; // Store barangay hall markers
+let brgyDataMap = {}; // Store barangay hall data (name, lat, lng, city) mapped by marker ID
+let showDasmaBrgy = false; // Filter: show Dasma barangays
+let showSilangBrgy = false; // Filter: show Silang barangays
+let showHospitals = false; // Filter: show hospitals
 // ===== TIMING CONSTANTS (standardized across system) =====
 const GPS_TIMING = {
     STALE_THRESHOLD_SEC: 120,        // 2 minutes = marker shows as "stale" (grayed)
@@ -6334,10 +7056,29 @@ function loadKnownHospitals() {
 // Ensure hospitals and base marker are always visible (regardless of filter)
 function ensureStaticMarkersVisible() {
   try {
-    // Ensure all hospital markers are visible
+    // Ensure hospital markers are visible based on filter
     Object.values(hospitalMarkers || {}).forEach(marker => {
-      if (marker && !map.hasLayer(marker)) {
-        try { marker.addTo(map); } catch(_){}
+      if (marker) {
+        if (showHospitals && !map.hasLayer(marker)) {
+          try { marker.addTo(map); } catch(_){}
+        } else if (!showHospitals && map.hasLayer(marker)) {
+          try { map.removeLayer(marker); } catch(_){}
+        }
+      }
+    });
+    
+    // Ensure barangay hall markers are visible based on filters
+    Object.keys(brgyMarkers || {}).forEach(markerId => {
+      const marker = brgyMarkers[markerId];
+      const brgyData = brgyDataMap[markerId];
+      if (marker && brgyData) {
+        const shouldShow = (brgyData.city === 'Dasma' && showDasmaBrgy) || 
+                          (brgyData.city === 'Silang' && showSilangBrgy);
+        if (shouldShow && !map.hasLayer(marker)) {
+          try { marker.addTo(map); } catch(_){}
+        } else if (!shouldShow && map.hasLayer(marker)) {
+          try { map.removeLayer(marker); } catch(_){}
+        }
       }
     });
     
@@ -6389,13 +7130,408 @@ function addBaseMarker() {
   ensureStaticMarkersVisible();
 }
 
+// Barangay Hall marker icon with label below - Blue with B
+function createBrgyIcon(brgyName) {
+  const abbreviation = abbreviateBrgyName(brgyName);
+  const html = `
+    <div class="brgy-marker-wrapper">
+      <div class="brgy-marker-icon" data-full-name="${brgyName || 'Barangay Hall'}" style="width:32px; height:32px; background:#2563eb; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(37,99,235,0.5); border:3px solid #fff; cursor:pointer; position:relative; margin: 0 auto;">
+        <div class="brgy-icon-css">B</div>
+        <div class="brgy-hover-tooltip">${brgyName || 'Barangay Hall'}</div>
+      </div>
+      <div class="brgy-label">${abbreviation}</div>
+    </div>
+  `;
+  return L.divIcon({ className: 'brgy-div-icon', html, iconSize: [50, 50], iconAnchor: [25, 32] });
+}
+
+// Function to abbreviate barangay name
+function abbreviateBrgyName(fullName) {
+  if (!fullName || typeof fullName !== 'string') return 'B';
+  
+  // Remove common words that shouldn't be abbreviated
+  const commonWords = ['of', 'the', 'ng', 'and', 'at', 'Barangay', 'Brgy', 'Brgy.'];
+  const words = fullName.trim().split(/\s+/).filter(w => w.length > 0);
+  
+  if (words.length === 1) {
+    // Single word: take first 3-4 letters
+    return fullName.substring(0, 4).toUpperCase();
+  }
+  
+  // Multiple words: take first letter of each word, but skip common words
+  const importantWords = words.filter(w => !commonWords.includes(w.toLowerCase()));
+  
+  if (importantWords.length <= 3) {
+    // Take all first letters if 3 or fewer important words
+    return importantWords.map(w => w[0].toUpperCase()).join('');
+  } else {
+    // Take first 3 words' first letters
+    return importantWords.slice(0, 3).map(w => w[0].toUpperCase()).join('');
+  }
+}
+
+// Load Dasma barangay halls
+function loadDasmaBrgyHalls() {
+  const dasmaBrgyHalls = [
+    { name: 'Burol Main', lat: 14.3239, lng: 120.9373, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Burol I', lat: 14.3262, lng: 120.9405, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Burol II', lat: 14.3291, lng: 120.9442, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Burol III', lat: 14.3315, lng: 120.9469, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Datu Esmael', lat: 14.3354, lng: 120.9412, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Emmanuel Bergado I', lat: 14.3184, lng: 120.9348, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Emmanuel Bergado II', lat: 14.3169, lng: 120.9315, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Fatima I', lat: 14.3225, lng: 120.9312, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Fatima II', lat: 14.3247, lng: 120.9294, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Fatima III', lat: 14.3271, lng: 120.9279, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'H-2 (Sta. Veronica)', lat: 14.3289, lng: 120.9335, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Langkaan I', lat: 14.3156, lng: 120.9508, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Langkaan II', lat: 14.3128, lng: 120.9534, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Luzviminda I', lat: 14.3085, lng: 120.9376, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Luzviminda II', lat: 14.3062, lng: 120.9348, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Paliparan I', lat: 14.2994, lng: 120.9891, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Paliparan II', lat: 14.3032, lng: 120.9939, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Paliparan III', lat: 14.3068, lng: 120.9976, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Sabang', lat: 14.3342, lng: 120.9347, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Salawag', lat: 14.3065, lng: 120.9602, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Salitran I', lat: 14.3248, lng: 120.9601, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Salitran II', lat: 14.3275, lng: 120.9639, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Salitran III', lat: 14.3304, lng: 120.9678, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Salitran IV', lat: 14.3329, lng: 120.9715, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Sampaloc I', lat: 14.3336, lng: 120.9578, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Sampaloc II', lat: 14.3364, lng: 120.9609, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Sampaloc III', lat: 14.3391, lng: 120.9642, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Sampaloc IV', lat: 14.3418, lng: 120.9675, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Sampaloc V', lat: 14.3445, lng: 120.9708, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Agustin I', lat: 14.3147, lng: 120.9449, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Agustin II', lat: 14.3121, lng: 120.9416, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Agustin III', lat: 14.3098, lng: 120.9382, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Andres I', lat: 14.3192, lng: 120.9496, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Andres II', lat: 14.3171, lng: 120.9463, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Antonio de Padua I', lat: 14.3268, lng: 120.9543, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Antonio de Padua II', lat: 14.3289, lng: 120.9575, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Dionisio (Brgy 1)', lat: 14.3314, lng: 120.9369, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Esteban (Brgy 4)', lat: 14.3339, lng: 120.9398, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Francisco I', lat: 14.3397, lng: 120.9465, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Francisco II', lat: 14.3425, lng: 120.9498, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Isidro Labrador I', lat: 14.3214, lng: 120.9265, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Isidro Labrador II', lat: 14.3192, lng: 120.9237, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Jose', lat: 14.3347, lng: 120.9442, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Juan', lat: 14.3379, lng: 120.9474, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Lorenzo Ruiz I', lat: 14.3281, lng: 120.9512, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Lorenzo Ruiz II', lat: 14.3306, lng: 120.9539, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Luis I', lat: 14.3365, lng: 120.9526, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Luis II', lat: 14.3392, lng: 120.9554, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Manuel I', lat: 14.3418, lng: 120.9589, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Manuel II', lat: 14.3445, lng: 120.9618, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Mateo', lat: 14.3471, lng: 120.9652, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Miguel I', lat: 14.3203, lng: 120.9298, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Miguel II', lat: 14.3227, lng: 120.9326, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Nicolas I', lat: 14.3251, lng: 120.9259, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Nicolas II', lat: 14.3278, lng: 120.9286, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Roque', lat: 14.3356, lng: 120.9315, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'San Simon', lat: 14.3384, lng: 120.9346, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Santa Cristina I', lat: 14.3468, lng: 120.9695, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Santa Cristina II', lat: 14.3495, lng: 120.9728, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Santa Cruz I', lat: 14.3437, lng: 120.9611, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Santa Cruz II', lat: 14.3464, lng: 120.9644, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Santa Fe', lat: 14.3512, lng: 120.9763, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Santa Lucia', lat: 14.3487, lng: 120.9689, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Santa Maria', lat: 14.3529, lng: 120.9795, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Santo Cristo', lat: 14.3322, lng: 120.9425, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Santo Niño I', lat: 14.3189, lng: 120.9273, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Santo Niño II', lat: 14.3164, lng: 120.9248, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Zone I (Poblacion)', lat: 14.3298, lng: 120.9370, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Zone I-A (Poblacion)', lat: 14.3311, lng: 120.9386, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Zone II (Poblacion)', lat: 14.3285, lng: 120.9352, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Zone III (Poblacion)', lat: 14.3272, lng: 120.9334, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Zone IV (Poblacion)', lat: 14.3259, lng: 120.9316, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Victoria Reyes', lat: 14.3109, lng: 120.9668, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Saint Peter I', lat: 14.3047, lng: 120.9729, address: 'Dasmariñas City, Cavite', city: 'Dasma' },
+    { name: 'Saint Peter II', lat: 14.3024, lng: 120.9696, address: 'Dasmariñas City, Cavite', city: 'Dasma' }
+  ];
+  
+  // Clear existing Dasma barangay markers
+  Object.keys(brgyMarkers || {}).forEach(markerId => {
+    const brgyData = brgyDataMap[markerId];
+    if (brgyData && brgyData.city === 'Dasma') {
+      const marker = brgyMarkers[markerId];
+      if (marker && map.hasLayer(marker)) {
+        map.removeLayer(marker);
+      }
+      delete brgyMarkers[markerId];
+      delete brgyDataMap[markerId];
+    }
+  });
+  
+  dasmaBrgyHalls.forEach((brgy, index) => {
+    const marker = L.marker([brgy.lat, brgy.lng], {
+      icon: createBrgyIcon(brgy.name),
+      zIndexOffset: 500,
+      interactive: true
+    });
+    
+    // Add click handler to set as destination
+    marker.on('click', function() {
+      const destinationField = document.getElementById('case-destination');
+      if (destinationField) {
+        let destinationText = brgy.name;
+        if (brgy.address) {
+          destinationText += `, ${brgy.address}`;
+        }
+        destinationField.value = destinationText;
+        
+        // Place purple destination pin on the barangay coordinates
+        if (currentDestinationMarker) {
+          map.removeLayer(currentDestinationMarker);
+        }
+        
+        window.destinationLatitude = brgy.lat;
+        window.destinationLongitude = brgy.lng;
+        
+        currentDestinationMarker = L.marker([brgy.lat, brgy.lng], { 
+          icon: destinationIcon, 
+          draggable: true,
+          zIndexOffset: 1000
+        }).addTo(map);
+        
+        if (typeof window.currentCaseNumber !== 'undefined' && window.currentCaseNumber !== null) {
+          currentDestinationMarker.bindTooltip(`Case ${window.currentCaseNumber} Destination`, {
+            permanent: true,
+            direction: 'bottom',
+            offset: [0, 18],
+            className: 'case-label'
+          });
+        }
+        
+        currentDestinationMarker.on('dragend', function(e) {
+          const newPos = e.target.getLatLng();
+          window.destinationLatitude = newPos.lat;
+          window.destinationLongitude = newPos.lng;
+          setTimeout(() => setAddressFromLatLng(window.destinationLatitude, window.destinationLongitude, 'destination'), 0);
+          updateConnectionLine();
+        });
+        
+        updateConnectionLine();
+        
+        // Show nearest barangay hall suggestion for destination (based on pickup location, with delay to ensure markers are loaded)
+        setTimeout(() => {
+          showNearestBrgyForDestination();
+        }, 500);
+        
+        if (currentPinMarker && currentDestinationMarker) {
+          const group = new L.featureGroup([currentPinMarker, currentDestinationMarker]);
+          map.fitBounds(group.getBounds().pad(0.1));
+        } else if (currentDestinationMarker) {
+          map.setView([brgy.lat, brgy.lng], 15);
+        }
+      }
+    });
+    
+    const markerId = `brgy_dasma_${index}`;
+    brgyMarkers[markerId] = marker;
+    brgyDataMap[markerId] = {
+      name: brgy.name,
+      lat: brgy.lat,
+      lng: brgy.lng,
+      address: brgy.address,
+      city: brgy.city
+    };
+    
+    // Add to map if filter allows
+    if (showDasmaBrgy) {
+      marker.addTo(map);
+    }
+  });
+  
+  console.log(`Loaded ${dasmaBrgyHalls.length} Dasma barangay halls`);
+  ensureStaticMarkersVisible();
+}
+
+// Load Silang barangay halls
+function loadSilangBrgyHalls() {
+  const silangBrgyHalls = [
+    { name: 'Acacia', lat: 14.2776, lng: 120.9918, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Adlas', lat: 14.2568, lng: 120.9655, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Anahaw 1', lat: 14.2740, lng: 120.9900, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Anahaw 2', lat: 14.2700, lng: 120.9900, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Balite 1', lat: 14.2384, lng: 120.9890, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Balite 2', lat: 14.2300, lng: 120.9890, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Balubad', lat: 14.2400, lng: 120.9800, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Banaba', lat: 14.2650, lng: 120.9900, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Batas', lat: 14.2100, lng: 120.9800, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Biga 1', lat: 14.2700, lng: 120.9700, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Biluso', lat: 14.2400, lng: 120.9600, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Buho', lat: 14.2200, lng: 120.9800, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Bucal', lat: 14.2200, lng: 120.9700, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Bulihan', lat: 14.2600, lng: 120.9900, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Cabangaan', lat: 14.2150, lng: 120.9800, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Carmen', lat: 14.2200, lng: 120.9900, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Hukay', lat: 14.2300, lng: 120.9700, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Iba', lat: 14.2230, lng: 120.9750, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Inchican', lat: 14.2100, lng: 120.9700, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Ipil 1', lat: 14.2200, lng: 120.9600, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Ipil 2', lat: 14.2150, lng: 120.9550, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Kalubkob', lat: 14.2000, lng: 120.9600, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Kaong', lat: 14.2220, lng: 120.9900, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Lalaan 1', lat: 14.1800, lng: 120.9600, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Lalaan 2', lat: 14.1750, lng: 120.9550, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Litlit', lat: 14.2051, lng: 120.9432, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Lucsuhin', lat: 14.2000, lng: 120.9700, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Lumil', lat: 14.2100, lng: 120.9400, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Maguyam', lat: 14.2550, lng: 120.9800, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Malabag', lat: 14.2000, lng: 120.9800, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Mataas na Burol', lat: 14.2200, lng: 120.9500, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Munting Ilog', lat: 14.1900, lng: 120.9700, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Paligawan', lat: 14.2400, lng: 120.9600, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Pasong Langka', lat: 14.2000, lng: 120.9600, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Poblacion 1', lat: 14.2246, lng: 120.9741, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Poblacion 2', lat: 14.2246, lng: 120.9741, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Poblacion 3', lat: 14.2224, lng: 120.9735, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Poblacion 4', lat: 14.2213, lng: 120.9718, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Poblacion 5', lat: 14.2230, lng: 120.9740, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Pooc 1', lat: 14.1900, lng: 120.9600, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Pooc 2', lat: 14.1850, lng: 120.9550, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Pulong Bunga', lat: 14.2000, lng: 120.9600, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Pulong Saging', lat: 14.2000, lng: 120.9550, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Puting Kahoy', lat: 14.2100, lng: 120.9700, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Sabutan', lat: 14.2200, lng: 120.9850, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'San Miguel 1', lat: 14.2200, lng: 120.9700, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'San Miguel 2', lat: 14.2250, lng: 120.9700, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'San Vicente 1', lat: 14.2300, lng: 120.9750, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'San Vicente 2', lat: 14.2350, lng: 120.9750, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Santol', lat: 14.2200, lng: 120.9800, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Tartaria', lat: 14.2300, lng: 120.9700, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Tibig', lat: 14.2274, lng: 121.0003, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Toledo', lat: 14.2150, lng: 120.9700, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Tubuan 1', lat: 14.2000, lng: 120.9700, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Tubuan 2', lat: 14.1900, lng: 120.9600, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Tubuan 3', lat: 14.1850, lng: 120.9550, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Ulat', lat: 14.2100, lng: 120.9700, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Yakal', lat: 14.2600, lng: 120.9700, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Narra 1', lat: 14.2700, lng: 120.9900, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Narra 2', lat: 14.2600, lng: 120.9900, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Narra 3', lat: 14.2600, lng: 120.9950, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Hoyo', lat: 14.2000, lng: 120.9500, address: 'Silang, Cavite', city: 'Silang' },
+    { name: 'Malaking Tatyao', lat: 14.2500, lng: 120.9800, address: 'Silang, Cavite', city: 'Silang' }
+  ];
+  
+  // Clear existing Silang barangay markers
+  Object.keys(brgyMarkers || {}).forEach(markerId => {
+    const brgyData = brgyDataMap[markerId];
+    if (brgyData && brgyData.city === 'Silang') {
+      const marker = brgyMarkers[markerId];
+      if (marker && map.hasLayer(marker)) {
+        map.removeLayer(marker);
+      }
+      delete brgyMarkers[markerId];
+      delete brgyDataMap[markerId];
+    }
+  });
+  
+  silangBrgyHalls.forEach((brgy, index) => {
+    const marker = L.marker([brgy.lat, brgy.lng], {
+      icon: createBrgyIcon(brgy.name),
+      zIndexOffset: 500,
+      interactive: true
+    });
+    
+    // Add click handler to set as destination
+    marker.on('click', function() {
+      const destinationField = document.getElementById('case-destination');
+      if (destinationField) {
+        let destinationText = brgy.name;
+        if (brgy.address) {
+          destinationText += `, ${brgy.address}`;
+        }
+        destinationField.value = destinationText;
+        
+        // Place purple destination pin on the barangay coordinates
+        if (currentDestinationMarker) {
+          map.removeLayer(currentDestinationMarker);
+        }
+        
+        window.destinationLatitude = brgy.lat;
+        window.destinationLongitude = brgy.lng;
+        
+        currentDestinationMarker = L.marker([brgy.lat, brgy.lng], { 
+          icon: destinationIcon, 
+          draggable: true,
+          zIndexOffset: 1000
+        }).addTo(map);
+        
+        if (typeof window.currentCaseNumber !== 'undefined' && window.currentCaseNumber !== null) {
+          currentDestinationMarker.bindTooltip(`Case ${window.currentCaseNumber} Destination`, {
+            permanent: true,
+            direction: 'bottom',
+            offset: [0, 18],
+            className: 'case-label'
+          });
+        }
+        
+        currentDestinationMarker.on('dragend', function(e) {
+          const newPos = e.target.getLatLng();
+          window.destinationLatitude = newPos.lat;
+          window.destinationLongitude = newPos.lng;
+          setTimeout(() => setAddressFromLatLng(window.destinationLatitude, window.destinationLongitude, 'destination'), 0);
+          updateConnectionLine();
+        });
+        
+        updateConnectionLine();
+        
+        // Show nearest barangay hall suggestion for destination (based on pickup location, with delay to ensure markers are loaded)
+        setTimeout(() => {
+          showNearestBrgyForDestination();
+        }, 500);
+        
+        if (currentPinMarker && currentDestinationMarker) {
+          const group = new L.featureGroup([currentPinMarker, currentDestinationMarker]);
+          map.fitBounds(group.getBounds().pad(0.1));
+        } else if (currentDestinationMarker) {
+          map.setView([brgy.lat, brgy.lng], 15);
+        }
+      }
+    });
+    
+    const markerId = `brgy_silang_${index}`;
+    brgyMarkers[markerId] = marker;
+    brgyDataMap[markerId] = {
+      name: brgy.name,
+      lat: brgy.lat,
+      lng: brgy.lng,
+      address: brgy.address,
+      city: brgy.city
+    };
+    
+    // Add to map if filter allows
+    if (showSilangBrgy) {
+      marker.addTo(map);
+    }
+  });
+  
+  console.log(`Loaded ${silangBrgyHalls.length} Silang barangay halls`);
+  ensureStaticMarkersVisible();
+}
+
+// Initialize filter checkboxes
+document.addEventListener('DOMContentLoaded', function() {
+  const hospitalCheckbox = document.getElementById('filter-hospitals');
+  const dasmaCheckbox = document.getElementById('filter-dasma-brgy');
+  const silangCheckbox = document.getElementById('filter-silang-brgy');
+  
+  if (hospitalCheckbox) hospitalCheckbox.checked = showHospitals;
+  if (dasmaCheckbox) dasmaCheckbox.checked = showDasmaBrgy;
+  if (silangCheckbox) silangCheckbox.checked = showSilangBrgy;
+});
+
 // Load hospitals after map initialization
 setTimeout(() => {
   try {
     loadHospitals();
+    loadDasmaBrgyHalls();
+    loadSilangBrgyHalls();
     addBaseMarker(); // Add base marker
   } catch (e) {
-    console.warn('Failed to load hospitals:', e);
+    console.warn('Failed to load hospitals or barangay halls:', e);
   }
 }, 500);
 let driverMetaByAmbId = {}; // ambulanceId -> { label, photoUrl }
@@ -6531,6 +7667,45 @@ function applyDriverVisibility(){
         // Ensure hospitals and base marker are always visible (not affected by filter)
         ensureStaticMarkersVisible();
     } catch(_){}
+}
+
+// Filter toggle functions
+function toggleFiltersPanel() {
+    const panel = document.getElementById('map-filters-panel');
+    const toggle = document.getElementById('map-filters-toggle');
+    if (panel && toggle) {
+        if (panel.style.display === 'none' || !panel.style.display) {
+            panel.style.display = 'block';
+            toggle.style.display = 'none';
+        } else {
+            panel.style.display = 'none';
+            toggle.style.display = 'flex';
+        }
+    }
+}
+
+function toggleHospitalFilter() {
+    const checkbox = document.getElementById('filter-hospitals');
+    if (checkbox) {
+        showHospitals = checkbox.checked;
+        ensureStaticMarkersVisible();
+    }
+}
+
+function toggleDasmaBrgyFilter() {
+    const checkbox = document.getElementById('filter-dasma-brgy');
+    if (checkbox) {
+        showDasmaBrgy = checkbox.checked;
+        ensureStaticMarkersVisible();
+    }
+}
+
+function toggleSilangBrgyFilter() {
+    const checkbox = document.getElementById('filter-silang-brgy');
+    if (checkbox) {
+        showSilangBrgy = checkbox.checked;
+        ensureStaticMarkersVisible();
+    }
 }
 
 // ===== Status bar counters =====
@@ -7011,6 +8186,8 @@ async function geocodeAndPinFromAddress(address, type = 'pickup') {
                 // Suggest nearest driver and hospital when pin is moved
                 suggestNearestDriver();
                 suggestNearestHospital();
+                suggestNearestBrgy();
+                showNearestBrgyForDestination();
             });
 
             // Open case creation and fill pickup address
@@ -7022,6 +8199,8 @@ async function geocodeAndPinFromAddress(address, type = 'pickup') {
             setTimeout(() => {
                 suggestNearestDriver();
                 suggestNearestHospital();
+                suggestNearestBrgy();
+                showNearestBrgyForDestination();
             }, 500);
             
         } else if (type === 'destination') {
@@ -7092,6 +8271,11 @@ async function geocodeAndPinFromAddress(address, type = 'pickup') {
             // Fill destination address
             const destField = document.getElementById('case-destination');
             if (destField) destField.value = best.display_name || address;
+            
+            // Show nearest barangay hall suggestion for destination (based on pickup location, with delay to ensure markers are loaded)
+            setTimeout(() => {
+                showNearestBrgyForDestination();
+            }, 500);
         }
 
         // Update the connection line between pickup and destination
@@ -7501,6 +8685,11 @@ map.on('click', async function (e) {
         setTimeout(() => setAddressFromLatLng(window.destinationLatitude, window.destinationLongitude, 'destination'), 0);
         updateConnectionLine();
         
+        // Show nearest barangay hall suggestion for destination (based on pickup location, with delay to ensure markers are loaded)
+        setTimeout(() => {
+            showNearestBrgyForDestination();
+        }, 500);
+        
         // Open the case creation modal if not already open
         const modal = document.getElementById('case-creation-modal');
         if (!modal || modal.style.display === 'none') {
@@ -7561,6 +8750,7 @@ map.on('click', async function (e) {
         // Suggest nearest driver and hospital when pin is moved
         suggestNearestDriver();
         suggestNearestHospital();
+        showNearestBrgyForDestination();
     });
     
     // Open the case creation modal
@@ -7574,6 +8764,7 @@ map.on('click', async function (e) {
     setTimeout(() => {
         suggestNearestDriver();
         suggestNearestHospital();
+        showNearestBrgyForDestination();
     }, 500);
 });
 
@@ -11172,12 +12363,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Suggest nearest driver and hospital when pin is moved
                 suggestNearestDriver();
                 suggestNearestHospital();
+                suggestNearestBrgy();
+                showNearestBrgyForDestination();
             });
             
             // Suggest nearest driver and hospital when modal opens via URL
             setTimeout(() => {
                 suggestNearestDriver();
                 suggestNearestHospital();
+                suggestNearestBrgy();
+                showNearestBrgyForDestination();
             }, 500);
             
             const pinCoords = document.getElementById('pin-coordinates');
